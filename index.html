@@ -45,35 +45,36 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{display:flex;justify-content:center;align-items:center;min-height:calc(100vh - 16px);position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;
+#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 /* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
-#game #board{transform:rotateX(var(--tilt));transform-origin:50% 100%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(60vw, calc((100vh - 40px) * 1.22));box-shadow:0 40px 60px rgba(0,0,0,.6)}
+#game #board{transform:rotateX(var(--tilt));transform-origin:50% 100%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc(100vw - 2 * var(--pw) - 40px), calc((100vh - 16px - 96px) * 1.25));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
 #game .cell{transform-style:preserve-3d;overflow:visible}
 #game .cell .bld{transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:3%;bottom:40%}
 #game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
 #game .cell .lab{position:absolute;left:3px;bottom:2px;max-width:62%;z-index:2}
-#game .cell .nm{margin:0;font-size:clamp(8px,1.25vw,15px)}
+#game .cell .nm{margin:0;font-size:calc(var(--bw,600px) / 9 * .17);line-height:1.1;word-break:keep-all;overflow-wrap:normal;white-space:normal}
+#game .cell .pr{font-size:calc(var(--bw,600px) / 9 * .13)}
 #game .cell.corner .lab{max-width:96%}
 #game .cell .cimg{position:absolute;inset:14% 14% 26% 14%;opacity:.9;pointer-events:none}
 #game .cell .cimg svg{width:100%;height:100%}
 #game .cell.corner[id="c0"] .nm{font-family:var(--body);font-weight:700;letter-spacing:.12em;color:#f0d79a}
-#eraBar{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:min(calc(100vw - 2 * clamp(150px,19vw,262px)),900px);z-index:9;display:flex;flex-direction:column;gap:2px}
+#eraBar{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:min(calc(100vw - 2 * var(--pw) - 40px),900px);z-index:9;display:flex;flex-direction:column;gap:2px}
 #eraBar #era span{font-size:clamp(9px,1.05vw,13px)}
 #eraBar #eraCap{font-size:clamp(10px,1.15vw,14px)}
-.pc{position:absolute;z-index:9;width:clamp(150px,17vw,250px);aspect-ratio:1}
+.pc{position:absolute;z-index:9;width:var(--pw);aspect-ratio:1}
 .pc.tl{left:6px;top:6px}.pc.tr{right:6px;top:6px}.pc.br{right:6px;bottom:6px}.pc.bl{left:6px;bottom:6px}
-.pc .pl{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;font-size:clamp(11px,1.25vw,16px);padding:10px;background:rgba(42,32,28,.94);border-width:2px;border-radius:10px}
+.pc .pl{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;font-size:calc(var(--pw) * .075);padding:10px;background:rgba(42,32,28,.94);border-width:2px;border-radius:10px}
 .pc .pl b{font-size:1.35em;white-space:normal}
 .pc .pl .cash{font-size:1.4em;font-weight:700;text-align:center}
 .pc .pl .rank{text-align:center;line-height:1.45}
-.pc .pl .face{width:clamp(34px,4.2vw,62px)}
+.pc .pl .face{width:calc(var(--pw) * .24)}
 .pc .pl .rank{white-space:normal}
 .rare{font-size:.75em;border:1px dashed currentColor;border-radius:3px;padding:0 .2em}
 #game .cell.own::after{content:'';position:absolute;right:6%;bottom:34%;width:50%;height:16%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(2px);pointer-events:none}
 #game #tokens{transform-style:preserve-3d}
 #game .tk{transform-style:preserve-3d;transform:rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
-#game .tk .ch{width:clamp(20px,2.6vw,32px);left:-14px}
+#game .tk .ch{width:calc(var(--bw,600px) / 9 * .5);left:calc(var(--bw,600px) / 9 * -.25)}
 #game .ctrHole{grid-column:2/9;grid-row:2/9;background:radial-gradient(ellipse at 50% 50%,#3a2c22,#241b16 75%);position:relative}
 #game .ctrHole i{position:absolute;width:0;height:0}
 #game > #center{position:absolute;z-index:8;border-radius:8px;background:rgba(27,21,19,.84);box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;padding:8px 12px}
@@ -85,6 +86,8 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game > #center #sticks{gap:clamp(6px,1.4vw,18px)}
 #game > #center #result{font-size:clamp(17px,2.8vw,40px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-wrap:nowrap;justify-content:center;min-height:1.25em}
 #game > #center #stage{overflow:hidden}
+#game > #center #result{position:relative;z-index:3;text-shadow:0 2px 8px #000}
+#game > #center #mid{margin-top:4px;position:relative;z-index:1}
 #game > #center #mid{flex:1}
 #game > #center #faces{font-size:clamp(10px,1.2vw,15px)}
 #game > #center #chips span{font-size:clamp(9px,1.05vw,13px);padding:.1em .45em}
@@ -92,6 +95,17 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game > #center #actrow .btn{font-size:clamp(12px,1.4vw,18px);padding:.45em 1em}
 #game > #center #gauge{height:clamp(18px,2.4vw,28px);max-width:none;min-width:140px}
 #game > #center #gauge .lbl{font-size:clamp(9px,1vw,12px)}
+
+#sideL{position:absolute;z-index:9;left:6px;top:calc(var(--pw) + 12px);bottom:calc(var(--pw) + 12px);width:var(--pw);display:flex;flex-direction:column;gap:6px;min-height:0}
+#sideL .tools{display:flex;flex-wrap:wrap;gap:4px;margin:0}
+#sideL .tools .btn{font-size:calc(var(--pw) * .07);padding:.3em .6em}
+#liveLog{flex:1;min-height:0;overflow:hidden;font-size:calc(var(--pw) * .062);line-height:1.4;color:var(--paper-dim);display:flex;flex-direction:column;gap:3px;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+#liveLog .new{color:var(--paper)}
+#game .edge{position:absolute;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(#8a6242,#5a3d27 45%,#2e1e13);box-shadow:inset 0 2px 0 #c9a25a}
+#game .edge.front{left:0;right:0;top:100%;height:calc(var(--bw,600px) * .11);transform-origin:50% 0;transform:rotateX(-90deg)}
+#game .edge.left{top:0;bottom:0;left:0;width:calc(var(--bw,600px) * .11);transform-origin:0 50%;transform:rotateY(90deg);background:linear-gradient(90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset 2px 0 0 #c9a25a}
+#game .edge.right{top:0;bottom:0;right:0;width:calc(var(--bw,600px) * .11);transform-origin:100% 50%;transform:rotateY(-90deg);background:linear-gradient(-90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset -2px 0 0 #c9a25a}
+@media (max-height:520px){ #game > #center #faces{display:none} #game > #center .st{height:clamp(46px,14vh,110px)} #game > #center #result{font-size:clamp(15px,5vh,30px)} #game > #center #actrow .btn{font-size:clamp(11px,3.4vh,16px);padding:.3em .8em} #game > #center #say{font-size:clamp(10px,3vh,14px)} }
 #tiltBox{display:flex;align-items:center;gap:4px;font-size:clamp(9px,1vw,12px);color:var(--paper-dim)}
 #tiltBox input{width:70px}
 #board{position:relative;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(6,1fr);gap:2px;
@@ -230,7 +244,7 @@ td:first-child,th:first-child{text-align:left}
   </div>
 </section>
 
-<section id="game" hidden><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
+<section id="game" hidden><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn" id="fsBtn">전체화면</button><button class="btn" id="rulesBtn2">규칙</button><button class="btn" id="exitBtn">나가기</button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
 <div id="sheet" hidden><div class="in" id="sheetIn"></div></div>
 <div id="evt" hidden><div class="in" id="evtIn"></div></div>
 <div id="over" hidden><div class="in" id="overIn"></div></div>
@@ -728,7 +742,7 @@ const CORNER_ART = {
   start: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="none" stroke="#c9a25a" stroke-width="2"/><path d="M14 30 h26 l-8 -8 M40 30 l-8 8" stroke="#e0c27a" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
   away: `<svg viewBox="0 0 60 60"><path d="M6 40 q24 10 48 0 l-6 8 q-18 6 -36 0z" fill="#6b4a2e"/><path d="M28 40 V12 L46 36Z" fill="#efe6d2"/><path d="M26 40 V18 L12 36Z" fill="#d9ccae"/><path d="M0 52 q10 -4 20 0 t20 0 t20 0" stroke="#5f9a9a" stroke-width="2.5" fill="none"/></svg>`,
   rite: `<svg viewBox="0 0 60 60"><path d="M8 20 h44 M12 26 h36" stroke="#b8473a" stroke-width="4" stroke-linecap="round"/><path d="M16 20 V50 M44 20 V50" stroke="#b8473a" stroke-width="4"/><rect x="22" y="38" width="16" height="12" fill="#7d6640"/><path d="M30 34 v-6" stroke="#e0c27a" stroke-width="2"/><circle cx="30" cy="26" r="2" fill="#f0d79a"/></svg>`,
-  song: `<svg viewBox="0 0 60 60"><path d="M14 44 V30 q0 -8 10 -9 h12 q6 -6 10 -10 l2 6 q-2 4 -4 6 v8 q0 6 -6 7 v6 M20 44 v-8 M34 44 v-8" stroke="#c9a25a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 30 q-6 2 -8 8" stroke="#c9a25a" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="44" cy="17" r="1.5" fill="#e0c27a"/></svg>`,
+  song: `<svg viewBox="0 0 60 60"><ellipse cx="30" cy="52" rx="17" ry="3" fill="rgba(0,0,0,.35)"/><g stroke="#4a2e18" stroke-width="1.4" stroke-linejoin="round"><rect x="19" y="40" width="5" height="11" rx="2.5" fill="#a8703e"/><rect x="34" y="40" width="5" height="11" rx="2.5" fill="#a8703e"/><ellipse cx="29" cy="38" rx="15" ry="9.5" fill="#c98a4b"/><path d="M14 36 q-7 2 -6 10 q4 -3 7 -6" fill="#6b3f1d"/><circle cx="43" cy="25" r="10" fill="#c98a4b"/><ellipse cx="50" cy="29" rx="5" ry="4" fill="#e6b27a"/><path d="M37 17 l1 -7 l5 5z" fill="#c98a4b"/><path d="M34 22 q2 -9 10 -10 q-3 4 -1 7 q-4 0 -6 6z" fill="#6b3f1d"/></g><circle cx="45" cy="24" r="2.3" fill="#2a1a0e"/><circle cx="45.8" cy="23.2" r=".8" fill="#fff"/><circle cx="51.5" cy="29" r=".9" fill="#4a2e18"/><ellipse cx="41" cy="29" rx="2.4" ry="1.4" fill="#f08a8a" opacity=".75"/><path d="M47 32.5 q2 1.4 4 0" stroke="#4a2e18" stroke-width="1" fill="none"/><rect x="22" y="29" width="14" height="5" rx="2" fill="#b8473a"/></svg>`,
 };
 function buildBoard(){
   const b = $('board'); b.innerHTML = '';
@@ -746,7 +760,7 @@ function buildBoard(){
   ctr.innerHTML = `<div id="stage">
       <div id="result"></div>
       <div id="mid"><div id="tray"><div id="sticks"></div></div>
-        <div id="rbox"><div id="faces"></div><div id="chips"></div><div id="bubble"></div></div></div>
+        <div id="rbox"><div id="faces"></div><div id="bubble"></div></div></div>
       <div id="say"></div><div id="actrow"></div>
     </div>`;
   $('game').appendChild(ctr);
@@ -754,8 +768,9 @@ function buildBoard(){
   hole.innerHTML = '<i id="hTL" style="left:0;top:0"></i><i id="hTR" style="right:0;top:0"></i><i id="hBL" style="left:0;bottom:0"></i><i id="hBR" style="right:0;bottom:0"></i>';
   b.appendChild(hole);
   const tl = document.createElement('div'); tl.id = 'tokens'; b.appendChild(tl);
+  ['front','left','right'].forEach(k => { const e = document.createElement('div'); e.className = 'edge ' + k; b.appendChild(e); });
   $('sticks').innerHTML = [0,1,2,3,4].map(k => `<div class="st" id="st${k}"><div class="f w">${k<2 ? PHEASANT : '<span></span>'}<small>흰</small></div><div class="edge"></div><div class="f b">${k<2 ? OX : '<span></span>'}<small>검</small></div></div>`).join('');
-  $('chips').innerHTML = OUT.map((o,k) => `<span id="ch${k}" class="${o.king?'k':''}" title="${o.how}">${o.rare ? '' : `<span class="hz">${o.zh}</span> `}${o.ko}</span>`).join('');
+  if($('chips')) $('chips').innerHTML = OUT.map((o,k) => `<span id="ch${k}" class="${o.king?'k':''}" title="${o.how}">${o.rare ? '' : `<span class="hz">${o.zh}</span> `}${o.ko}</span>`).join('');
 }
 
 const DISP = {}; let stepTimer = null, walking = false, throwingUntil = 0, lastThrowN = 0;
@@ -772,7 +787,8 @@ function placeCenter(){
   const pad = 6, left = tl.left - gr.left + pad, right = tr.left - gr.left - pad, top = tl.top - gr.top + pad, bottom = bl.top - gr.top - pad;
   Object.assign(c.style, { left:left+'px', top:top+'px', width:Math.max(0,right-left)+'px', height:Math.max(0,bottom-top)+'px' });
 }
-addEventListener('resize', () => setTimeout(placeCenter, 50));
+function sizeBoard(){ const b = $('board'); if(b) b.style.setProperty('--bw', b.offsetWidth + 'px'); }
+addEventListener('resize', () => setTimeout(() => { sizeBoard(); placeCenter(); if(G) drawTokens(); }, 80));
 function drawTokens(hopIds){
   const L = $('tokens'); if(!L || !G) return;
   G.players.forEach((p,k) => {
@@ -853,6 +869,7 @@ function render(){
   if(G.phase === 'card' && G.card != null){ const k = G.card; setTimeout(() => { if(G.phase === 'card' && G.card === k) showCard(RELICS[k]); }, animating() ? 1500 : 0); }
   else if(sheetMode === 'card') closeSheet();
   renderActions();
+  renderLog();
   aiStep();
   if(G.over) setTimeout(showOver, 1800);
 }
@@ -902,10 +919,18 @@ function renderActions(){
     if(G.phase === 'take'){ addBtn(`인수하기 (${takeCost(p.pos)})`, () => send({k:'take'}), true); addBtn('지나가기', () => send({k:'skip'})); }
     if(G.phase === 'card'){ addBtn('카드 읽음', () => send({k:'ok'}), true); }
   }
-  A.insertAdjacentHTML('beforeend', `<div class="tools"><label id="tiltBox" hidden>기울기 <input type="range" id="tilt" min="20" max="58" value="${TILT}"></label><button class="btn" id="fsBtn">${document.fullscreenElement ? '창 모드' : '전체화면'}</button><button class="btn" id="logBtn">기록</button><button class="btn" id="rulesBtn2">규칙</button></div>`);
-  $('logBtn').onclick = showLog; $('rulesBtn2').onclick = showRules; $('fsBtn').onclick = toggleFS;
-  $('tilt').oninput = e => { TILT = +e.target.value; $('game').style.setProperty('--tilt', TILT + 'deg'); placeCenter(); };
+  $('fsBtn').textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '창 모드' : '전체화면';
 }
+let exitArm = 0;
+function wireSide(){
+  $('fsBtn').onclick = toggleFS; $('rulesBtn2').onclick = showRules;
+  $('exitBtn').onclick = () => {
+    if(Date.now() < exitArm){ location.reload(); return; }
+    exitArm = Date.now() + 3000; $('exitBtn').textContent = '한 번 더 누르면 나가요';
+    setTimeout(() => { if(Date.now() >= exitArm) $('exitBtn').textContent = '나가기'; }, 3100);
+  };
+}
+function renderLog(){ const L = $('liveLog'); if(!L || !G) return; L.innerHTML = G.log.slice().reverse().map((t,i) => `<div class="${i?'':'new'}">${hzify(esc(t))}</div>`).join(''); }
 function addBtn(t, fn, main, dis){ const b = document.createElement('button'); b.className = 'btn' + (main?' main':''); b.textContent = t; b.disabled = !!dis; b.onclick = fn; $('actrow').appendChild(b); }
 
 const srcLine = o => o.src ? `<div class="src" style="font-size:12px;color:var(--paper-dim)">출처: ${o.url ? `<a href="${o.url}" target="_blank" rel="noopener" style="color:#e0c27a">${o.src}</a>` : o.src}</div>` : '';
@@ -1037,7 +1062,7 @@ function enterGame(){
   for(const k in DISP) delete DISP[k];
   lastEvtN = 0; lastNoteN = G.note?.n || 0; lastThrowN = G.last?.n || 0;
   $('lobby').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
-  buildBoard(); requestAnimationFrame(() => { placeCenter(); render(); }); setTimeout(placeCenter, 300);
+  buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { sizeBoard(); placeCenter(); render(); }); setTimeout(() => { sizeBoard(); placeCenter(); drawTokens(); }, 300);
 }
 addEventListener('resize', () => { if(G && $('tokens')) drawTokens(); });
 
