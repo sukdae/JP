@@ -1,11 +1,3 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-</head>
-<body>
 <title>모두의 저포</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +31,11 @@ h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
 .tag{display:inline-block;font-size:11px;padding:0 .5em;border-radius:3px;margin-left:.4em;vertical-align:1px;color:var(--lacquer);font-family:var(--body)}
 .tag.rec{background:#9fb6d8}.tag.leg{background:#c7a8e0}.tag.fic{background:#e0c27a}.tag.chk{background:#9a9a9a}.tag.lit{background:#e8a38f}.tag.re{background:#a8c79a}
 
-#lobby{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-block:12px}
+#lobby{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:22px;padding-block:6vh;min-height:calc(100vh - 16px);justify-content:center}
+#lobby .mark{text-align:center}
+.menu{display:flex;flex-direction:column;gap:12px}
+.btn.big{font-family:var(--display);font-size:clamp(20px,3vw,28px);padding:.7em 1em;border-radius:10px;letter-spacing:.1em}
+.btn.back{align-self:flex-start}
 #lobby .mark{font-family:var(--display);font-size:clamp(40px,10vw,68px);letter-spacing:.12em;color:var(--bronze);line-height:1}
 #lobby .mark small{display:block;font-size:.26em;letter-spacing:.3em;color:var(--paper-dim);margin-top:.8em;font-family:var(--display)}
 .panel{border:1px solid var(--bronze-dim);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--lacquer2)}
@@ -202,18 +198,26 @@ td:first-child,th:first-child{text-align:left}
 
 <section id="lobby">
   <div class="mark">모두의 저포<small><span class="hz">樗蒲</span> · 부여 한 바퀴</small></div>
-  <p class="muted" style="margin:0;line-height:1.7">다섯 막대를 던져 부여의 성과 절, 왕궁과 포구를 돌며 건물을 세우세요. 한 바퀴 돌 때마다 백제 관등이 오르고 봉급이 늘어요. 선두가 한 바퀴를 돌 때마다 성왕부터 의자왕까지 열두 턴의 사건이 하나씩 일어나고, 660년이 오면 판이 끝나요.</p>
-  <div class="panel" id="soloPanel">
-    <h3>혼자 하기 · 양생과 부처님</h3>
+  <div id="menuMain" class="menu">
+    <button class="btn main big" id="goSingle">싱글플레이</button>
+    <button class="btn main big" id="goMulti">멀티플레이</button>
+    <div class="row" style="justify-content:center"><button class="btn" id="howBtn">규칙</button><button class="btn" id="fsBtn0">전체화면</button></div>
+  </div>
+  <div id="menuSingle" class="menu" hidden>
+    <div class="panel" id="soloPanel">
+    <h3>양생과 부처님</h3>
     <p class="muted" style="margin:0;font-size:14px;line-height:1.7">김시습의 『금오신화』 「만복사저포기」에서 가난한 서생 양생은 만복사 부처님께 저포 내기를 청한다. 지면 법회를 열어 갚고, 이기면 짝을 만나게 해 달라고. 이번 판의 상대는 부처님이다.</p>
     <div class="row"><input type="text" id="soloNick" maxlength="10" value="양생" aria-label="내 이름"><button class="btn main" id="startSolo">만복사로 가기</button></div>
   </div>
-  <div class="panel" id="localPanel">
-    <h3>한 기기에서 여럿이 하기</h3>
-    <div id="seats" style="display:flex;flex-direction:column;gap:8px"></div>
-    <div class="row"><button class="btn main" id="startLocal">시작하기</button><button class="btn" id="howBtn">규칙 보기</button><button class="btn" id="fsBtn0">전체화면</button></div>
+    <button class="btn back" data-back>← 처음으로</button>
   </div>
-  <div class="panel" id="roomPanel">
+  <div id="menuMulti" class="menu" hidden>
+    <div class="panel" id="localPanel">
+    <h3>한 기기에서 함께</h3>
+    <div id="seats" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="row"><button class="btn main" id="startLocal">시작하기</button></div>
+  </div>
+    <div class="panel" id="roomPanel">
     <h3>여럿이 한 방에서</h3>
     <p class="muted" id="roomNote" style="margin:0;font-size:14px">방 기능을 확인하는 중…</p>
     <div id="roomCtl" hidden style="display:flex;flex-direction:column;gap:10px">
@@ -222,7 +226,8 @@ td:first-child,th:first-child{text-align:left}
     </div>
     <div id="waiting" hidden style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
-  <p class="muted" style="font-size:12px;margin:0;line-height:1.6">저포는 『주서』 백제전에 백제 놀이로 기록되어 있어요. 백제 저포의 규칙은 전하지 않아, 당나라 이고의 『오목경』 결과표를 바탕으로 게임용 규칙을 새로 만들었어요.</p>
+    <button class="btn back" data-back>← 처음으로</button>
+  </div>
 </section>
 
 <section id="game" hidden><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
@@ -1052,6 +1057,10 @@ $('startLocal').onclick = () => {
 };
 function alertLobby(t){ $('roomNote').textContent = t; $('roomNote').scrollIntoView({block:'center'}); }
 $('howBtn').onclick = showRules;
+const showMenu = id => ['menuMain','menuSingle','menuMulti'].forEach(m => $(m).hidden = m !== id);
+$('goSingle').onclick = () => showMenu('menuSingle');
+$('goMulti').onclick = () => showMenu('menuMulti');
+document.querySelectorAll('[data-back]').forEach(b => b.onclick = () => showMenu('menuMain'));
 // 전체화면: 버튼을 누를 때만 (브라우저가 허락하지 않으면 안내만)
 function toggleFS(){
   const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
@@ -1109,6 +1118,3 @@ function onRoom(peers){
   }
 }
 </script>
-
-</body>
-</html>
