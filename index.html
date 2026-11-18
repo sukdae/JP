@@ -176,6 +176,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #chips span{font-size:clamp(7px,.85vw,11px);padding:0 .35em;border-radius:3px;background:#2a211b;color:#8f8371;border:1px solid transparent;white-space:nowrap}
 #chips span.k{border-color:#6b5531}
 #chips span.on{background:var(--bronze);color:var(--lacquer);font-weight:700}
+#tleft{font-weight:700;color:#f0d79a;margin-right:.3em}#tleft.hurry{color:#e2574c}
 #say{font-size:clamp(8.5px,1.05vw,13px);color:var(--paper);min-height:1.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #bubble{font-family:var(--display);font-size:clamp(9px,1.1vw,14px);color:#f0d79a;min-height:1.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .4s}
 #actrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:2em}
@@ -471,8 +472,9 @@ function throwSticks(){ const f = Array.from({length:5},()=>Math.random()<.5); r
 function act(pid, a){
   if(!G || G.over) return;
   const p = cur(); if(p.id !== pid) return;
+  if(a.s != null && a.s !== G.seq) return;
   G.eraThisAct = false;
-  if(G.phase === 'throw' && a.k === 'pay' && p.gate){ if(p.cash < GATE_FEE) return; p.cash -= GATE_FEE; p.gate = 0; log(`${p.nm}: 30수전을 내고 관문을 나섰다.`); return done(); }
+  if(G.phase === 'throw' && a.k === 'pay' && p.gate){ if(p.cash < GATE_FEE) return; p.cash -= GATE_FEE; p.gate = 0; log(`${p.nm}: 30수전 내고 관문 통과`); return done(); }
   if(G.phase === 'throw' && a.k === 'throw') return doThrow(p, +a.x || 0);
   if(G.phase === 'buy' && a.k === 'buy') return buy(p);
   if(['buy','up','take'].includes(G.phase) && a.k === 'skip'){ G.phase = 'throw'; return afterProp(p); }
@@ -488,11 +490,11 @@ function doThrow(p, power){
   const hit = power >= 70 && power <= 85;
   G.last = { f:t.f, k:t.k, who:p.id, n:(G.last?.n||0)+1, hit, mv: r.move + (hit?1:0) };
   if(p.gate){
-    if(!r.king){ p.gate++; log(`${p.nm}: ${r.zh}(${r.ko}) — 왕채가 아니라 관문을 나서지 못했다.`); if(p.gate>2){ p.gate=0; log(`${p.nm}: 다음 차례엔 그냥 나선다.`); } return nextTurn(); }
-    p.gate = 0; log(`${p.nm}: 왕채 ${r.zh}! 관문을 나선다.`);
+    if(!r.king){ p.gate++; log(`${p.nm}: ${r.ko} — 관문에 막힘`); if(p.gate>2){ p.gate=0; log(`${p.nm}: 다음엔 그냥 통과`); } return nextTurn(); }
+    p.gate = 0; log(`${p.nm}: 왕채! 관문 통과`);
   }
   G.extra = r.king ? G.extra + 1 : 0;
-  log(`${p.nm}: ${r.zh}(${r.ko}) ${G.last.mv}칸${hit?' · 명중 +1':''}${r.king?' · 왕채, 한 번 더':''}`);
+  log(`${p.nm}: ${r.ko} ${G.last.mv}칸${hit?' (명중)':''}${r.king?' · 왕채':''}`);
   step(p, G.last.mv);
 }
 // 턴은 선두 기준: 출발(사비 천도)과 맞은편 구태묘 제사를 지날 때, 지금까지의 선두 기록을 처음 넘어서면 다음 턴
@@ -506,7 +508,7 @@ function passStart(p){
   if(p.rank < LAP_TOP) p.rank = Math.min(LAP_TOP, p.rank + 2);
   if(p.rank === 10) p.zp++;
   const pay = RANKS[p.rank].pay; p.cash += pay;
-  log(`${p.nm}: 한 바퀴! ${before !== p.rank ? RANKS[p.rank].n+'으로 승진, ' : ''}봉급 ${pay}수전.`);
+  log(`${p.nm}: 한 바퀴 · ${before !== p.rank ? RANKS[p.rank].n+' · ' : ''}봉급 ${pay}`);
   if(p.rank === 10 && p.zp >= JWA_LAPS){ G.winner = idx(p); return finish('jwapyeong'); }
 }
 function moveTo(p, to){ const d = (to - p.pos + N) % N || N; let pos = p.pos; for(let i=0;i<d;i++){ pos = (pos+1) % N; if(pos === 0) passStart(p); if(!G.over) tick(p); if(G.over) return done(); } p.pos = to; land(p); }
@@ -514,7 +516,7 @@ function land(p){
   if(G.over) return done();
   const c = CELLS[p.pos], me = idx(p);
   if(c.t === 'prop' && !p.seen.includes(p.pos)) p.seen.push(p.pos);
-  if(G.players.some(q => q !== p && !q.out && q.pos === p.pos) && c.t !== 'start'){ G.extra++; log(`${p.nm}: 다른 사람을 쳤다(擊馬) — 한 번 더.`); }
+  if(G.players.some(q => q !== p && !q.out && q.pos === p.pos) && c.t !== 'start'){ G.extra++; log(`${p.nm}: 擊馬 — 한 번 더`); }
   if(c.t === 'prop'){
     if(c.gate) p.gate = 1;
     if(p.pos === IDX('정사암')) jeongsa(p);
@@ -528,30 +530,30 @@ function land(p){
   }
   if(c.t === 'card') return draw(p);
   if(c.t === 'gibok') return gibok(p);
-  if(c.t === 'away'){ p.away = 1; G.extra = 0; log(`${p.nm}: 왜국에 사신으로 떠났다. 한 번 쉰다.`); note(`${p.nm} · 왜국 파견 — 한 번 쉰다`); return endMove(p); }
-  if(c.t === 'rite'){ G.players.forEach(q => { if(!q.out) q.cash += RITE; }); log(`구태묘 제사 — 모두 ${RITE}수전.`); note('구태묘 제사 · 모두 40수전'); return endMove(p); }
-  if(c.t === 'song'){ G.phase = 'tp'; log(`${p.nm}: 과하마를 타고 달린다 — 건너갈 칸을 고른다.`); return done(); }
+  if(c.t === 'away'){ p.away = 1; G.extra = 0; log(`${p.nm}: 왜국 파견 · 한 번 쉼`); note(`${p.nm} 왜국 파견`); return endMove(p); }
+  if(c.t === 'rite'){ G.players.forEach(q => { if(!q.out) q.cash += RITE; }); log(`구태묘 제사 · 모두 +${RITE}`); note(`구태묘 제사 · 모두 +${RITE}`); return endMove(p); }
+  if(c.t === 'song'){ G.phase = 'tp'; log(`${p.nm}: 과하마 · 칸 고르기`); return done(); }
   return endMove(p);
 }
 function afterProp(p){ if(p.pos === IDX('국립부여박물관') && !G.over && !p.out) return draw(p); return endMove(p); }
 function jeongsa(p){
   const t = throwSticks(), r = OUT[t.k];
   if(p.rank === 10) return;
-  if(p.rank < JWA_MIN){ log(`${p.nm}: 정사암 회의 — 아직 관등이 낮아 이름이 오르지 못했다 (${RANKS[JWA_MIN].n} 이상).`); note(`정사암 회의 · ${RANKS[JWA_MIN].n} 이상만 이름이 오른다`); return; }
-  if(r.king){ p.rank = 10; p.zp = 0; p.cash += 200; log(`${p.nm}: 정사암 회의 — ${r.zh}! 도장 자국이 찍혀 좌평이 되었다 (+200).`); note(`정사암 회의 · ${r.zh} 왕채 — 좌평!`); }
-  else { log(`${p.nm}: 정사암 회의 — ${r.zh}, 도장 자국은 없었다.`); note(`정사암 회의 · ${r.zh} — 도장 자국 없음`); }
+  if(p.rank < JWA_MIN){ log(`${p.nm}: 정사암 · 관등이 낮다`); note(`정사암 · ${RANKS[JWA_MIN].n} 이상만`); return; }
+  if(r.king){ p.rank = 10; p.zp = 0; p.cash += 200; log(`${p.nm}: 정사암 왕채 — 좌평! (+200)`); note(`${p.nm} 좌평!`); }
+  else { log(`${p.nm}: 정사암 · 도장 없음`); note('정사암 · 도장 없음'); }
 }
 function gibok(p){
   const stones = 3 + Math.floor(Math.random()*10);
-  if(stones % 2){ p.cash += 60; log(`${p.nm}: 기복 — 바둑알 ${stones}개, 홀수라 길하다 (+60).`); note(`기복 · 바둑알 ${stones}개 · 홀 · 길 +60`); }
-  else { const f = Math.min(p.cash, 40); p.cash -= f; log(`${p.nm}: 기복 — 바둑알 ${stones}개, 짝수라 흉하다 (−${f}).`); note(`기복 · 바둑알 ${stones}개 · 짝 · 흉 −${f}`); }
+  if(stones % 2){ p.cash += 60; log(`${p.nm}: 기복 ${stones}알 · 홀 +60`); note(`기복 · 홀 +60`); }
+  else { const f = Math.min(p.cash, 40); p.cash -= f; log(`${p.nm}: 기복 ${stones}알 · 짝 −${f}`); note(`기복 · 짝 −${f}`); }
   return endMove(p);
 }
 function buy(p){
   const c = CELLS[p.pos];
   if(G.own[p.pos] !== -1 || p.cash < c.p) return;
   p.cash -= c.p; G.own[p.pos] = idx(p); G.bl[p.pos] = 1;
-  log(`${p.nm}: ${c.n}에 ${bldName(p.pos)}을(를) 세웠다 (${c.p}수전).`);
+  log(`${p.nm}: ${c.n} ${bldName(p.pos)} 세웠다`);
   G.phase = 'throw';
   if(['P','C','T'].filter(g => fullGroup(idx(p), g)).length >= 2){ G.winner = idx(p); finish('groups'); return done(); }
   afterProp(p);
@@ -559,13 +561,13 @@ function buy(p){
 function upgrade(p){
   const k = p.pos; if(G.own[k] !== idx(p) || !canLevel(k) || G.bl[k] >= MAX_BL || p.cash < upCost(k)) return;
   p.cash -= upCost(k); G.bl[k]++;
-  log(`${p.nm}: ${CELLS[k].n}을(를) ${G.bl[k]}단계로 올렸다 (${upCost(k)}수전).`);
+  log(`${p.nm}: ${CELLS[k].n} ${G.bl[k]}단계`);
   G.phase = 'throw'; afterProp(p);
 }
 function takeover(p){
   const k = p.pos, o = G.own[k], cost = takeCost(k); if(o < 0 || o === idx(p) || p.cash < cost || (G.bl[k] || 1) >= MAX_BL) return;
   const owner = G.players[o]; p.cash -= cost; owner.cash += cost; G.own[k] = idx(p);
-  log(`${p.nm}: ${owner.nm}의 ${CELLS[k].n}(${G.bl[k] || 1}단계)을 ${cost}수전에 인수했다.`); note(`${p.nm} · ${CELLS[k].n} 인수!`);
+  log(`${p.nm}: ${CELLS[k].n} 인수 (${cost})`); note(`${p.nm} · ${CELLS[k].n} 인수`);
   G.phase = 'throw';
   if(['P','C','T'].filter(g => fullGroup(idx(p), g)).length >= 2){ G.winner = idx(p); finish('groups'); return done(); }
   afterProp(p);
@@ -574,42 +576,42 @@ function payToll(p, o, k){
   const owner = G.players[o]; if(owner.out) return;
   const roll = G.last ? (OUT[G.last.k].pts || 6) : 6;
   const fee = portToll(k, toll(k, roll));
-  if(p.shield){ p.shield = false; log(`${p.nm}: 금동 광배가 지켜 통행세를 피했다.`); return; }
+  if(p.shield){ p.shield = false; log(`${p.nm}: 광배로 통행세 면제`); return; }
   const paid = Math.min(fee, p.cash); p.cash -= paid; owner.cash += paid;
-  log(`${p.nm} → ${owner.nm}: 통행세 ${paid}수전.`);
+  log(`${p.nm} → ${owner.nm}: 통행세 ${paid}`);
   if(paid < fee) bankrupt(p);
 }
 function bankrupt(p){
   p.out = true; const i = idx(p);
   G.own = G.own.map((o,k) => { if(o === i){ G.lv[k] = 0; G.tmp[k] = 0; G.bl[k] = 0; return -1; } return o; });
-  log(`${p.nm}: 오수전이 바닥나 판에서 물러났다.`); note(`${p.nm} 파산 — 탈락`);
+  log(`${p.nm}: 파산`); note(`${p.nm} 파산`);
   const alive = G.players.filter(q => !q.out);
   if(alive.length === 1){ G.winner = idx(alive[0]); finish('last'); }
 }
 function draw(p){
   if(!G.deck.length) G.deck = shuffle(RELICS.map((_,i)=>i));
   const k = G.deck.pop(), cd = RELICS[k]; G.card = k;
-  log(`${p.nm}: 유물 카드 「${cd.t}」`);
+  log(`${p.nm}: 유물 카드 한 장`);
   if(cd.fx === 'shield') p.shield = true;
-  else if(cd.fx === 'double'){ const b = p.cash; p.cash *= 2; log(`${p.nm}: 구구셈 — 오수전이 ${b}에서 ${p.cash}로 두 배!`); }
+  else if(cd.fx === 'double'){ const b = p.cash; p.cash *= 2; log(`${p.nm}: 오수전 두 배 (${p.cash})`); }
   else if(cd.fx === 'goto0') G.pendingGoto = 0;
   else if(cd.fx === 'lotus' || cd.fx === 'temple'){
     if(myProps(p, cd.fx).length) G.pick = { kind: cd.fx };
-    else { p.cash += 60; log(`${p.nm}: 세울 곳이 없어 60수전을 받았다.`); }
+    else { p.cash += 60; log(`${p.nm}: 세울 곳 없어 +60`); }
   }
   G.phase = 'card'; done();
 }
 function myProps(p, kind){ const i = idx(p); return G.own.map((o,k)=>k).filter(k => G.own[k] === i && ['P','C','T'].includes(CELLS[k].g) && (kind === 'lotus' ? G.lv[k] < 2 : !G.tmp[k])); }
 function doPick(p, k){
   if(!G.pick || !myProps(p, G.pick.kind).includes(k)) return;
-  if(G.pick.kind === 'lotus'){ G.lv[k]++; log(`${p.nm}: ${CELLS[k].n}의 땅값이 올랐다.`); }
-  else { G.tmp[k] = 1; log(`${p.nm}: ${CELLS[k].n} 곁에 사찰을 세웠다.`); }
+  if(G.pick.kind === 'lotus'){ G.lv[k]++; log(`${p.nm}: ${CELLS[k].n} 땅값 상승`); }
+  else { G.tmp[k] = 1; log(`${p.nm}: ${CELLS[k].n} 곁에 사찰`); }
   G.pick = null; G.phase = 'throw'; endMove(p);
 }
 function endMove(p){
   if(G.over) return done();
   if(G.pendingGoto != null){ const to = G.pendingGoto; G.pendingGoto = null; return moveTo(p, to); }
-  if(G.extra > 0 && G.extra <= 3 && !p.out && !p.away){ G.extra--; G.phase = 'throw'; log(`${p.nm}: 한 번 더 던진다.`); return done(); }
+  if(G.extra > 0 && G.extra <= 3 && !p.out && !p.away){ G.extra--; G.phase = 'throw'; log(`${p.nm}: 한 번 더`); return done(); }
   G.extra = 0; nextTurn();
 }
 function nextTurn(){
@@ -618,14 +620,14 @@ function nextTurn(){
     G.turn = (G.turn + 1) % G.players.length;
     const q = cur();
     if(q.out) continue;
-    if(q.away){ q.away = 0; q.cash += AWAY_PAY; log(`${q.nm}: 왜국에서 돌아와 ${AWAY_PAY}수전을 받았다.`); continue; }
+    if(q.away){ q.away = 0; q.cash += AWAY_PAY; log(`${q.nm}: 왜국에서 귀환 +${AWAY_PAY}`); continue; }
     break;
   }
   done();
 }
 function advanceEra(){
   if(G.over) return;
-  if(G.era >= TURNS.length - 1){ G.era = TURNS.length; G.evtN++; log(`— 660 사비 함락. 판이 멈춘다.`); return finish('era'); }
+  if(G.era >= TURNS.length - 1){ G.era = TURNS.length; G.evtN++; log('— 660 사비 함락'); return finish('era'); }
   G.era++;
   const pool = TURNS[G.era].ev; G.ev[G.era] = Math.floor(Math.random() * pool.length);
   applyEvent(pool[G.ev[G.era]]);
@@ -634,7 +636,7 @@ function applyEvent(E){
   const alive = G.players.filter(q => !q.out), own = (q, f) => { const i = idx(q); return G.own.filter((o,k) => o === i && f(CELLS[k], k)).length; };
   const pay = (q, n) => { if(n >= 0) q.cash += n; else q.cash -= Math.min(q.cash, -n); };
   G.evtN++;
-  log(`— ${G.era + 1}턴 ${E.y} ${E.t}: ${E.fxt}`);
+  log(`— ${E.y} ${E.t}: ${E.fxt}`);
   const [code, num] = [E.fx.replace(/[+-]\d+$/,''), +(E.fx.match(/[+-]\d+$/)||[0])[0]];
   if(code === 'all') alive.forEach(q => pay(q, num));
   if(code === 'castle') alive.forEach(q => pay(q, num * own(q, c => c.g === 'C')));
@@ -660,7 +662,7 @@ function score(p, i){
 function finish(why){
   if(G.over) return;
   G.over = why; G.phase = 'over';
-  log(why==='era' ? '660년, 사비가 무너졌다. 판이 멈춘다.' : why==='groups' ? '두 무리를 모두 차지한 사람이 나왔다!' : why==='jwapyeong' ? '좌평이 출발점을 두 번 더 밟았다!' : '한 사람만 남았다.');
+  log(why==='era' ? '사비 함락 · 판 끝' : why==='groups' ? '두 무리 독점 · 판 끝' : why==='jwapyeong' ? '좌평 승리 · 판 끝' : '한 사람만 남음 · 판 끝');
 }
 const bldName = k => ({ palace:'전각', castle:'성루', temple:'가람', port:'나루터', special:'기념 건물' })[GROUPS[CELLS[k].g].kind];
 
@@ -861,7 +863,7 @@ function render(){
   });
   paintPicks();
   $('era').innerHTML = TURNS.map((t,k) => `<span class="${k<G.era?'past':k===G.era?'now':''}" title="${k+1}턴 · ${t.king}">${k<=G.era ? TURNS[k].ev[G.ev[k]].y : k+1+'턴'}</span>`).join('') + `<span class="${G.era>=TURNS.length?'now':''}">660</span>`;
-  { const E = curEvent(); $('eraCap').textContent = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${E.t} — 선두가 출발이나 구태묘를 지나면 다음 턴`; }
+  { const E = curEvent(); $('eraCap').textContent = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${E.t}`; }
   const L = G.last;
   if(L && L.n !== lastThrowN){ lastThrowN = L.n; throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; markChip(-1); setTimeout(showResult, 1150); }
   else if(Date.now() >= throwingUntil){ if(!L) setSticksStatic(null); showResult(); }
@@ -874,7 +876,7 @@ function render(){
   walk();
   if(G.evtN !== lastEvtN){ lastEvtN = G.evtN; const E = curEvent(), t = G.era; setTimeout(() => showEvent(E, t), animating() ? 1500 : 100); }
   if(G.note && G.note.n !== lastNoteN){ lastNoteN = G.note.n; const t = G.note.t; setTimeout(() => toastSay(t), animating() ? 1300 : 0); }
-  if(G.phase === 'card' && G.card != null){ const k = G.card; setTimeout(() => { if(G.phase === 'card' && G.card === k) showCard(RELICS[k]); }, animating() ? 1500 : 0); }
+  if(G.phase === 'card' && G.card != null && myTurn()){ const k = G.card; setTimeout(() => { if(G.phase === 'card' && G.card === k) showCard(RELICS[k]); }, animating() ? 1500 : 0); }
   else if(sheetMode === 'card') closeSheet();
   renderActions();
   renderLog();
@@ -885,7 +887,7 @@ function markChip(k){ OUT.forEach((_,j) => $('ch'+j)?.classList.toggle('on', j =
 function showResult(){
   if(!G || !$('result')) return;
   const L = G.last;
-  if(!L){ $('result').innerHTML = '<span class="muted" style="font-size:.55em">꾹 눌러 힘을 모으고, 놓아서 던진다</span>'; $('faces').textContent = '두 막대: 흰 면에 꿩, 검은 면에 소'; markChip(-1); return; }
+  if(!L){ $('result').innerHTML = '<span class="muted" style="font-size:.55em">꾹 눌렀다 놓아 던지기</span>'; $('faces').textContent = '두 막대: 흰 면에 꿩, 검은 면에 소'; markChip(-1); return; }
   const r = OUT[L.k];
   $('result').innerHTML = `${r.rare ? '' : `<span class="hz">${r.zh}</span> `}${r.ko} · ${L.mv}칸 <span class="badge ${r.king?'king':'peon'}">${r.king?'왕채 · 한 번 더':'맹채'}</span>${L.hit?'<span class="badge hit">명중 +1</span>':''}`;
   $('faces').textContent = `${L.f.map((b,k) => k<2 ? (b?'소':'꿩') : (b?'검':'흰')).join(' · ')} → ${r.how}${r.pts ? ` · 『오목경』 ${r.pts}점` : ''}`;
@@ -893,14 +895,14 @@ function showResult(){
 }
 function toastSay(t){ const b = $('bubble'); if(!b) return; b.textContent = t; b.style.opacity = 1; clearTimeout(toastSay.t); toastSay.t = setTimeout(() => { b.style.opacity = 0; }, 3600); }
 function phaseText(p){
-  if(G.phase === 'buy') return `${CELLS[p.pos].n}에 ${bldName(p.pos)}을(를) 세울까? (${CELLS[p.pos].p}수전)`;
-  if(G.phase === 'up') return `${CELLS[p.pos].n}을(를) ${G.bl[p.pos]+1}단계로 올릴까? (${upCost(p.pos)}수전)`;
-  if(G.phase === 'take'){ const o = G.players[G.own[p.pos]]; return `${o.nm}의 ${CELLS[p.pos].n}(${G.bl[p.pos]||1}단계)을 인수할까? (${takeCost(p.pos)}수전)`; }
-  if(G.phase === 'tp') return '과하마 — 건너갈 칸을 누르세요';
-  if(G.phase === 'pick') return G.pick.kind === 'lotus' ? '땅값을 올릴 내 건물을 누르세요' : '사찰을 세울 내 건물을 누르세요';
-  if(G.phase === 'card') return '유물 카드';
-  if(p.gate) return '관문 — 왕채가 나와야 나간다';
-  return '저포를 던질 차례';
+  if(G.phase === 'buy') return `${CELLS[p.pos].n} 세울까? (${CELLS[p.pos].p})`;
+  if(G.phase === 'up') return `${G.bl[p.pos]+1}단계로 올릴까? (${upCost(p.pos)})`;
+  if(G.phase === 'take'){ const o = G.players[G.own[p.pos]]; return `인수할까? (${takeCost(p.pos)})`; }
+  if(G.phase === 'tp') return '갈 칸을 누르세요';
+  if(G.phase === 'pick') return '내 건물을 누르세요';
+  if(G.phase === 'card') return myTurn() ? '유물 카드' : '유물 카드 보는 중';
+  if(p.gate) return '관문 · 왕채가 나와야 통과';
+  return '던지기';
 }
 let TILT = 40;
 let gauge = { on:false, v:0, dir:1, t:null };
@@ -911,7 +913,7 @@ function renderActions(){
   if(!G || !$('actrow')) return;
   if(gauge.on) return;
   const p = cur(), mine = myTurn() && !animating();
-  $('say').innerHTML = G.over ? '판이 끝났다.' : `<b style="color:${p.c}">${esc(p.nm)}</b>의 차례 · ${phaseText(p)}`;
+  $('say').innerHTML = G.over ? '판이 끝났다.' : `<span id="tleft"></span><b style="color:${p.c}">${esc(p.nm)}</b> · ${phaseText(p)}`;
   const A = $('actrow'); A.innerHTML = '';
   if(!G.over && mine){
     if(G.phase === 'throw'){
@@ -1056,9 +1058,35 @@ $('startSolo').onclick = async () => {
    7. 한 기기 / 방
    ===================================================================== */
 const isHostSide = () => !NET || NET.host;
+/* 차례 제한 10초: 온라인 방에서 사람 차례에만. 막대·말 움직임과 사건 창이 끝난 뒤부터 센다.
+   방장이 시간을 재고, 끝나면 대신 움직인다 (던지기 · 지나가기 · 카드 닫기). */
+const TURN_MS = 10000;
+let tmKey = null, tmStart = 0, tmFired = null;
+function turnClock(){
+  const el = $('tleft');
+  if(!G || G.over || !NET || cur().ai || cur().out){ if(el) el.textContent = ''; return; }
+  if(G.seq !== tmKey){ tmKey = G.seq; tmStart = 0; }
+  if(!tmStart){ if(animating() || !$('evt').hidden){ if(el) el.textContent = ''; return; } tmStart = Date.now(); }
+  const left = Math.max(0, TURN_MS - (Date.now() - tmStart));
+  if(el){ el.textContent = Math.ceil(left / 1000) + '초'; el.classList.toggle('hurry', left <= 3000); }
+  if(left === 0 && isHostSide() && tmFired !== tmKey){ tmFired = tmKey; timeUp(); }
+}
+function timeUp(){
+  const p = cur(), ph = G.phase;
+  if(gauge.on && myTurn()) return gaugeEnd();
+  let a = null;
+  if(ph === 'throw') a = { k:'throw', x:0 };
+  else if(['buy','up','take'].includes(ph)) a = { k:'skip' };
+  else if(ph === 'card') a = { k:'ok' };
+  else if(ph === 'tp') a = { k:'tp', x:(SONG() + 1) % N };
+  else if(ph === 'pick'){ const m = myProps(p, G.pick.kind); if(m.length) a = { k:'pick', x:m[0] }; }
+  if(a){ log(`${p.nm}: 시간 초과`); act(p.id, a); }
+}
+setInterval(turnClock, 200);
 const myTurn = () => G && !G.over && ME && ME.includes(cur().id);
 function send(a){
   if(!myTurn()) return;
+  a = { ...a, s: G.seq };
   if(isHostSide()) act(cur().id, a);
   else { NET.n = (NET.n||0) + 1; NET.r.presence({ it:{ n:NET.n, pid:cur().id, a } }).catch(()=>{}); }
 }
