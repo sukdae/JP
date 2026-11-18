@@ -2,1221 +2,263 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>폼 체크</title>
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<title>모두의 저포</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Noto+Serif+TC:wght@500;700&display=swap">
-<style>
-/* 가로 휴대폰 한 화면: 직사각형 판(12×6칸) 둘레를 돌고, 판 안쪽에 사람 패·저포 막대·결과·게이지. 어두운 옻칠 단일 테마 */
-:root{
-  --lacquer:#1b1513; --lacquer2:#2a201c; --lacquer3:#35281f;
-  --bronze:#c9a25a; --bronze-dim:#7d6640;
-  --paper:#efe6d2; --paper-dim:#b9ad96;
-  --seal:#c0533f;
-  --hz:'Noto Serif TC','Songti TC','PingFang TC','MingLiU-ExtB','SimSun-ExtB',serif;
-  --display:'Gowun Batang','Noto Serif TC','Noto Serif KR',serif;
-  --body:'Gowun Dodum','Noto Sans KR','Noto Serif TC',system-ui,sans-serif;
-  --gP:#b8473a; --gC:#5f7f9a; --gT:#8a6bb0; --gF:#3f8a86; --gS:#c9a25a;
-  color-scheme:dark;
-}
-[hidden]{display:none!important}
-html,body{height:100%}
-body{background:var(--lacquer);color:var(--paper);font-family:var(--body);margin:0;box-sizing:border-box;
-  padding-left:max(10px, env(safe-area-inset-left,0px));padding-right:max(10px, env(safe-area-inset-right,0px));padding-block:8px;overflow-x:hidden}
-*{box-sizing:border-box}
-button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
-h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
-.hz{font-family:var(--hz)}
-.btn{background:transparent;border:1px solid var(--bronze);color:var(--paper);border-radius:6px;padding:.5em 1em;font-size:15px;touch-action:none;user-select:none;-webkit-user-select:none}
-.btn.main{background:var(--bronze);color:var(--lacquer);font-weight:700}
-.btn:disabled{opacity:.35;cursor:default}
-.muted{color:var(--paper-dim)}
-.tag{display:inline-block;font-size:11px;padding:0 .5em;border-radius:3px;margin-left:.4em;vertical-align:1px;color:var(--lacquer);font-family:var(--body)}
-.tag.rec{background:#9fb6d8}.tag.leg{background:#c7a8e0}.tag.fic{background:#e0c27a}.tag.chk{background:#9a9a9a}.tag.lit{background:#e8a38f}.tag.re{background:#a8c79a}
+<header class="topbar">
+  <button id="backBtn" class="icon-btn" aria-label="뒤로" hidden>←</button>
+  <h1 id="title">폼 체크</h1>
+  <button id="settingsBtn" class="icon-btn" aria-label="설정">⚙︎</button>
+</header>
 
-#lobby{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:22px;padding-block:6vh;min-height:calc(100vh - 16px);justify-content:center}
-#lobby .mark{text-align:center}
-.menu{display:flex;flex-direction:column;gap:12px}
-.btn.big{font-family:var(--display);font-size:clamp(20px,3vw,28px);padding:.7em 1em;border-radius:10px;letter-spacing:.1em}
-.btn.back{align-self:flex-start}
-#lobby .mark{font-family:var(--display);font-size:clamp(40px,10vw,68px);letter-spacing:.12em;color:var(--bronze);line-height:1}
-#lobby .mark small{display:block;font-size:.26em;letter-spacing:.3em;color:var(--paper-dim);margin-top:.8em;font-family:var(--display)}
-.panel{border:1px solid var(--bronze-dim);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--lacquer2)}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);color:var(--paper);border-radius:6px;padding:.45em .7em;font:inherit;font-size:15px;min-width:0;flex:1}
-.seat{display:flex;gap:8px;align-items:center}
-.seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
-.seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
-
-#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;--pw:clamp(104px,min(17vw,30vh),250px);
-  background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
-/* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
-#game #board{transform:rotateX(var(--tilt));transform-origin:50% 100%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc(100vw - 2 * var(--pw) - 40px), calc((100vh - 16px - 96px) * 1.25));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
-#game .cell{transform-style:preserve-3d;overflow:visible}
-#game .cell .bld{transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:3%;bottom:40%}
-#game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
-#game .cell .lab{position:absolute;left:3px;bottom:2px;max-width:62%;z-index:2}
-#game .cell .nm{margin:0;font-size:calc(var(--bw,600px) / 9 * .17);line-height:1.1;word-break:keep-all;overflow-wrap:normal;white-space:normal}
-#game .cell .pr{font-size:calc(var(--bw,600px) / 9 * .13)}
-#game .cell.corner .lab{max-width:96%}
-#game .cell .cimg{position:absolute;inset:14% 14% 26% 14%;opacity:.9;pointer-events:none}
-#game .cell .cimg svg{width:100%;height:100%}
-#game .cell.corner[id="c0"] .nm{font-family:var(--body);font-weight:700;letter-spacing:.12em;color:#f0d79a}
-#eraBar{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:min(calc(100vw - 2 * var(--pw) - 40px),900px);z-index:9;display:flex;flex-direction:column;gap:2px}
-#eraBar #era span{font-size:clamp(9px,1.05vw,13px)}
-#eraBar #eraCap{font-size:clamp(10px,1.15vw,14px)}
-.pc{position:absolute;z-index:9;width:var(--pw);aspect-ratio:1}
-.pc.tl{left:6px;top:6px}.pc.tr{right:6px;top:6px}.pc.br{right:6px;bottom:6px}.pc.bl{left:6px;bottom:6px}
-.pc .pl{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;font-size:calc(var(--pw) * .075);padding:10px;background:rgba(42,32,28,.94);border-width:2px;border-radius:10px}
-.pc .pl b{font-size:1.35em;white-space:normal}
-.pc .pl .cash{font-size:1.4em;font-weight:700;text-align:center}
-.pc .pl .rank{text-align:center;line-height:1.45}
-.pc .pl .face{width:calc(var(--pw) * .24)}
-.pc .pl .rank{white-space:normal}
-.rare{font-size:.75em;border:1px dashed currentColor;border-radius:3px;padding:0 .2em}
-#game .cell.own::after{content:'';position:absolute;right:6%;bottom:34%;width:50%;height:16%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(2px);pointer-events:none}
-#game #tokens{transform-style:preserve-3d}
-#game .tk{transform-style:preserve-3d;transform:rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
-#game .tk .ch{width:calc(var(--bw,600px) / 9 * .5);left:calc(var(--bw,600px) / 9 * -.25)}
-#game .ctrHole{grid-column:2/9;grid-row:2/9;background:radial-gradient(ellipse at 50% 50%,#3a2c22,#241b16 75%);position:relative}
-#game .ctrHole i{position:absolute;width:0;height:0}
-#game > #center{position:absolute;z-index:8;border-radius:8px;background:rgba(27,21,19,.84);box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;padding:8px 12px}
-#game > #center #stage{flex:1;gap:6px}
-#game > #center #mid{display:flex;align-items:center;gap:clamp(12px,2vw,28px);min-height:0}
-#game > #center #tray{flex:none;height:auto;padding:0 4px}
-#game > #center #rbox{flex:1;min-width:0}
-#game > #center .st{width:clamp(16px,2.1vw,30px);height:clamp(60px,12vh,130px)}
-#game > #center #sticks{gap:clamp(6px,1.4vw,18px)}
-#game > #center #result{font-size:clamp(17px,2.8vw,40px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-wrap:nowrap;justify-content:center;min-height:1.25em}
-#game > #center #stage{overflow:hidden}
-#game > #center #result{position:relative;z-index:3;text-shadow:0 2px 8px #000}
-#game > #center #mid{margin-top:4px;position:relative;z-index:1}
-#game > #center #mid{flex:1}
-#game > #center #faces{font-size:clamp(10px,1.2vw,15px)}
-#game > #center #chips span{font-size:clamp(9px,1.05vw,13px);padding:.1em .45em}
-#game > #center #say{font-size:clamp(11px,1.3vw,16px)}
-#game > #center #actrow .btn{font-size:clamp(12px,1.4vw,18px);padding:.45em 1em}
-#game > #center #gauge{height:clamp(18px,2.4vw,28px);max-width:none;min-width:140px}
-#game > #center #gauge .lbl{font-size:clamp(9px,1vw,12px)}
-
-#sideL{position:absolute;z-index:9;left:6px;top:calc(var(--pw) + 12px);bottom:calc(var(--pw) + 12px);width:var(--pw);display:flex;flex-direction:column;gap:6px;min-height:0}
-#sideL .tools{display:flex;flex-wrap:wrap;gap:4px;margin:0}
-#sideL .tools .btn{font-size:calc(var(--pw) * .07);padding:.3em .6em}
-#liveLog{flex:1;min-height:0;overflow:hidden;font-size:calc(var(--pw) * .062);line-height:1.4;color:var(--paper-dim);display:flex;flex-direction:column;gap:3px;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
-#liveLog .new{color:var(--paper)}
-#game .edge{position:absolute;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(#8a6242,#5a3d27 45%,#2e1e13);box-shadow:inset 0 2px 0 #c9a25a}
-#game .edge.front{left:0;right:0;top:100%;height:calc(var(--bw,600px) * .11);transform-origin:50% 0;transform:rotateX(-90deg)}
-#game .edge.left{top:0;bottom:0;left:0;width:calc(var(--bw,600px) * .11);transform-origin:0 50%;transform:rotateY(90deg);background:linear-gradient(90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset 2px 0 0 #c9a25a}
-#game .edge.right{top:0;bottom:0;right:0;width:calc(var(--bw,600px) * .11);transform-origin:100% 50%;transform:rotateY(-90deg);background:linear-gradient(-90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset -2px 0 0 #c9a25a}
-@media (max-height:520px){ #game > #center #faces{display:none} #game > #center .st{height:clamp(46px,14vh,110px)} #game > #center #result{font-size:clamp(15px,5vh,30px)} #game > #center #actrow .btn{font-size:clamp(11px,3.4vh,16px);padding:.3em .8em} #game > #center #say{font-size:clamp(10px,3vh,14px)} }
-#tiltBox{display:flex;align-items:center;gap:4px;font-size:clamp(9px,1vw,12px);color:var(--paper-dim)}
-#tiltBox input{width:70px}
-#board{position:relative;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(6,1fr);gap:2px;
-  width:min(100%, calc((100vh - 16px) * 2.05));aspect-ratio:2.05/1;background:var(--bronze-dim);padding:2px;border-radius:6px}
-.cell{position:relative;background:var(--lacquer2);overflow:hidden;cursor:pointer;min-width:0;display:flex;flex-direction:column;padding:2px 3px}
-.cell .band{position:absolute;inset:0 0 auto;height:4px}
-.cell .nm{font-family:var(--display);font-size:clamp(7.5px,1.15vw,13px);line-height:1.12;margin-top:4px;word-break:keep-all;overflow-wrap:anywhere;position:relative;z-index:1}
-.cell .pr{font-size:clamp(6.5px,.85vw,10px);color:var(--paper-dim);font-variant-numeric:tabular-nums;position:relative;z-index:1}
-.cell .bld{position:absolute;right:1px;bottom:1px;width:58%;height:62%;display:flex;align-items:flex-end;justify-content:flex-end;pointer-events:none}
-.cell .bld svg{width:100%;height:100%;overflow:visible}
-.cell.own{box-shadow:inset 0 0 0 2px var(--oc)}
-.cell.corner{background:var(--lacquer3)}
-.cell.corner .nm{color:var(--bronze)}
-.cell.cardc .nm{color:#e0cd9e}
-.cell.pick{outline:2px dashed var(--bronze);outline-offset:-3px;animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{50%{background:#4a3a2a}}
-#tokens{position:absolute;inset:0;pointer-events:none;z-index:5}
-.tk{position:absolute;width:0;height:0;transition:left .3s linear, top .3s linear}
-.tk .ch{position:absolute;left:-12px;bottom:0;width:clamp(16px,2.1vw,26px)}
-.tk .ch .chibi{width:100%}
-.tk.hop .ch{animation:hop .3s ease-out}
-@keyframes hop{0%{transform:translateY(0)}45%{transform:translateY(-55%) scale(1.05,.95)}100%{transform:translateY(0)}}
-.tk.cur .ch .chibi{filter:drop-shadow(0 0 4px #f0d79a)}
-@media (prefers-reduced-motion:reduce){.tk{transition:none}.tk.hop .ch{animation:none}}
-.chibi{overflow:visible;filter:drop-shadow(0 1px 0 rgba(0,0,0,.5))}
-
-#center{grid-column:2/12;grid-row:2/6;background:radial-gradient(ellipse at 55% 45%,#2f251f,var(--lacquer) 75%);display:grid;grid-template-columns:minmax(0,26%) minmax(0,1fr);gap:6px;padding:5px 8px;min-width:0;min-height:0}
-#players{display:flex;flex-direction:column;gap:4px;min-width:0;overflow:hidden}
-.pl{border:1px solid var(--bronze-dim);border-radius:6px;padding:2px 6px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0 6px;align-items:center;background:var(--lacquer2);font-size:clamp(8px,1vw,12px)}
-.pl.cur{border-color:var(--bronze);box-shadow:0 0 0 1px var(--bronze)}
-.pl.out{opacity:.35}
-.pl .face{grid-row:span 2;width:clamp(16px,2.2vw,26px)}
-.pl .face .chibi{width:100%}
-.pl b{font-family:var(--display);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pl .cash{font-variant-numeric:tabular-nums;color:var(--bronze);text-align:right;white-space:nowrap}
-.pl .rank{color:var(--paper-dim);grid-column:2/4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#stage{display:flex;flex-direction:column;gap:3px;min-width:0;min-height:0}
-#era{display:flex;gap:2px;align-items:center;min-width:0}
-#era span{flex:1;text-align:center;font-size:clamp(7px,.85vw,11px);color:var(--paper-dim);border-bottom:2px solid #3a2e26;padding-bottom:1px;font-variant-numeric:tabular-nums;white-space:nowrap}
-#era span.past{color:var(--bronze-dim);border-color:var(--bronze-dim)}
-#era span.now{color:var(--bronze);border-color:var(--bronze);font-weight:700}
-#eraCap{font-size:clamp(8px,1vw,12px);color:var(--paper-dim);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#mid{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px;min-height:0;align-items:center}
-#tray{height:100%;min-height:0;display:flex;align-items:center;justify-content:center;perspective:500px}
-#sticks{display:flex;gap:clamp(4px,1vw,12px);transform:rotateX(38deg);transform-style:preserve-3d}
-.st{width:clamp(14px,1.9vw,24px);height:clamp(48px,7.4vw,96px);position:relative;transform-style:preserve-3d}
-.st .f{position:absolute;inset:0;border-radius:7px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:3px 0;border:1px solid #000}
-.st .f.w{background:linear-gradient(90deg,#c9bb9c,#f6eedc 50%,#c9bb9c);color:#5a3a20;transform:translateZ(4px)}
-.st .f.b{background:linear-gradient(90deg,#0d0a09,#3a2f29 50%,#0d0a09);color:#e0c27a;transform:rotateY(180deg) translateZ(4px)}
-.st .f small{font-size:clamp(7px,.8vw,10px);font-family:var(--display);line-height:1}
-.st .f svg{width:88%;height:auto}
-.st .edge{position:absolute;top:4px;bottom:4px;width:8px;left:50%;margin-left:-4px;background:#6b5640;transform:rotateY(90deg)}
-#rbox{display:flex;flex-direction:column;gap:3px;min-width:0}
-#result{font-family:var(--display);font-size:clamp(14px,2.3vw,28px);color:var(--bronze);line-height:1.1;min-height:1.2em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-#result .hz{font-size:1.15em}
-.badge{font-family:var(--body);font-size:clamp(9px,1vw,12px);border-radius:999px;padding:.1em .6em;font-weight:700}
-.badge.king{background:#e0b85a;color:#2a1a08}.badge.peon{background:#4a3c30;color:var(--paper-dim)}.badge.hit{background:#3f8a86;color:#fff}
-#faces{font-size:clamp(8px,.95vw,12px);color:var(--paper-dim);min-height:1.2em}
-#chips{display:flex;flex-wrap:wrap;gap:2px}
-#chips span{font-size:clamp(7px,.85vw,11px);padding:0 .35em;border-radius:3px;background:#2a211b;color:#8f8371;border:1px solid transparent;white-space:nowrap}
-#chips span.k{border-color:#6b5531}
-#chips span.on{background:var(--bronze);color:var(--lacquer);font-weight:700}
-#tleft{font-weight:700;color:#f0d79a;margin-right:.3em}#tleft.hurry{color:#e2574c}
-#say{font-size:clamp(8.5px,1.05vw,13px);color:var(--paper);min-height:1.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#bubble{font-family:var(--display);font-size:clamp(9px,1.1vw,14px);color:#f0d79a;min-height:1.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .4s}
-#actrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:2em}
-#actrow .btn{font-size:clamp(10px,1.2vw,15px);padding:.35em .8em}
-#gauge{flex:1;min-width:90px;max-width:260px;height:clamp(12px,1.6vw,18px);border-radius:999px;background:#2a211b;border:1px solid var(--bronze-dim);position:relative;overflow:hidden}
-#gauge .sweet{position:absolute;top:0;bottom:0;left:70%;width:15%;background:rgba(63,138,134,.55)}
-#gauge .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#7d6640,#e0b85a)}
-#gauge .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(7px,.8vw,10px);color:#fff;text-shadow:0 1px 2px #000}
-.tools{display:flex;gap:4px;margin-left:auto}
-.tools .btn{font-size:clamp(9px,1vw,12px);padding:.25em .6em}
-
-#sheet{position:fixed;inset:auto 0 0 0;z-index:20;background:var(--lacquer2);border-top:2px solid var(--bronze);padding:14px max(16px, env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px));
-  max-height:80vh;overflow:auto;box-shadow:0 -10px 30px rgba(0,0,0,.5)}
-#sheet .in{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-.zh{font-family:var(--hz);font-size:15px;color:#e8dcc2;line-height:1.6}
-#sheet .src{font-size:12px;color:var(--paper-dim)}
-#sheet p{margin:0;line-height:1.6}
-#over{position:fixed;inset:0;z-index:30;background:rgba(15,11,9,.92);display:flex;align-items:center;justify-content:center;padding:16px}
-#over .in{max-width:560px;width:100%;display:flex;flex-direction:column;gap:12px}
-#evt{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;background:rgba(10,8,7,.72);padding:16px;cursor:pointer}
-#evt .in{max-width:520px;text-align:center;display:flex;flex-direction:column;gap:8px;animation:fadeup .5s ease}
-#evt .yr{font-family:var(--display);color:var(--bronze);font-size:clamp(28px,5vw,52px);letter-spacing:.1em}
-#evt h2{font-size:clamp(18px,2.6vw,28px)}
-#evt p{margin:0;line-height:1.6;color:var(--paper)}
-#evt .fx{color:#f0d79a;font-weight:700}
-#story{position:fixed;inset:0;z-index:40;background:radial-gradient(circle at 50% 35%,#3a2c20,#120e0c 70%);display:flex;align-items:center;justify-content:center;padding:24px max(16px, env(safe-area-inset-left,0px));cursor:pointer}
-#story p{font-family:var(--display);font-size:clamp(17px,3vw,26px);line-height:1.85;text-align:center;max-width:30em;margin:0;animation:fadeup .6s ease}
-#story .more{position:absolute;bottom:calc(5% + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:var(--paper-dim);font-size:13px}
-#story .src{position:absolute;top:calc(3% + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;color:var(--paper-dim);font-size:12px}
-@keyframes fadeup{from{opacity:0;transform:translateY(8px)}}
-table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
-td,th{padding:5px 4px;border-bottom:1px solid var(--bronze-dim);text-align:right;font-size:13px}
-td:first-child,th:first-child{text-align:left}
-.rules{font-size:14px;line-height:1.65}
-#rotate{display:none;position:fixed;inset:0;z-index:50;background:var(--lacquer);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
-#rotate .phone{width:44px;height:74px;border:3px solid var(--bronze);border-radius:8px;animation:turn 2s ease-in-out infinite}
-@keyframes turn{0%,20%{transform:rotate(0)}50%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
-@media (orientation:portrait) and (max-width:820px){ body.ingame #rotate{display:flex} }
-</style>
-
-<div id="rotate"><div class="phone"></div><b style="font-family:var(--display)">화면을 가로로 돌려 주세요</b><span class="muted" style="font-size:14px">판은 가로 화면에 맞춰져 있어요</span></div>
-
-<section id="lobby">
-  <div class="mark">모두의 저포<small><span class="hz">樗蒲</span> · 부여 한 바퀴</small></div>
-  <div id="menuMain" class="menu">
-    <button class="btn main big" id="goSingle">싱글플레이</button>
-    <button class="btn main big" id="goMulti">멀티플레이</button>
-    <div class="row" style="justify-content:center"><button class="btn" id="howBtn">규칙</button><button class="btn" id="fsBtn0">전체화면</button></div>
-  </div>
-  <div id="menuSingle" class="menu" hidden>
-    <div class="panel" id="soloPanel">
-    <h3>양생과 부처님</h3>
-    <p class="muted" style="margin:0;font-size:14px;line-height:1.7">김시습의 『금오신화』 「만복사저포기」에서 가난한 서생 양생은 만복사 부처님께 저포 내기를 청한다. 지면 법회를 열어 갚고, 이기면 짝을 만나게 해 달라고. 이번 판의 상대는 부처님이다.</p>
-    <div class="row"><input type="text" id="soloNick" maxlength="10" value="양생" aria-label="내 이름"><button class="btn main" id="startSolo">만복사로 가기</button></div>
-  </div>
-    <button class="btn back" data-back>← 처음으로</button>
-  </div>
-  <div id="menuMulti" class="menu" hidden>
-    <div class="panel" id="localPanel">
-    <h3>한 기기에서 함께</h3>
-    <div id="seats" style="display:flex;flex-direction:column;gap:8px"></div>
-    <div class="row"><button class="btn main" id="startLocal">시작하기</button></div>
-  </div>
-    <div class="panel" id="roomPanel">
-    <h3>여럿이 한 방에서</h3>
-    <p class="muted" id="roomNote" style="margin:0;font-size:14px">방 기능을 확인하는 중…</p>
-    <div id="roomCtl" hidden style="display:flex;flex-direction:column;gap:10px">
-      <div class="row"><input type="text" id="nick" maxlength="10" placeholder="내 이름 (10자까지)"></div>
-      <div class="row"><button class="btn main" id="mkRoom">방 만들기</button><input type="text" id="code" maxlength="6" placeholder="방 번호" style="max-width:120px"><button class="btn" id="joinRoom">들어가기</button></div>
+<main>
+  <!-- 온보딩 -->
+  <section id="view-onboarding" class="view" hidden>
+    <div class="card">
+      <h2>🔒 영상은 기기 밖으로 나가지 않아요</h2>
+      <p>자세 분석은 이 기기의 브라우저 안에서만 처리돼요. 서버로 영상이나 관절 데이터를 보내지 않아요. 기록과 영상 저장은 직접 선택할 때만 이 기기에 저장돼요.</p>
     </div>
-    <div id="waiting" hidden style="display:flex;flex-direction:column;gap:8px"></div>
-  </div>
-    <button class="btn back" data-back>← 처음으로</button>
-  </div>
-</section>
+    <div class="card">
+      <h2>📐 이렇게 촬영해 주세요</h2>
+      <div class="guide-figure" aria-hidden="true">
+        <svg viewBox="0 0 320 120">
+          <rect x="20" y="58" width="34" height="22" rx="4" class="g-cam"/>
+          <circle cx="37" cy="69" r="6" class="g-lens"/>
+          <line x1="58" y1="69" x2="228" y2="69" class="g-dash"/>
+          <text x="140" y="60" text-anchor="middle" class="g-text">2~3m</text>
+          <circle cx="262" cy="22" r="9" class="g-body"/>
+          <line x1="262" y1="31" x2="262" y2="70" class="g-limb"/>
+          <line x1="262" y1="70" x2="272" y2="110" class="g-limb"/>
+          <line x1="262" y1="44" x2="282" y2="56" class="g-limb"/>
+          <text x="262" y="118" text-anchor="middle" class="g-text small">측면</text>
+        </svg>
+      </div>
+      <ul class="checks">
+        <li><b>측면</b>에서, 카메라는 허리 높이</li>
+        <li>거리 <b>2~3m</b>, 머리부터 발끝까지 <b>전신</b>이 보이게</li>
+        <li>관절이 보이는 <b>몸에 맞는 옷</b>, 밝은 곳</li>
+        <li>폰은 고정(삼각대나 벽에 기대기)</li>
+      </ul>
+    </div>
+    <p class="disclaimer">이 앱은 의료 기기가 아니며 부상을 진단하거나 치료하지 않아요. 결과는 참고용 폼 피드백이에요.</p>
+    <button id="onboardDone" class="btn primary block">시작하기</button>
+  </section>
 
-<section id="game" hidden><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn" id="fsBtn">전체화면</button><button class="btn" id="rulesBtn2">규칙</button><button class="btn" id="exitBtn">나가기</button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
-<div id="sheet" hidden><div class="in" id="sheetIn"></div></div>
-<div id="evt" hidden><div class="in" id="evtIn"></div></div>
-<div id="over" hidden><div class="in" id="overIn"></div></div>
-<div id="story" hidden><div class="src" id="storySrc"></div><p id="storyP"></p><span class="more">눌러서 넘기기 ▼</span></div>
+  <!-- 홈 -->
+  <section id="view-home" class="view" hidden>
+    <div id="exSeg" class="seg ex-seg" role="radiogroup" aria-label="운동">
+      <button data-ex="squat">스쿼트</button><button data-ex="deadlift">데드리프트 <small>베타</small></button>
+    </div>
+    <h2 class="hero" id="heroTitle">스쿼트 자세 분석</h2>
+    <div id="viewMode" class="seg big" role="radiogroup" aria-label="촬영 방향">
+      <button data-mode="side">측면</button><button data-mode="front">정면</button><button data-mode="both">둘 다</button>
+    </div>
+    <p class="hint center" id="viewHint"></p>
+    <div class="load-row" aria-label="무게 (선택)">
+      <label>몸무게 <input type="number" id="bodyKg" inputmode="decimal" min="20" max="300" step="0.5" placeholder="선택"> kg</label>
+      <label>바벨 <input type="number" id="barKg" inputmode="decimal" min="0" max="600" step="0.5" placeholder="맨몸 0"> kg</label>
+    </div>
+    <div class="actions">
+      <button id="recordBtn" class="btn primary">● 촬영</button>
+      <label class="btn">영상 불러오기<input type="file" accept="video/*" id="fileInput" multiple hidden></label>
+    </div>
+    <button id="demoBtn" class="link block-center">예시 보기</button>
+    <div id="recentBlock" hidden>
+      <div class="row-head"><h2>최근 기록</h2><button id="historyBtn" class="link">전체</button></div>
+      <div id="recentList" class="session-list"></div>
+    </div>
+  </section>
 
-<script>
-'use strict';
-/* =====================================================================
-   1. 자료 — tag: rec 기록 / leg 설화 / fic 창작 / chk 확인 중 / re 재현 이름(백제문화단지)
-   ===================================================================== */
-const GAME_NAME = '모두의 저포';
-const DB = 'https://db.history.go.kr/ancient/level.do?levelId=';
-const EK = 'https://encykorea.aks.ac.kr/Article/';
-const sg = (id, label) => ({ src:`『삼국사기』 ${label} · 국사편찬위원회 한국사데이터베이스`, url: DB + id });
-const ek = (id, title, more='') => ({ src:`한국민족문화대백과사전 「${title}」${more}`, url: EK + id });
-const GROUPS = {
-  P:{ name:'왕궁', color:'var(--gP)', kind:'palace' },
-  C:{ name:'성', color:'var(--gC)', kind:'castle' },
-  T:{ name:'절', color:'var(--gT)', kind:'temple' },
-  F:{ name:'포', color:'var(--gF)', kind:'port' },
-  S:{ name:'특수 건물', color:'var(--gS)', kind:'special' },
-};
-const N = 32;
-const CELLS0 = [
-  { t:'start', n:'START', info:'538년, 성왕이 도읍을 사비로 옮기고 나라 이름을 남부여라 했다. 이 칸을 지날 때마다 관등이 오르고 봉급을 받는다.', zh:'移都於泗沘 一名所夫里', tag:'rec', ...sg('sg_026r_0060_0100','권26 성왕 (538년)') },
-  { t:'prop', g:'P', n:'쌍북리 유적', p:140, info:'사비 도성 안 관청 터 일대. 2011년 6월 이곳 공사장에서 나온 목간이 2016년 곱셈구구를 적은 백제 목간으로 판정되었다. 국내에서 처음 나온 구구단 자료다.', tag:'rec', src:'「백제 시대 곱셈구구단 목간 재음미」(학술 논문) · 주간경향 「백제 \'구구단 목간\'의 수수께끼」', url:'https://scholar.kyobobook.co.kr/article/detail/4050028763450' },
-  { t:'prop', g:'P', n:'문사전', p:150, info:'백제문화단지 사비궁의 동궁 정전. 다시 지은 건물의 이름이며, 백제 때 이름은 전하지 않는다.', src:'백제문화단지 재현 건물', tag:'re' },
-  { t:'card', n:'유물 카드' },
-  { t:'prop', g:'P', n:'연영전', p:160, info:'백제문화단지 사비궁의 동궁 외전 (재현 이름).', src:'백제문화단지 재현 건물', tag:'re' },
-  { t:'prop', g:'P', n:'천정전', p:180, info:'백제문화단지 사비궁의 정전 (재현 이름). 왕이 조회를 여는 곳으로 지었다.', src:'백제문화단지 재현 건물', tag:'re' },
-  { t:'prop', g:'F', n:'대왕포', p:120, info:'백제 왕이 늘 이곳에서 잔치를 열고 노래하고 춤추었기에 지금도 대왕포라 부른다고 한다.', zh:'百濟王每逰宴歌舞, 故至今稱爲大王浦.', src:'『삼국유사』 권2 기이 남부여·전백제 「대왕포의 유래」 · 국사편찬위원회 한국사데이터베이스', url: DB + 'sy_002r_0010_0200_0090', tag:'leg' },
-  { t:'prop', g:'P', n:'무덕전', p:180, info:'백제문화단지 사비궁의 서궁 정전 (재현 이름).', src:'백제문화단지 재현 건물', tag:'re' },
-  { t:'gibok', n:'기복 (棋卜)', info:'바둑알을 한 줌 쥐어 홀짝으로 길흉을 본다. 백제 사람들이 점(卜筮)에 밝고 바둑(奕棊)을 특히 좋아했다는 기록에서 떠올린 창작 놀이.', zh:'亦解醫藥卜筮占相之術. … 然尤尙奕棊.', src:'『주서』 이역열전 백제 (바둑알 점 자체는 창작)', tag:'fic' },
-  { t:'prop', g:'P', n:'인덕전', p:190, info:'백제문화단지 사비궁의 서궁 외전 (재현 이름).', src:'백제문화단지 재현 건물', tag:'re' },
-  { t:'prop', g:'S', n:'정사암', p:150, info:'재상을 뽑을 때 후보의 이름을 함에 넣어 바위에 두었다가, 도장 자국이 찍힌 사람을 재상으로 삼았다는 바위. 누구든 여기 서면 정사암 회의가 열려, 왕채가 나오면 좌평이 된다.', zh:'國家將議宰相。則書當選者名。或三四函封置嵒上。須臾取看。名上有印跡者為相。', src:'『삼국유사』 권2 기이 남부여·전백제 「정사암의 유래」 · 국사편찬위원회 한국사데이터베이스', url: DB + 'sy_002r_0010_0200_0050', tag:'leg' },
-  { t:'away', n:'왜국 파견 · 오경박사', info:'백제는 513년 오경박사 단양이를, 516년 고안무를 왜에 보내 교대하게 했다(무령왕 때). 여기 멈추면 사신으로 떠나 한 번 쉬고, 돌아올 때 50수전을 받는다.', tag:'rec', ...ek('E0036601','역박사',' · 근거 사료는 『일본서기』') },
-  { t:'prop', g:'C', n:'증산성', p:120, info:'부여 규암면 신성리에 있는 산성. 사적.', tag:'rec', ...ek('E0024379','부여군') },
-  { t:'prop', g:'C', n:'나성', p:130, gate:true, info:'사비 도성을 둘러싸 안팎을 가르던 바깥 성. 538년 무렵 쌓은 것으로 보며, 북쪽과 동쪽 성벽 약 6.6km가 확인되었다. 관문 칸: 여기 멈추면 다음 차례에 왕채가 나와야 나간다(『오목경』 「非王采不出關」을 빌린 창작 규칙). 30수전을 내고 나가도 된다.', tag:'rec', ...ek('E0024388','부여나성') },
-  { t:'prop', g:'F', n:'구드래 나루', p:120, info:'부소산 서쪽 기슭 백마강가의 나루. 2009년 「부여 구드래 일원」으로 명승이 되었다.', tag:'rec', ...ek('E0069836','부여 구드래 일원') },
-  { t:'prop', g:'C', n:'부소산성', p:140, gate:true, info:'부소산 일대의 산성. 사비 도성의 왕성이자 방어성, 후원 구실을 했다. 관문 칸: 여기 멈추면 다음 차례에 왕채가 나와야 나간다(창작 규칙). 30수전을 내고 나가도 된다.', tag:'rec', ...ek('E0024406','부여 부소산성') },
-  { t:'rite', n:'구태묘 제사', info:'『주서』 백제전 등은 백제의 시조를 구태라 하고, 백제 사람들이 구태의 사당에 제사를 지냈다고 전한다. 이 칸에 서면 모두가 40수전씩 받는다.', tag:'rec', ...ek('E0006085','구태',' · 근거 사료는 『주서』·『수서』 백제전') },
-  { t:'prop', g:'C', n:'가림성', p:150, info:'사비 도성을 지키려고 성흥산에 쌓은 산성. 『삼국사기』에 따라 501년(동성왕 23)에 쌓은 것으로 본다. 성흥산성이라고도 불렀다.', tag:'rec', ...ek('E0024415','부여 가림성') },
-  { t:'prop', g:'C', n:'청산성', p:160, info:'부여읍 쌍북리에 있는 산성. 사적.', tag:'rec', ...ek('E0024379','부여군') },
-  { t:'card', n:'유물 카드' },
-  { t:'prop', g:'C', n:'석성산성', p:170, info:'사비 도성의 남동쪽 바깥 관문을 지키려고 6세기 전반에 쌓은 돌 산성. 세 겹 성벽이 있다.', tag:'rec', ...ek('E0024411','부여 석성산성') },
-  { t:'prop', g:'S', n:'낙화암', p:150, info:'부소산 북쪽 백마강가 절벽. 백제가 무너질 때 여인들이 몸을 던졌다고 전한다. 본래 이름은 타사암이었고, 후궁이 궁녀로 바뀌어 전해지며 꽃에 빗댄 이름이 붙었다고 본다.', tag:'leg', ...ek('E0011673','낙화암',' · 『삼국유사』에 인용된 백제고기') },
-  { t:'prop', g:'T', n:'용정리 사지', p:180, info:'부여읍 용정리의 백제 절터. 금당 터로 보이는 기단이 남아 있다.', tag:'rec', ...ek('E0039669','용정리 사지') },
-  { t:'prop', g:'T', n:'고란사', p:190, info:'부소산 백마강가의 절. 백제 때 지었다는 이야기가 전하고, 절 벼랑에 자라는 고란초에서 이름이 왔다.', tag:'rec', ...ek('E0003413','부소산 고란사') },
-  { t:'prop', g:'F', n:'궁남지', p:120, info:'634년(무왕 35) 대궐 남쪽에 판 못. 지금 알려진 우리나라에서 가장 오래된 궁원 연못이다. 지금 모습은 1960년대에 다시 꾸민 것이다.', zh:'三月, 穿池於宫南', tag:'rec', ...sg('sg_027r_0050_0450','권27 무왕 (634년 3월) · 한국민족문화대백과 「부여 궁남지」') },
-  { t:'gibok', n:'기복 (棋卜)', info:'바둑알을 한 줌 쥐어 홀짝으로 길흉을 본다 (창작 놀이).', zh:'亦解醫藥卜筮占相之術. … 然尤尙奕棊.', src:'『주서』 이역열전 백제 (바둑알 점 자체는 창작)', tag:'fic' },
-  { t:'prop', g:'T', n:'능산리 절터', p:210, info:'왕릉 곁에 있던 절의 터. 1993년 금동대향로가 나왔고, 1995년 목탑 터에서 창왕 13년에 매형(누이) 공주가 사리를 공양했다는 글이 새겨진 돌 사리감이 나왔다. 그 해를 567년으로 보는 견해와 566년으로 보는 견해가 있다.', tag:'rec', ...ek('E0022382','부여 능산리 사지 석조 사리감') },
-  { t:'song', n:'과하마', info:'무왕 22년(621) 10월, 당에 사신을 보내 과하마(키 작은 말)를 바쳤다. 작은 말을 타고 판 위 아무 칸으로나 건너간다. 출발을 지나면 한 바퀴로 친다.', tag:'rec', ...sg('sg_027r_0050_0210','권27 무왕 (621년 10월)') },
-  { t:'prop', g:'T', n:'왕흥사지', p:220, info:'백마강 건너편의 절터. 목탑 터에서 나온 사리기(국보)에는 창왕이 정유년(577) 죽은 왕자를 위해 절을 세웠다고 새겨져 있어, 『삼국사기』의 법왕 창건·무왕 완성 기록과 엇갈린다. 공양품 가운데 중국 돈 상평오수전도 있었다.', tag:'rec', ...ek('E0039190','부여 왕흥사지') },
-  { t:'prop', g:'S', n:'국립부여박물관', p:150, info:'금동대향로와 사택지적비를 볼 수 있는 박물관. 여기 서면 유물 카드를 한 장 본다.', tag:'rec', ...ek('E0006225','국립부여박물관') },
-  { t:'prop', g:'T', n:'정림사지', p:230, info:'사비 도성 한가운데 있던 절터. 국보 오층석탑(높이 8.33m)은 첫층에 당 소정방이 새긴 글이 있어 오랫동안 「평제탑」으로 불렸다.', tag:'rec', ...ek('E0024447','부여 정림사지 오층석탑') },
-  { t:'prop', g:'T', n:'부소산 사지', p:240, info:'부소산성 서쪽 기슭의 절터(서복사지). 강당이 없고 탑 터에서 금동 장식이 나와, 왕실이나 귀족의 원당으로 본다.', tag:'rec', ...ek('E0077885','서복사지') },
-];
-// 정사각형 판(9×9 둘레 32칸): 귀퉁이가 0·8·16·24에 오도록 순서만 바꾼다
-const ORDER = [0,1,2,3,4,5,6,7,11,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23,27,24,25,26,28,29,30,31];
-const CELLS = ORDER.map(i => CELLS0[i]);
-const IDX = n => CELLS.findIndex(c => c.n === n);
-const SONG = () => CELLS.findIndex(c => c.t === 'song');
+  <!-- 촬영 -->
+  <section id="view-capture" class="view" hidden>
+    <div class="stage cam" id="camStage">
+      <video id="camVideo" playsinline muted autoplay></video>
+      <canvas id="camCanvas"></canvas>
+      <div id="countdown" class="countdown" hidden></div>
+      <div id="recBadge" class="rec-badge" hidden>● REC <span id="recTime">0:00</span></div>
+    </div>
+    <div id="camStatus" class="status">카메라 준비 중…</div>
+    <div class="actions">
+      <button id="flipBtn" class="btn">카메라 전환</button>
+      <button id="recBtn" class="btn primary" disabled>녹화 시작</button>
+    </div>
+    <p class="hint center" id="captureHint">측면 · 2~3m · 전신</p>
+  </section>
 
-const GATE_FEE = 30, RITE = 40, AWAY_PAY = 50, START_CASH = 900;
-const fullGroup = (o, g) => !!g && CELLS.every((c,i) => c.g !== g || G.own[i] === o);
-function toll(k, roll){
-  const c = CELLS[k], o = G.own[k]; if(o < 0) return 0;
-  if(c.g === 'F'){ const n = CELLS.filter((x,i) => x.g === 'F' && G.own[i] === o).length; return [0,30,70,150][n]; }
-  if(c.g === 'S'){ const n = CELLS.filter((x,i) => x.g === 'S' && G.own[i] === o).length; return (roll || 6) * [0,5,10,15][n]; }
-  let f = c.p * 0.5 * Math.max(1, G.bl[k] || 1);
-  if(fullGroup(o, c.g)) f *= 2;
-  f *= Math.pow(1.5, G.lv[k]);
-  if(G.tmp[k]) f *= 1.5;
-  return Math.round(f / 5) * 5;
-}
-const MAX_BL = 3;
-const canLevel = k => ['P','C','T'].includes(CELLS[k].g);
-const upCost = k => Math.round(CELLS[k].p * 0.6 / 10) * 10;
-const spent = k => CELLS[k].p + (canLevel(k) ? upCost(k) * Math.max(0, (G.bl[k] || 1) - 1) : 0);
-const takeCost = k => Math.round(spent(k) * 1.5 / 10) * 10;
-const portToll = (k, base) => (k === IDX('궁남지') && G.fx && G.fx.gungnam) ? base * 2 : base;
+  <!-- 둘 다: 두 번째 영상 -->
+  <section id="view-step" class="view" hidden>
+    <div class="card step-card">
+      <p class="step-badge">2 / 2</p>
+      <h2 id="stepTitle">정면 영상</h2>
+      <p class="sub">같은 세트를 다른 방향에서 찍은 영상</p>
+      <div class="actions">
+        <button id="stepRecordBtn" class="btn primary">● 정면 촬영</button>
+        <label class="btn" id="stepFileLabel">정면 영상 불러오기<input type="file" accept="video/*" id="stepFileInput" hidden></label>
+      </div>
+      <button id="stepSkipBtn" class="btn ghost block">정면 없이 측면 결과만 보기</button>
+    </div>
+  </section>
 
-const RANKS = [
-  { n:'극우', g:16, belt:'#e9e4d8', tie:'흰 띠',   pay:150 },
-  { n:'대덕', g:11, belt:'#d8b23a', tie:'노란 띠', pay:190 },
-  { n:'계덕', g:10, belt:'#3f7fa8', tie:'푸른 띠', pay:230 },
-  { n:'고덕', g:9,  belt:'#b8473a', tie:'붉은 띠', pay:270 },
-  { n:'시덕', g:8,  belt:'#222222', tie:'검은 띠', pay:310 },
-  { n:'장덕', g:7,  belt:'#7a3f8a', tie:'자주 띠', pay:350 },
-  { n:'내솔', g:6,  belt:'#c9ced6', tie:'은꽃 관 장식', pay:400 },
-  { n:'덕솔', g:4,  belt:'#c9ced6', tie:'은꽃 관 장식', pay:420 },
-  { n:'은솔', g:3,  belt:'#c9ced6', tie:'은꽃 관 장식', pay:440 },
-  { n:'달솔', g:2,  belt:'#c9ced6', tie:'은꽃 관 장식', pay:460 },
-  { n:'좌평', g:1,  belt:'#e0c27a', tie:'은꽃 관 장식', pay:500 },
-];
-const LAP_TOP = 9;
-let JWA_MIN = 6, JWA_LAPS = 2;   // 정사암 회의에는 내솔(6품, 은꽃 관 장식) 이상만 이름이 오른다 · 좌평이 된 뒤 출발을 지나야 하는 횟수
-const RANK_SRC = '「官有十六品 … 將德七品, 紫帶, 施德八品, 皂帶, 固德九品, 赤帶, 季德十品, 靑帶, 對德十一品, 文督十二品, 皆黃帶, 武督十三品 … 克虞十六品, 皆白帶」 — 『주서』 이역열전 백제 (한국사DB)';
+  <!-- 분석 중 -->
+  <section id="view-processing" class="view" hidden>
+    <div class="processing">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="procText">준비 중…</p>
+      <div class="progress"><div id="procBar"></div></div>
+      <p class="hint">영상은 이 기기 안에서만 처리돼요.</p>
+      <button id="procCancel" class="btn">취소</button>
+    </div>
+  </section>
 
-// 열두 턴: 누군가 출발을 지나 한 바퀴를 돌 때마다 다음 턴으로. 턴마다 사건 하나가 무작위로 일어난다.
-// fx: 효과 코드 (게임용). 사건 설명은 사용자 정리 — 『삼국사기』 백제본기 등 원문 대조 필요
-const TURNS = [
-  { king:'성왕', ev:[
-    { y:538, t:'사비 천도', d:'도읍을 사비로 옮기고 나라 이름을 남부여라 했다.', zh:'移都於泗沘 一名所夫里', fx:'all+30', fxt:'모두 30수전을 받는다.', tag:'rec', ...sg('sg_026r_0060_0100','권26 성왕 (538년)') },
-    { y:547, t:'일식', d:'정월 초하루에 해가 먹혔다.', zh:'日有食之', fx:'all-20', fxt:'흉조 — 모두 20수전을 잃는다.', tag:'rec', ...sg('sg_026r_0060_0130','권26 성왕 (547년 1월)') },
-    { y:548, t:'독산성 방어', d:'고구려 왕 평성(양원왕)이 예와 함께 한강 북쪽 독산성을 치자, 신라에 구원을 청했고 신라 장군 주진의 군사와 함께 물리쳤다.', zh:'攻漢北獨山城', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_026r_0060_0140','권26 성왕 (548년 1월)') } ]},
-  { king:'성왕', ev:[
-    { y:549, t:'후경의 난', d:'양나라에 사신을 보냈는데, 마침 도읍에 반란이 일어나 후경이 사신을 붙잡아 가두었다.', zh:'侯景聞之大怒, 執囚之', fx:'port-30', fxt:'포를 가진 사람은 포 하나마다 30수전을 잃는다.', tag:'rec', ...sg('sg_026r_0060_0160','권26 성왕 (549년 10월)') },
-    { y:553, t:'신주 설치', d:'7월 신라가 동북 변경을 빼앗아 신주를 두었고, 10월 왕의 딸이 신라로 시집갔다.', zh:'新羅取東北鄙, 置新州', fx:'all-40', fxt:'모두 40수전을 잃는다.', tag:'rec', ...sg('sg_026r_0060_0190','권26 성왕 (553년 7월) · 왕녀 출가는 sg_026r_0060_0200') },
-    { y:554, t:'성왕 전사', d:'성왕이 신라를 치려고 몸소 보병과 기병 쉰을 거느리고 밤에 구천에 이르렀다가, 매복한 신라군에게 목숨을 잃었다.', zh:'夜至狗川, 新羅伏兵發與戰', fx:'all-30', fxt:'모두 30수전을 잃는다.', tag:'rec', ...sg('sg_026r_0060_0210','권26 성왕 (554년 7월)') } ]},
-  { king:'위덕왕', ev:[
-    { y:554, t:'웅천성 방어', d:'고구려가 웅천성을 쳤으나 패하여 돌아갔다.', zh:'來攻熊川城', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_027r_0020_0020','권27 위덕왕 (554년 10월)') },
-    { y:559, t:'일식', d:'해가 먹혔다.', zh:'日有食之', fx:'all-20', fxt:'흉조 — 모두 20수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0030','권27 위덕왕 (559년 5월)') },
-    { y:561, t:'신라 변경 공격', d:'신라의 변경을 쳤으나 신라군에게 져서 죽은 사람이 천여 명이었다.', zh:'羅兵出撃敗之', fx:'topRank-1', fxt:'관등이 가장 높은 사람이 한 품 내려간다.', tag:'rec', ...sg('sg_027r_0020_0040','권27 위덕왕 (561년 7월)') },
-    { y:567, t:'진나라에 사신', d:'진나라에 사신을 보내 조공했다.', zh:'遣使入陳朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0050','권27 위덕왕 (567년 9월)') } ]},
-  { king:'위덕왕', ev:[
-    { y:570, t:'북제의 책봉', d:'북제 후주가 왕을 사지절·거기대장군·대방군공·백제왕으로 삼았다. 이듬해(571)에는 동청주자사 칭호도 내렸다.', zh:'髙齊後主拜王爲使持節', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_027r_0020_0060','권27 위덕왕 (570년) · 동청주자사는 sg_027r_0020_0070') },
-    { y:572, t:'일식', d:'9월 초하루에 해가 먹혔다.', zh:'秋九月庚子朔, 日有食之', fx:'all-20', fxt:'흉조 — 모두 20수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0090','권27 위덕왕 (572년 9월)') },
-    { y:577, t:'북주에 사신', d:'북주에 사신을 보내 조공했다.', zh:'遣使入宇文周朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0120','권27 위덕왕 (577년 11월)') },
-    { y:577, t:'신라 공격 실패', d:'10월 신라의 서쪽 변경을 쳤으나, 신라 이찬 세종이 군사를 이끌고 와서 쳐부수었다.', zh:'新羅伊湌丗宗帥兵擊破之', fx:'all-30', fxt:'모두 30수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0110','권27 위덕왕 (577년 10월)') } ]},
-  { king:'위덕왕', ev:[
-    { y:579, t:'혜성과 지진', d:'10월 긴 꼬리별이 하늘을 가로질렀고, 땅이 흔들렸다.', zh:'長星竟天', fx:'bld-10', fxt:'세운 건물 하나마다 10수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0140','권27 위덕왕 (579년 10월) · 지진은 sg_027r_0020_0150') },
-    { y:581, t:'수나라의 책봉', d:'새로 선 수나라에 사신을 보냈고, 수가 왕을 상개부의동삼사·대방군공으로 삼았다.', zh:'拜王爲上開府儀同三司·帶方郡公', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_027r_0020_0170','권27 위덕왕 (581년)') },
-    { y:586, t:'진나라에 사신', d:'진나라에 사신을 보내 조공했다.', zh:'遣使入陳朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0200','권27 위덕왕 (586년)') } ]},
-  { king:'위덕왕', ev:[
-    { y:589, t:'수나라 배를 돌려보냄', d:'수나라 전함이 탐모라국에 표류하자 백제가 돌려보냈고, 수 문제가 조서를 내렸다.', zh:'其舩得還', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0220','권27 위덕왕 (589년)') },
-    { y:592, t:'일식', d:'7월 그믐에 해가 먹혔다.', zh:'秋七月壬申晦, 日有食之', fx:'all-20', fxt:'흉조 — 모두 20수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0230','권27 위덕왕 (592년 7월)') },
-    { y:594, t:'혜성', d:'11월 혜성이 각수와 항수 자리에 나타났다.', zh:'星孛于角·亢', fx:'bld-10', fxt:'세운 건물 하나마다 10수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0240','권27 위덕왕 (594년 11월)') },
-    { y:597, t:'아좌태자 파견', d:'왕자 아좌를 왜국에 보냈다고 전한다. 『삼국사기』에는 이 기사가 없다.', fx:'lowRank+1', fxt:'관등이 가장 낮은 사람이 한 품 오른다.', tag:'chk', src:'『일본서기』 스이코 5년 (원문 대조 필요 · 『삼국사기』에는 없음)' } ]},
-  { king:'무왕', ev:[
-    { y:600, t:'칠악사 기우제', king:'법왕', d:'큰 가뭄이 들자 법왕이 칠악사에 가서 비를 빌었다.', zh:'大旱, 王幸漆岳寺, 祈雨', fx:'temple+30', fxt:'가뭄 — 모두 30수전을 잃고, 절을 가진 사람은 절 하나마다 30수전을 받는다.', tag:'rec', ...sg('sg_027r_0040_0040','권27 법왕 (600년)') },
-    { y:602, t:'아막산성 공격', d:'8월 신라의 아막산성을 에워쌌으나 이기지 못하고 돌아왔다.', zh:'圍新羅阿莫山城', fx:'all-30', fxt:'모두 30수전을 잃는다.', tag:'rec', ...sg('sg_027r_0050_0020','권27 무왕 (602년 8월)') },
-    { y:605, t:'각산성 쌓기', d:'2월 각산성을 쌓았다.', zh:'築角山城', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_027r_0050_0030','권27 무왕 (605년 2월)') },
-    { y:607, t:'수나라에 사신', d:'한솔 연문진을 수나라에 보내고, 이어 좌평 왕효린을 보내 고구려를 칠 것을 청했다.', zh:'又遣佐平王孝隣, 入貢兼請討髙句麗', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0050_0070','권27 무왕 (607년 3월)') },
-    { y:608, t:'배청이 지나감', d:'수나라 문림랑 배청이 왜국에 사신으로 가며 백제 남쪽 길을 지났다.', zh:'奉使倭國, 經我國南路', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0050_0100','권27 무왕 (608년 3월)') } ]},
-  { king:'무왕', ev:[
-    { y:611, t:'가잠성 함락', d:'10월 신라 가잠성을 빼앗고 성주 찬덕을 죽였다.', zh:'殺城主讃德, 滅其城', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_027r_0050_0140','권27 무왕 (611년 10월)') },
-    { y:612, t:'벼락과 홍수', d:'4월 대궐 남문에 벼락이 치고, 5월 큰물에 민가가 떠내려갔다.', zh:'震宮南門', fx:'palace-20', fxt:'왕궁을 가진 사람은 왕궁 하나마다 20수전을 잃는다.', tag:'rec', ...sg('sg_027r_0050_0160','권27 무왕 (612년 4월) · 홍수는 sg_027r_0050_0170') },
-    { y:616, t:'왕도의 지진', d:'11월 왕도에 지진이 일어났다.', zh:'十一月, 王都地震.', fx:'bld-10', fxt:'세운 건물 하나마다 10수전을 잃는다.', tag:'rec', ...sg('sg_027r_0050_0190','권27 무왕 (616년 11월)') } ]},
-  { king:'무왕', ev:[
-    { y:624, t:'당나라의 책봉', d:'당에 사신을 보내 조공하니, 당 고조가 왕을 대방군왕으로 책봉했다.', zh:'遣使就冊爲帶方郡王', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_027r_0050_0230','권27 무왕 (624년 1월)') },
-    { y:624, t:'신라 여섯 성', d:'10월 신라의 속함·앵잠·기잠·봉잠·기현·용책 여섯 성을 빼앗았다.', zh:'柵等六城, 取之', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_027r_0050_0250','권27 무왕 (624년 10월)') },
-    { y:627, t:'장군 사걸', d:'장군 사걸이 신라 서쪽 변경의 두 성을 빼앗고 남녀 삼백여 명을 사로잡았다.', zh:'拔新羅西鄙二城, 虜男女三百餘口', fx:'all+30', fxt:'모두 30수전을 받는다.', tag:'rec', ...sg('sg_027r_0050_0300','권27 무왕 (627년 7월)') } ]},
-  { king:'무왕', ev:[
-    { y:633, t:'서곡성', d:'8월 장수를 보내 신라 서곡성을 쳐서 열사흘 만에 빼앗았다.', zh:'十三日拔之', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_027r_0050_0430','권27 무왕 (633년 8월)') },
-    { y:634, t:'왕흥사 완성', d:'2월 왕흥사가 완성되었다. 절이 물가에 있어 왕은 늘 배를 타고 절에 들어가 향을 피웠다.', zh:'王每乗舟, 入寺行香', fx:'wanghung', fxt:'왕흥사지를 가진 사람은 100수전, 없으면 절을 가진 사람이 절마다 20수전.', tag:'rec', ...sg('sg_027r_0050_0440','권27 무왕 (634년 2월)') },
-    { y:634, t:'궁남지', d:'3월 대궐 남쪽에 못을 파고 물을 끌어들였다.', zh:'三月, 穿池於宫南', fx:'gungnam', fxt:'이제부터 궁남지 통행세가 두 배.', tag:'rec', ...sg('sg_027r_0050_0450','권27 무왕 (634년 3월)') } ]},
-  { king:'의자왕', ev:[
-    { y:641, t:'당의 책봉', d:'당 태종이 사부랑중 정문표를 보내 왕을 주국·대방군왕·백제왕으로 책봉했다.', zh:'太宗遣祠部郎中鄭文表', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_028r_0020_0010','권28 의자왕 (641년 3월)') },
-    { y:642, t:'순행과 사면', d:'2월 왕이 주군을 돌며 백성을 달래고, 죄수를 살펴 사형죄가 아니면 모두 풀어 주었다.', zh:'王巡撫州郡, 慮囚', fx:'amnesty', fxt:'관문에 갇힌 사람과 왜국에 간 사람이 풀려나고, 모두 30수전.', tag:'rec', ...sg('sg_028r_0020_0040','권28 의자왕 (642년 2월)') },
-    { y:642, t:'대야성 함락', d:'8월 장군 윤충이 신라 대야성을 치자, 성주 품석이 처자와 함께 나와 항복했다.', zh:'城主品釋與妻子出降', fx:'castle+50', fxt:'성을 가진 사람은 성 하나마다 50수전.', tag:'rec', ...sg('sg_028r_0020_0060','권28 의자왕 (642년 8월)') },
-    { y:643, t:'고구려와 화친', d:'11월 왕이 고구려와 화친했다.', zh:'冬十一月, 王與髙句麗和親.', fx:'all+30', fxt:'모두 30수전을 받는다.', tag:'rec', ...sg('sg_028r_0020_0080','권28 의자왕 (643년 11월)') } ]},
-  { king:'의자왕', ev:[
-    { y:652, t:'당에 조공', d:'정월 당에 사신을 보내 조공했다.', zh:'春正月, 遣使入唐朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_028r_0020_0190','권28 의자왕 (652년 1월)') },
-    { y:655, t:'망해정', d:'2월 태자의 궁을 매우 사치스럽고 화려하게 고치고, 왕궁 남쪽에 망해정을 세웠다.', zh:'立望海亭於王宮南', fx:'palaceLv', fxt:'왕궁 건물의 땅값이 한 단계 오른다.', tag:'rec', ...sg('sg_028r_0020_0220','권28 의자왕 (655년 2월)') },
-    { y:656, t:'성충의 옥', d:'좌평 성충이 간언하다 옥에 갇혔고, 옥에서 죽기 전 나라를 지킬 방도를 글로 올렸다.', zh:'佐平成忠 或云淨忠.極諌', fx:'topRank-1', fxt:'관등이 가장 높은 사람이 한 품 내려간다.', tag:'rec', ...sg('sg_028r_0020_0260','권28 의자왕 (656년 3월)') },
-    { y:657, t:'서자 41명을 좌평으로', d:'정월 왕의 서자 41명을 좌평으로 삼았다.', zh:'拜王庻子四十一人爲佐平', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_028r_0020_0270','권28 의자왕 (657년 1월)') } ]},
-];
-const FINAL = { y:660, t:'사비 함락', king:'의자왕', d:'왕과 태자 효가 여러 성과 함께 항복했다. 판이 멈춘다.', zh:'於是, 王及太子孝與諸城皆降', fxt:'점수를 센다.', tag:'rec', ...sg('sg_028r_0020_0380','권28 의자왕 (660년)') };
-const curEvent = () => G.era >= TURNS.length ? FINAL : TURNS[G.era].ev[G.ev[G.era]];
-const kingOf = (e, t) => e.king || (t < TURNS.length ? TURNS[t].king : '의자왕');
+  <!-- 결과 -->
+  <section id="view-result" class="view" hidden>
+    <div id="viewTabs" class="tabs" role="tablist" aria-label="분석 방향" hidden>
+      <button role="tab" data-tab="side">측면 분석</button><button role="tab" data-tab="front">정면 분석</button>
+    </div>
+    <div id="resultBanner"></div>
+    <div class="player">
+      <div class="stage" id="resultStage">
+        <video id="resultVideo" playsinline muted></video>
+        <canvas id="resultCanvas"></canvas>
+      </div>
+      <div class="player-controls">
+        <button id="playBtn" class="icon-btn" aria-label="재생">▶</button>
+        <input type="range" id="seek" min="0" max="1000" value="0" aria-label="재생 위치">
+        <select id="rate" aria-label="재생 속도"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option></select>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="showSkel" checked> <span class="sw sw-user"></span>내 자세</label>
+        <label class="side-only"><input type="checkbox" id="showGhost"> <span class="sw sw-ghost"></span>기준 동작</label>
+        <select id="ghostMode" class="side-only" aria-label="기준 동작 표시 방식"><option value="sync">내 속도에 맞춤</option><option value="tempo">기준 리듬으로</option></select>
+        <label class="side-only"><input type="checkbox" id="showFeet" checked> <span class="sw sw-feet"></span>발</label>
+        <label class="side-only"><input type="checkbox" id="showBack" checked> <span class="sw sw-back"></span>등</label>
+        <label class="side-only"><input type="checkbox" id="showMuscle" checked> <span class="sw sw-muscle"></span>근육</label>
+        <label class="front-only"><input type="checkbox" id="showFrontGhost"> <span class="sw sw-ghost"></span>기준 자세</label>
+        <label class="front-only"><input type="checkbox" id="showFrontGuide" checked> <span class="sw sw-user"></span>정렬</label>
+        <label class="front-only"><input type="checkbox" id="showFrontBase" checked> <span class="sw sw-feet"></span>발</label>
+        <label class="front-only"><input type="checkbox" id="showFrontMuscle"> <span class="sw sw-muscle"></span>근육</label>
+      </div>
+    </div>
 
-const OUT = [
-  { zh:'盧', ko:'노', pts:16, move:8, king:true,  how:'다섯 모두 검은 면' },
-  { zh:'雉', ko:'치', pts:14, move:7, king:true,  how:'꿩 둘 + 검정 셋' },
-  { zh:'開', ko:'개', pts:12, move:6, king:false, how:'꿩·소 하나씩 + 흰 셋' },
-  { zh:'塞', ko:'색', pts:11, move:6, king:false, how:'꿩·소 하나씩 + 검정 셋' },
-  { zh:'犢', ko:'독', pts:10, move:5, king:true,  how:'소 둘 + 흰 셋' },
-  { zh:'白', ko:'백', pts:8,  move:4, king:true,  how:'다섯 모두 흰 면' },
-  { zh:'塔', ko:'탑', pts:5,  move:3, king:false, how:'꿩 둘 + 흰 둘 + 검정 하나' },
-  { zh:'禿', ko:'독', pts:4,  move:2, king:false, how:'소 둘 + 검정 둘 + 흰 하나' },
-  { zh:'撅', ko:'궐', pts:3,  move:2, king:false, how:'꿩 둘 + 흰 하나 + 검정 둘' },
-  { zh:'𢳚', ko:'희귀자', rare:true, pts:2,  move:1, king:false, how:'소 둘 + 흰 둘 + 검정 하나' },
-  { zh:'雜', ko:'섞임', pts:null, move:5, king:false, how:'꿩·소 하나씩 + 면이 섞임 (『오목경』에 없음, 게임용)' },
-];
-function readThrow(f){
-  const ox = (f[0]?1:0) + (f[1]?1:0), pb = f.slice(2).filter(Boolean).length;
-  return ox===2&&pb===3 ? 0 : ox===0&&pb===3 ? 1 : ox===1&&pb===0 ? 2 : ox===1&&pb===3 ? 3 : ox===2&&pb===0 ? 4 :
-         ox===0&&pb===0 ? 5 : ox===0&&pb===1 ? 6 : ox===2&&pb===2 ? 7 : ox===0&&pb===2 ? 8 : ox===2&&pb===1 ? 9 : 10;
-}
+    <section class="coach">
+      <div class="coach-head"><h2 id="coachTitle">이렇게 해 보세요</h2><div id="refChips" class="seg" role="tablist" aria-label="비교 대상"></div></div>
+      <ol id="actionList" class="action-list"></ol>
+      <div id="goodChips" class="good-chips"></div>
+      <button id="imageryBtn" class="imagery-tip" type="button">💭 기준 자세를 보며 머릿속으로 5번 따라 해 보기 <small>심상 연습</small></button>
+    </section>
 
-const RELICS = [
-  { id:'hyangno', t:'백제 금동대향로', d:'1993년 능산리 절터에서 나온 향로. 연기를 따라 출발점으로 돌아가 봉급을 받는다.', tag:'rec', fx:'goto0', ...ek('E0024394','백제 금동대향로') },
-  { id:'lotus', t:'연꽃무늬 벽돌', d:'1937년 부여 외리에서 나온 무늬 벽돌 여덟 장 가운데 연꽃을 새긴 벽돌. 내 건물 하나를 골라 땅값을 올린다 (통행세 1.5배, 두 번까지).', tag:'rec', fx:'lotus', ...ek('E0019585','부여 외리 문양전 일괄') },
-  { id:'halo', t:'금동 광배', d:'부여 관북리에서 나온 6세기 금동 광배. 불꽃무늬를 새기고 테두리에 비천을 다는 고리가 있다. 그 빛이 지켜 주어 다음 통행세 한 번을 내지 않는다.', tag:'rec', fx:'shield', ...ek('E0005130','광배') },
-  { id:'gugu', t:'구구단 목간', d:'2011년 부여 쌍북리에서 나와 2016년 곱셈구구로 판정된 백제 목간. 구구셈처럼 가진 오수전이 두 배가 된다.', tag:'rec', fx:'double', src:'「백제 시대 곱셈구구단 목간 재음미」(학술 논문) · 주간경향', url:'https://scholar.kyobobook.co.kr/article/detail/4050028763450' },
-  { id:'sataek', t:'사택지적비', d:'"금을 뚫어 금당을 세우고 옥을 다듬어 탑을 세웠다." 내 건물 하나 곁에 사찰을 세운다 (통행세 1.5배).', zh:'穿金以建珍堂鑿玉以立寶塔', src:'부여 사택지적비 · 국사편찬위원회 한국사데이터베이스 금석문', url: DB + 'gskh_002_0010_0010_0030', tag:'rec', fx:'temple' },
-  { id:'jassi', t:'자씨당', d:'미륵(자씨)을 모신 집. 내 건물 하나 곁에 사찰을 세운다.', src:'확인 중', tag:'chk', fx:'temple' },
-  { id:'jeongnim', t:'정림사지 유물', d:'정림사지에서 나온 유물들. 내 건물 하나 곁에 사찰을 세운다.', src:'정림사지 출토 유물 (세부 확인 중)', tag:'chk', fx:'temple' },
-  { id:'face', t:'인물무늬 기와', d:'사람 얼굴을 새긴 기와. 내 건물 하나 곁에 사찰을 세운다.', src:'확인 중', tag:'chk', fx:'temple' },
-];
+    <div id="fusedBlock" hidden>
+        <h2>3D <span class="tag">추정</span> <small class="muted">끌어서 회전</small></h2>
+        <div id="fusedChips" class="chips" role="tablist" aria-label="3D 반복 선택"></div>
+        <ul id="fusedSummary" class="fused-summary"></ul>
+        <canvas id="fusedCanvas" class="fused-canvas"></canvas>
+        <label class="share-opt"><input type="checkbox" id="fusedIdeal" checked> <span class="sw sw-ghost"></span>기준 자세 같이 보기</label>
+        <div id="fusedTable"></div>
+      </div>
 
-/* =====================================================================
-   2. 상태와 규칙 (방장 또는 한 기기에서만 계산)
-   ===================================================================== */
-const COLORS = ['#e2574c','#3fa7b0','#d9b23a','#9d7ad8'];
-let G = null, ME = null, NET = null;
-function newGame(seats){
-  return {
-    v:2, seq:0, turn:0, phase:'throw', extra:0, era:0, round:0, over:false, winner:null,
-    players: seats.map((s,i) => ({ id:s.id, nm:s.nm, c:s.c || COLORS[i], ai:!!s.ai, pos:0, cash:START_CASH, rank:0, laps:0,
-      away:0, gate:0, shield:false, out:false, seen:[], zp:-1, prog:0 })),
-    own: Array(N).fill(-1), lv: Array(N).fill(0), tmp: Array(N).fill(0), bl: Array(N).fill(0),
-    last:null, card:null, deck: shuffle(RELICS.map((_,i)=>i)), log:['사비에 판이 열렸다.'], evtN:0, note:null, pick:null, pendingGoto:null,
-    ev: Array(TURNS.length).fill(0), fx:{},
-  };
-}
-function startGame(g){ G = g; G.era = -1; advanceEra(); return G; }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-const cur = () => G.players[G.turn];
-const idx = p => G.players.indexOf(p);
-const log = s => { G.log.push(s); if(G.log.length > 5) G.log.shift(); if(typeof soloWatch === 'function') soloWatch(s); };
-const note = t => { G.note = { n:(G.note?.n||0)+1, t }; };
-function throwSticks(){ const f = Array.from({length:5},()=>Math.random()<.5); return { f, k:readThrow(f) }; }
+    <div class="actions">
+      <button id="saveBtn" class="btn primary">기록 저장</button>
+      <button id="againBtn" class="btn">새로 분석</button>
+    </div>
+    <div class="share-row">
+      <button id="shareBtn" class="btn block">이미지로 공유</button>
+      <label class="share-opt"><input type="checkbox" id="shareFrame"> 실제 영상 포함 <small>(지금 멈춘 장면)</small></label>
+    </div>
 
-function act(pid, a){
-  if(!G || G.over) return;
-  const p = cur(); if(p.id !== pid) return;
-  if(a.s != null && a.s !== G.seq) return;
-  G.eraThisAct = false;
-  if(G.phase === 'throw' && a.k === 'pay' && p.gate){ if(p.cash < GATE_FEE) return; p.cash -= GATE_FEE; p.gate = 0; log(`${p.nm}: 30수전 내고 관문 통과`); return done(); }
-  if(G.phase === 'throw' && a.k === 'throw') return doThrow(p, +a.x || 0);
-  if(G.phase === 'buy' && a.k === 'buy') return buy(p);
-  if(['buy','up','take'].includes(G.phase) && a.k === 'skip'){ G.phase = 'throw'; return afterProp(p); }
-  if(G.phase === 'up' && a.k === 'up') return upgrade(p);
-  if(G.phase === 'take' && a.k === 'take') return takeover(p);
-  if(G.phase === 'tp' && a.k === 'tp' && Number.isInteger(a.x) && a.x>=0 && a.x<N && a.x!==SONG()){ G.phase='throw'; return moveTo(p, a.x); }
-  if(G.phase === 'pick' && a.k === 'pick') return doPick(p, a.x);
-  if(G.phase === 'card' && a.k === 'ok'){ G.card = null; G.phase = G.pick ? 'pick' : 'throw'; if(G.pick) return done(); return endMove(p); }
-}
-function done(){ G.seq++; publish(); }
-function doThrow(p, power){
-  const t = throwSticks(), r = OUT[t.k];
-  const hit = power >= 70 && power <= 85;
-  G.last = { f:t.f, k:t.k, who:p.id, n:(G.last?.n||0)+1, hit, mv: r.move + (hit?1:0) };
-  if(p.gate){
-    if(!r.king){ p.gate++; log(`${p.nm}: ${r.ko} — 관문에 막힘`); if(p.gate>2){ p.gate=0; log(`${p.nm}: 다음엔 그냥 통과`); } return nextTurn(); }
-    p.gate = 0; log(`${p.nm}: 왕채! 관문 통과`);
-  }
-  G.extra = r.king ? G.extra + 1 : 0;
-  log(`${p.nm}: ${r.ko} ${G.last.mv}칸${hit?' (명중)':''}${r.king?' · 왕채':''}`);
-  step(p, G.last.mv);
-}
-// 턴은 선두 기준: 출발(사비 천도)과 맞은편 구태묘 제사를 지날 때, 지금까지의 선두 기록을 처음 넘어서면 다음 턴
-const HALF = N / 2;
-// 한 번 움직일 때(순간이동 포함) 턴은 많아야 한 번만 넘어간다
-function tick(p){ p.prog = (p.prog || 0) + 1; if(p.prog % HALF === 0){ const h = p.prog / HALF; if(h > (G.lead || 0)){ G.lead = h; if(!G.eraThisAct){ G.eraThisAct = true; advanceEra(); } } } }
-function step(p, n){ let pos = p.pos; for(let i=0;i<n;i++){ pos = (pos+1) % N; if(pos === 0) passStart(p); if(!G.over) tick(p); if(G.over) return done(); } p.pos = pos; land(p); }
-function passStart(p){
-  p.laps++;
-  const before = p.rank;
-  if(p.rank < LAP_TOP) p.rank = Math.min(LAP_TOP, p.rank + 2);
-  if(p.rank === 10) p.zp++;
-  const pay = RANKS[p.rank].pay; p.cash += pay;
-  log(`${p.nm}: 한 바퀴 · ${before !== p.rank ? RANKS[p.rank].n+' · ' : ''}봉급 ${pay}`);
-  if(p.rank === 10 && p.zp >= JWA_LAPS){ G.winner = idx(p); return finish('jwapyeong'); }
-}
-function moveTo(p, to){ const d = (to - p.pos + N) % N || N; let pos = p.pos; for(let i=0;i<d;i++){ pos = (pos+1) % N; if(pos === 0) passStart(p); if(!G.over) tick(p); if(G.over) return done(); } p.pos = to; land(p); }
-function land(p){
-  if(G.over) return done();
-  const c = CELLS[p.pos], me = idx(p);
-  if(c.t === 'prop' && !p.seen.includes(p.pos)) p.seen.push(p.pos);
-  if(G.players.some(q => q !== p && !q.out && q.pos === p.pos) && c.t !== 'start'){ G.extra++; log(`${p.nm}: 擊馬 — 한 번 더`); }
-  if(c.t === 'prop'){
-    if(c.gate) p.gate = 1;
-    if(p.pos === IDX('정사암')) jeongsa(p);
-    const o = G.own[p.pos];
-    if(o === -1){ if(p.cash >= c.p){ G.phase = 'buy'; return done(); } return afterProp(p); }
-    if(o === me){ if(canLevel(p.pos) && G.bl[p.pos] < MAX_BL && p.cash >= upCost(p.pos)){ G.phase = 'up'; return done(); } return afterProp(p); }
-    payToll(p, o, p.pos);
-    if(G.over) return done();
-    if(!p.out && G.own[p.pos] === o && (G.bl[p.pos] || 1) < MAX_BL && p.cash >= takeCost(p.pos)){ G.phase = 'take'; return done(); }
-    return afterProp(p);
-  }
-  if(c.t === 'card') return draw(p);
-  if(c.t === 'gibok') return gibok(p);
-  if(c.t === 'away'){ p.away = 1; G.extra = 0; log(`${p.nm}: 왜국 파견 · 한 번 쉼`); note(`${p.nm} 왜국 파견`); return endMove(p); }
-  if(c.t === 'rite'){ G.players.forEach(q => { if(!q.out) q.cash += RITE; }); log(`구태묘 제사 · 모두 +${RITE}`); note(`구태묘 제사 · 모두 +${RITE}`); return endMove(p); }
-  if(c.t === 'song'){ G.phase = 'tp'; log(`${p.nm}: 과하마 · 칸 고르기`); return done(); }
-  return endMove(p);
-}
-function afterProp(p){ if(p.pos === IDX('국립부여박물관') && !G.over && !p.out) return draw(p); return endMove(p); }
-function jeongsa(p){
-  const t = throwSticks(), r = OUT[t.k];
-  if(p.rank === 10) return;
-  if(p.rank < JWA_MIN){ log(`${p.nm}: 정사암 · 관등이 낮다`); note(`정사암 · ${RANKS[JWA_MIN].n} 이상만`); return; }
-  if(r.king){ p.rank = 10; p.zp = 0; p.cash += 200; log(`${p.nm}: 정사암 왕채 — 좌평! (+200)`); note(`${p.nm} 좌평!`); }
-  else { log(`${p.nm}: 정사암 · 도장 없음`); note('정사암 · 도장 없음'); }
-}
-function gibok(p){
-  const stones = 3 + Math.floor(Math.random()*10);
-  if(stones % 2){ p.cash += 60; log(`${p.nm}: 기복 ${stones}알 · 홀 +60`); note(`기복 · 홀 +60`); }
-  else { const f = Math.min(p.cash, 40); p.cash -= f; log(`${p.nm}: 기복 ${stones}알 · 짝 −${f}`); note(`기복 · 짝 −${f}`); }
-  return endMove(p);
-}
-function buy(p){
-  const c = CELLS[p.pos];
-  if(G.own[p.pos] !== -1 || p.cash < c.p) return;
-  p.cash -= c.p; G.own[p.pos] = idx(p); G.bl[p.pos] = 1;
-  log(`${p.nm}: ${c.n} ${bldName(p.pos)} 세웠다`);
-  G.phase = 'throw';
-  if(['P','C','T'].filter(g => fullGroup(idx(p), g)).length >= 2){ G.winner = idx(p); finish('groups'); return done(); }
-  afterProp(p);
-}
-function upgrade(p){
-  const k = p.pos; if(G.own[k] !== idx(p) || !canLevel(k) || G.bl[k] >= MAX_BL || p.cash < upCost(k)) return;
-  p.cash -= upCost(k); G.bl[k]++;
-  log(`${p.nm}: ${CELLS[k].n} ${G.bl[k]}단계`);
-  G.phase = 'throw'; afterProp(p);
-}
-function takeover(p){
-  const k = p.pos, o = G.own[k], cost = takeCost(k); if(o < 0 || o === idx(p) || p.cash < cost || (G.bl[k] || 1) >= MAX_BL) return;
-  const owner = G.players[o]; p.cash -= cost; owner.cash += cost; G.own[k] = idx(p);
-  log(`${p.nm}: ${CELLS[k].n} 인수 (${cost})`); note(`${p.nm} · ${CELLS[k].n} 인수`);
-  G.phase = 'throw';
-  if(['P','C','T'].filter(g => fullGroup(idx(p), g)).length >= 2){ G.winner = idx(p); finish('groups'); return done(); }
-  afterProp(p);
-}
-function payToll(p, o, k){
-  const owner = G.players[o]; if(owner.out) return;
-  const roll = G.last ? (OUT[G.last.k].pts || 6) : 6;
-  const fee = portToll(k, toll(k, roll));
-  if(p.shield){ p.shield = false; log(`${p.nm}: 광배로 통행세 면제`); return; }
-  const paid = Math.min(fee, p.cash); p.cash -= paid; owner.cash += paid;
-  log(`${p.nm} → ${owner.nm}: 통행세 ${paid}`);
-  if(paid < fee) bankrupt(p);
-}
-function bankrupt(p){
-  p.out = true; const i = idx(p);
-  G.own = G.own.map((o,k) => { if(o === i){ G.lv[k] = 0; G.tmp[k] = 0; G.bl[k] = 0; return -1; } return o; });
-  log(`${p.nm}: 파산`); note(`${p.nm} 파산`);
-  const alive = G.players.filter(q => !q.out);
-  if(alive.length === 1){ G.winner = idx(alive[0]); finish('last'); }
-}
-function draw(p){
-  if(!G.deck.length) G.deck = shuffle(RELICS.map((_,i)=>i));
-  const k = G.deck.pop(), cd = RELICS[k]; G.card = k;
-  log(`${p.nm}: 유물 카드 한 장`);
-  if(cd.fx === 'shield') p.shield = true;
-  else if(cd.fx === 'double'){ const b = p.cash; p.cash *= 2; log(`${p.nm}: 오수전 두 배 (${p.cash})`); }
-  else if(cd.fx === 'goto0') G.pendingGoto = 0;
-  else if(cd.fx === 'lotus' || cd.fx === 'temple'){
-    if(myProps(p, cd.fx).length) G.pick = { kind: cd.fx };
-    else { p.cash += 60; log(`${p.nm}: 세울 곳 없어 +60`); }
-  }
-  G.phase = 'card'; done();
-}
-function myProps(p, kind){ const i = idx(p); return G.own.map((o,k)=>k).filter(k => G.own[k] === i && ['P','C','T'].includes(CELLS[k].g) && (kind === 'lotus' ? G.lv[k] < 2 : !G.tmp[k])); }
-function doPick(p, k){
-  if(!G.pick || !myProps(p, G.pick.kind).includes(k)) return;
-  if(G.pick.kind === 'lotus'){ G.lv[k]++; log(`${p.nm}: ${CELLS[k].n} 땅값 상승`); }
-  else { G.tmp[k] = 1; log(`${p.nm}: ${CELLS[k].n} 곁에 사찰`); }
-  G.pick = null; G.phase = 'throw'; endMove(p);
-}
-function endMove(p){
-  if(G.over) return done();
-  if(G.pendingGoto != null){ const to = G.pendingGoto; G.pendingGoto = null; return moveTo(p, to); }
-  if(G.extra > 0 && G.extra <= 3 && !p.out && !p.away){ G.extra--; G.phase = 'throw'; log(`${p.nm}: 한 번 더`); return done(); }
-  G.extra = 0; nextTurn();
-}
-function nextTurn(){
-  G.phase = 'throw'; G.extra = 0;
-  for(let k=0;k<G.players.length;k++){
-    G.turn = (G.turn + 1) % G.players.length;
-    const q = cur();
-    if(q.out) continue;
-    if(q.away){ q.away = 0; q.cash += AWAY_PAY; log(`${q.nm}: 왜국에서 귀환 +${AWAY_PAY}`); continue; }
-    break;
-  }
-  done();
-}
-function advanceEra(){
-  if(G.over) return;
-  if(G.era >= TURNS.length - 1){ G.era = TURNS.length; G.evtN++; log('— 660 사비 함락'); return finish('era'); }
-  G.era++;
-  const pool = TURNS[G.era].ev; G.ev[G.era] = Math.floor(Math.random() * pool.length);
-  applyEvent(pool[G.ev[G.era]]);
-}
-function applyEvent(E){
-  const alive = G.players.filter(q => !q.out), own = (q, f) => { const i = idx(q); return G.own.filter((o,k) => o === i && f(CELLS[k], k)).length; };
-  const pay = (q, n) => { if(n >= 0) q.cash += n; else q.cash -= Math.min(q.cash, -n); };
-  G.evtN++;
-  log(`— ${E.y} ${E.t}: ${E.fxt}`);
-  const [code, num] = [E.fx.replace(/[+-]\d+$/,''), +(E.fx.match(/[+-]\d+$/)||[0])[0]];
-  if(code === 'all') alive.forEach(q => pay(q, num));
-  if(code === 'castle') alive.forEach(q => pay(q, num * own(q, c => c.g === 'C')));
-  if(code === 'port'){ if(num > 0 && !alive.some(q => own(q, c => c.g === 'F'))) alive.forEach(q => pay(q, 20)); else alive.forEach(q => pay(q, num * own(q, c => c.g === 'F'))); }
-  if(code === 'bld') alive.forEach(q => pay(q, num * own(q, () => true)));
-  if(code === 'palace') alive.forEach(q => pay(q, num * own(q, c => c.g === 'P')));
-  if(code === 'temple') alive.forEach(q => pay(q, -num + num * own(q, (c,k) => c.g === 'T' || G.tmp[k])));
-  if(code === 'topRank'){ const top = alive.slice().sort((a,b) => b.rank - a.rank)[0]; if(top.rank === 10){ top.rank = LAP_TOP; top.zp = -1; } else if(top.rank > 0) top.rank--; }
-  if(code === 'allRank') alive.forEach(q => { if(q.rank < LAP_TOP) q.rank++; });
-  if(code === 'lowRank'){ const low = alive.slice().sort((a,b) => a.rank - b.rank)[0]; if(low.rank < LAP_TOP) low.rank++; }
-  if(code === 'amnesty') alive.forEach(q => { q.gate = 0; q.away = 0; pay(q, 30); });
-  if(code === 'wanghung'){ const o = G.own[IDX('왕흥사지')]; if(o >= 0 && !G.players[o].out) G.players[o].cash += 100; else alive.forEach(q => pay(q, 20 * own(q, c => c.g === 'T'))); }
-  if(code === 'gungnam') G.fx.gungnam = true;
-  if(code === 'palaceLv') G.own.forEach((o,k) => { if(o >= 0 && CELLS[k].g === 'P' && G.lv[k] < 2) G.lv[k]++; });
-}
-function score(p, i){
-  let props = 0;
-  G.own.forEach((o,k) => { if(o === i) props += Math.round(spent(k) / 10) + G.lv[k]*8 + G.tmp[k]*10; });
-  const groups = ['P','C','T'].filter(g => fullGroup(i, g)).length * 80;
-  const cash = Math.floor(p.cash / 10), stamps = p.seen.length * 5, rank = p.rank * 10 + (p.rank === 10 ? 50 : 0);
-  return { props, groups, cash, stamps, rank, total: props + groups + cash + stamps + rank };
-}
-function finish(why){
-  if(G.over) return;
-  G.over = why; G.phase = 'over';
-  log(why==='era' ? '사비 함락 · 판 끝' : why==='groups' ? '두 무리 독점 · 판 끝' : why==='jwapyeong' ? '좌평 승리 · 판 끝' : '한 사람만 남음 · 판 끝');
-}
-const bldName = k => ({ palace:'전각', castle:'성루', temple:'가람', port:'나루터', special:'기념 건물' })[GROUPS[CELLS[k].g].kind];
+    <details class="more" id="moreDetails">
+      <summary>자세히 보기</summary>
 
-/* =====================================================================
-   3. 컴퓨터 상대
-   ===================================================================== */
-let aiTimer = null;
-function aiStep(){
-  clearTimeout(aiTimer);
-  if(!G || G.over || !isHostSide()) return;
-  const p = cur(); if(!p.ai) return;
-  aiTimer = setTimeout(() => {
-    if(animating()) return aiStep();
-    if(G.phase === 'throw') act(p.id, p.gate && p.cash > 400 ? { k:'pay' } : { k:'throw', x: Math.floor(Math.random()*101) });
-    else if(G.phase === 'buy') act(p.id, { k: p.cash - CELLS[p.pos].p >= 150 ? 'buy' : 'skip' });
-    else if(G.phase === 'up') act(p.id, { k: p.cash - upCost(p.pos) >= 150 ? 'up' : 'skip' });
-    else if(G.phase === 'take') act(p.id, { k: p.cash - takeCost(p.pos) >= 250 && Math.random() < .5 ? 'take' : 'skip' });
-    else if(G.phase === 'tp'){
-      const opts = CELLS.map((c,k)=>k).filter(k => CELLS[k].t==='prop' && G.own[k]===-1 && CELLS[k].p <= p.cash - 100);
-      act(p.id, { k:'tp', x: opts.length ? opts[Math.floor(Math.random()*opts.length)] : 0 });
-    }
-    else if(G.phase === 'pick'){ const m = myProps(p, G.pick.kind).sort((a,b) => CELLS[b].p - CELLS[a].p); act(p.id, { k:'pick', x:m[0] }); }
-    else if(G.phase === 'card') act(p.id, { k:'ok' });
-  }, G.phase === 'card' ? 1500 : 800);
-}
+      <div id="repChips" class="chips" role="tablist" aria-label="반복 선택"></div>
+      <div id="metricCards" class="cards"></div>
 
-/* =====================================================================
-   4. 그림: 캐릭터와 건물 (2D)
-   ===================================================================== */
-const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const zhOf = o => o.rare ? `<span class="rare" title="𢳚 (유니코드 U+22CDA) — 대부분의 글꼴에 없는 한자">⿰</span>` : `<span class="hz">${o.zh}</span>`;
-const hzify = s => String(s).replace(/([㐀-鿿\u{20000}-\u{2ffff}]+)/gu,'<span class="hz">$1</span>');
-const SEAT_LOOK = ['scholar','noble','merchant','artisan'];
-function lookOf(p, i){ return p.id === 'B' ? 'buddha' : p.id === 'Y' ? 'scholar' : SEAT_LOOK[i % 4]; }
-function chibi(p, i){
-  const kind = lookOf(p, i), rk = RANKS[p.rank], silver = p.rank >= 6;
-  const robe = kind === 'buddha' ? '#d9b25a' : p.c;
-  const hair = `<path d="M-2.6 -12.6 q2.6 -3.4 5.2 0 q-2.6 -1.4 -5.2 0z" fill="#1d1712"/>`;
-  const hats = {
-    scholar:  `<path d="M-2.4 -13.4 h4.8 l-.5 -2.6 h-3.8z" fill="#1d1d1d"/>`,
-    noble:    `<rect x="-2.6" y="-15.4" width="5.2" height="3" rx=".8" fill="#1d1d1d"/><path d="M-3.4 -13 q3.4 1 6.8 0" stroke="#1d1d1d" stroke-width=".7" fill="none"/>`,
-    merchant: `<path d="M-4.4 -12.6 q4.4 -4.2 8.8 0z" fill="#8b6b43"/><rect x="-1.8" y="-15.4" width="3.6" height="2.4" rx=".8" fill="#8b6b43"/>`,
-    artisan:  `<rect x="-2.8" y="-13.6" width="5.6" height="1.3" fill="#c9a35a"/>`,
-    buddha:   `<circle cx="0" cy="-14.4" r="1.4" fill="#3a2a1a"/><circle cx="0" cy="-11.6" r="5.2" fill="none" stroke="#f0d79a" stroke-width=".6" opacity=".8"/>`,
-  };
-  const flower = silver && kind !== 'buddha' ? `<g fill="#e8edf3" stroke="#8a96a3" stroke-width=".25"><circle cx="0" cy="-16.6" r=".9"/><circle cx="-1.1" cy="-16" r=".7"/><circle cx="1.1" cy="-16" r=".7"/></g>` : '';
-  return `<svg class="chibi" viewBox="-7 -20 14 21.6" role="img" aria-label="${esc(p.nm)} · ${rk.n}">
-    <ellipse cx="0" cy="0" rx="3.4" ry="1.3" fill="rgba(0,0,0,.35)"/>
-    <rect x="-1.9" y="-3" width="1.4" height="3" fill="#3a2e24"/><rect x=".5" y="-3" width="1.4" height="3" fill="#3a2e24"/>
-    <path d="M-3 -3 L-2.4 -9.5 H2.4 L3 -3z" fill="${robe}" stroke="rgba(0,0,0,.4)" stroke-width=".4"/>
-    <rect x="-2.75" y="-6.3" width="5.5" height="1.2" fill="${rk.belt}" stroke="rgba(0,0,0,.35)" stroke-width=".25"/>
-    <circle cx="0" cy="-11.6" r="2.6" fill="#f0cfa6" stroke="rgba(0,0,0,.3)" stroke-width=".4"/>
-    ${kind === 'buddha' ? `<path d="M-1.4 -11.6 q.6 .5 1.2 0 M.4 -11.6 q.6 .5 1.2 0" stroke="#2a2018" stroke-width=".35" fill="none"/><circle cx="0" cy="-12.8" r=".3" fill="#c0392b"/>`
-      : `<rect x="-1.2" y="-12" width=".6" height=".8" fill="#2a2018"/><rect x=".6" y="-12" width=".6" height=".8" fill="#2a2018"/>`}
-    ${kind === 'buddha' ? '' : hair}${hats[kind]}${flower}</svg>`;
-}
-function building(k, col){
-  const kind = GROUPS[CELLS[k].g].kind, flag = `<path d="M17 4 v12" stroke="#2b2118" stroke-width="1"/><path d="M17 4 h7 l-2 2.5 l2 2.5 h-7z" fill="${col}"/>`;
-  const art = {
-    palace: `<rect x="6" y="20" width="22" height="9" fill="#d9ccae"/><g fill="#9c3b2e">${[8,13,18,23].map(x=>`<rect x="${x}" y="20" width="1.6" height="9"/>`).join('')}</g><path d="M2 21 Q17 13 32 21 L28 18 Q17 11 6 18Z" fill="#3d434c"/><path d="M8 14 Q17 8 26 14 L23 12 Q17 7 11 12Z" fill="#3d434c"/><rect x="4" y="29" width="26" height="2.5" fill="#8a8273"/>`,
-    castle: `<path d="M1 31 L1 19 h4 v-2 h3 v2 h4 v-2 h3 v2 h4 v-2 h3 v2 h4 v-2 h3 v2 h3 V31Z" fill="#8f8a7c" stroke="#4a463e" stroke-width=".6"/><path d="M13 31 v-6 a4 4 0 0 1 8 0 v6z" fill="#2b241d"/><path d="M10 15 Q17 10 24 15 L22 13 Q17 9 12 13Z" fill="#3d434c"/><rect x="12" y="15" width="10" height="4" fill="#d9ccae"/>`,
-    temple: `<g fill="#3d434c">${[0,1,2,3,4].map(i=>`<path d="M${9+i*1.3} ${29-i*4.6} h${16-i*2.6} l-2 -1.6 h${-(12-i*2.6)}z"/>`).join('')}</g><g fill="#c9b893">${[0,1,2,3,4].map(i=>`<rect x="${13.5+i*.8}" y="${25.5-i*4.6}" width="${7-i*1.6}" height="2.2"/>`).join('')}</g><path d="M17 6 v-5" stroke="#c9a25a" stroke-width="1.2"/><rect x="8" y="29" width="18" height="2.5" fill="#8a8273"/>`,
-    port: `<path d="M2 26 Q17 33 32 26 L29 30 Q17 34 5 30Z" fill="#6b4a2e"/><path d="M16 26 V9 L27 23Z" fill="#efe6d2" stroke="#8a7a60" stroke-width=".5"/><path d="M0 31 Q8 29 16 31 T32 31" stroke="#5f9a9a" stroke-width="1.4" fill="none"/>`,
-    special: `<path d="M3 31 L7 18 L13 14 L21 16 L28 22 L31 31Z" fill="#7d776c" stroke="#4a463e" stroke-width=".6"/><circle cx="17" cy="24" r="3" fill="none" stroke="#c0533f" stroke-width="1.2"/><path d="M15.6 24 h2.8 M17 22.6 v2.8" stroke="#c0533f" stroke-width=".8"/>`,
-  }[kind];
-  const tp = G.tmp[k] ? `<g transform="translate(-6 6) scale(.55)">${[0,1,2].map(i=>`<path d="M${9+i*1.6} ${29-i*5} h${14-i*3.2} l-2 -1.6 h${-(10-i*3.2)}z" fill="#5a3f6e"/>`).join('')}</g>` : '';
-  const lv = G.lv[k] ? `<g fill="#f0c75a" stroke="#5a3a10" stroke-width=".4">${Array.from({length:G.lv[k]},(_,i)=>`<circle cx="${13+i*8}" cy="27.5" r="2.1"/>`).join('')}</g>` : '';
-  const b = G.bl[k] || 1, badge = b > 1 ? `<g><rect x="0" y="0" width="11" height="9" rx="2" fill="#1b1513" stroke="${col}" stroke-width=".8"/><text x="5.5" y="7" font-size="7" text-anchor="middle" fill="#f0d79a" font-family="serif">${b===2?'Ⅱ':'Ⅲ'}</text></g>` : '';
-  const sc = [1, 1, 1.12, 1.25][b];
-  return `<svg viewBox="0 0 34 34"><g transform="translate(${17*(1-sc)} ${34*(1-sc)}) scale(${sc})">${art}${tp}${lv}</g>${flag}${badge}</svg>`;
-}
-const PHEASANT = `<svg viewBox="0 0 20 20" aria-label="꿩"><path d="M3 12 Q7 7 12 9 Q15 6 17 7 L15.5 8.4 Q14 11 11 13 L3 17 Z" fill="#8a4a24"/><path d="M3 12 L-2 18" stroke="#8a4a24" stroke-width="1.3"/><circle cx="16.2" cy="7.3" r=".7" fill="#1d1712"/><path d="M15 6 q1.2 -1.6 2.4 -.8" stroke="#c0392b" stroke-width="1" fill="none"/><path d="M10 13 l-1 3 M12 12 l0 3" stroke="#5a3a20" stroke-width=".8"/></svg>`;
-const OX = `<svg viewBox="0 0 20 20" aria-label="소"><path d="M4 5 Q2 2 5 3 L7 6 M16 5 Q18 2 15 3 L13 6" stroke="#e0c27a" stroke-width="1.3" fill="none"/><path d="M6 6 h8 q1 5 -1 9 q-3 3 -6 0 q-2 -4 -1 -9z" fill="#e0c27a"/><circle cx="8.3" cy="9" r=".8" fill="#2a1a08"/><circle cx="11.7" cy="9" r=".8" fill="#2a1a08"/><ellipse cx="10" cy="13.2" rx="2.2" ry="1.4" fill="#b8954f"/></svg>`;
 
-/* =====================================================================
-   5. 판 그리기
-   ===================================================================== */
-// 12×6 둘레: 0 = 오른쪽 아래 → 아랫줄 왼쪽으로 → 왼쪽 줄 위로 → 윗줄 오른쪽으로 → 오른쪽 줄 아래로
-function gridPos(i){
-  if(i <= 8) return [9, 9 - i];
-  if(i <= 16) return [9 - (i - 8), 1];
-  if(i <= 24) return [1, 1 + (i - 16)];
-  return [1 + (i - 24), 9];
-}
-const CORNER_ART = {
-  start: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="none" stroke="#c9a25a" stroke-width="2"/><path d="M14 30 h26 l-8 -8 M40 30 l-8 8" stroke="#e0c27a" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
-  away: `<svg viewBox="0 0 60 60"><path d="M6 40 q24 10 48 0 l-6 8 q-18 6 -36 0z" fill="#6b4a2e"/><path d="M28 40 V12 L46 36Z" fill="#efe6d2"/><path d="M26 40 V18 L12 36Z" fill="#d9ccae"/><path d="M0 52 q10 -4 20 0 t20 0 t20 0" stroke="#5f9a9a" stroke-width="2.5" fill="none"/></svg>`,
-  rite: `<svg viewBox="0 0 60 60"><path d="M8 20 h44 M12 26 h36" stroke="#b8473a" stroke-width="4" stroke-linecap="round"/><path d="M16 20 V50 M44 20 V50" stroke="#b8473a" stroke-width="4"/><rect x="22" y="38" width="16" height="12" fill="#7d6640"/><path d="M30 34 v-6" stroke="#e0c27a" stroke-width="2"/><circle cx="30" cy="26" r="2" fill="#f0d79a"/></svg>`,
-  song: `<svg viewBox="0 0 60 60"><ellipse cx="30" cy="52" rx="17" ry="3" fill="rgba(0,0,0,.35)"/><g stroke="#4a2e18" stroke-width="1.4" stroke-linejoin="round"><rect x="19" y="40" width="5" height="11" rx="2.5" fill="#a8703e"/><rect x="34" y="40" width="5" height="11" rx="2.5" fill="#a8703e"/><ellipse cx="29" cy="38" rx="15" ry="9.5" fill="#c98a4b"/><path d="M14 36 q-7 2 -6 10 q4 -3 7 -6" fill="#6b3f1d"/><circle cx="43" cy="25" r="10" fill="#c98a4b"/><ellipse cx="50" cy="29" rx="5" ry="4" fill="#e6b27a"/><path d="M37 17 l1 -7 l5 5z" fill="#c98a4b"/><path d="M34 22 q2 -9 10 -10 q-3 4 -1 7 q-4 0 -6 6z" fill="#6b3f1d"/></g><circle cx="45" cy="24" r="2.3" fill="#2a1a0e"/><circle cx="45.8" cy="23.2" r=".8" fill="#fff"/><circle cx="51.5" cy="29" r=".9" fill="#4a2e18"/><ellipse cx="41" cy="29" rx="2.4" ry="1.4" fill="#f08a8a" opacity=".75"/><path d="M47 32.5 q2 1.4 4 0" stroke="#4a2e18" stroke-width="1" fill="none"/><rect x="22" y="29" width="14" height="5" rx="2" fill="#b8473a"/></svg>`,
-};
-function buildBoard(){
-  const b = $('board'); b.innerHTML = '';
-  CELLS.forEach((c,i) => {
-    const d = document.createElement('div'), [r,col] = gridPos(i);
-    d.className = 'cell' + (['start','away','rite','song'].includes(c.t) ? ' corner' : '') + (['card','gibok'].includes(c.t) ? ' cardc' : '');
-    d.style.gridRow = r; d.style.gridColumn = col; d.id = 'c'+i; d.tabIndex = 0;
-    d.innerHTML = (c.g ? `<div class="band" style="background:${GROUPS[c.g].color}"></div>` : '') +
-      (CORNER_ART[c.t] ? `<div class="cimg">${CORNER_ART[c.t]}</div>` : '') + `<div class="lab"><div class="nm">${hzify(c.n)}</div>` + (c.p ? `<div class="pr">${c.p}${c.gate?' · 관문':''}</div>` : '') + `</div><div class="bld"></div>`;
-    d.onclick = () => cellClick(i);
-    d.onkeydown = e => { if(e.key === 'Enter') cellClick(i); };
-    b.appendChild(d);
-  });
-  const ctr = document.createElement('div'); ctr.id = 'center';
-  ctr.innerHTML = `<div id="stage">
-      <div id="result"></div>
-      <div id="mid"><div id="tray"><div id="sticks"></div></div>
-        <div id="rbox"><div id="faces"></div><div id="bubble"></div></div></div>
-      <div id="say"></div><div id="actrow"></div>
-    </div>`;
-  $('game').appendChild(ctr);
-  const hole = document.createElement('div'); hole.className = 'ctrHole';
-  hole.innerHTML = '<i id="hTL" style="left:0;top:0"></i><i id="hTR" style="right:0;top:0"></i><i id="hBL" style="left:0;bottom:0"></i><i id="hBR" style="right:0;bottom:0"></i>';
-  b.appendChild(hole);
-  const tl = document.createElement('div'); tl.id = 'tokens'; b.appendChild(tl);
-  ['front','left','right'].forEach(k => { const e = document.createElement('div'); e.className = 'edge ' + k; b.appendChild(e); });
-  $('sticks').innerHTML = [0,1,2,3,4].map(k => `<div class="st" id="st${k}"><div class="f w">${k<2 ? PHEASANT : '<span></span>'}<small>흰</small></div><div class="edge"></div><div class="f b">${k<2 ? OX : '<span></span>'}<small>검</small></div></div>`).join('');
-  if($('chips')) $('chips').innerHTML = OUT.map((o,k) => `<span id="ch${k}" class="${o.king?'k':''}" title="${o.how}">${o.rare ? '' : `<span class="hz">${o.zh}</span> `}${o.ko}</span>`).join('');
-}
 
-const DISP = {}; let stepTimer = null, walking = false, throwingUntil = 0, lastThrowN = 0;
-const STEP_MS = 330;
-const animating = () => walking || Date.now() < throwingUntil;
-function cellXY(i){
-  const el = $('c'+i), b = $('board'); if(!el || !b) return [0,0];
-  return [el.offsetLeft + el.offsetWidth*0.62, el.offsetTop + el.offsetHeight*0.97];
-}
-function placeCenter(){
-  const c = $('center'), g = $('game'); if(!c || !$('hTL')) return;
-  const gr = g.getBoundingClientRect(), p = id => $(id).getBoundingClientRect();
-  const tl = p('hTL'), tr = p('hTR'), bl = p('hBL');
-  const pad = 6, left = tl.left - gr.left + pad, right = tr.left - gr.left - pad, top = tl.top - gr.top + pad, bottom = bl.top - gr.top - pad;
-  Object.assign(c.style, { left:left+'px', top:top+'px', width:Math.max(0,right-left)+'px', height:Math.max(0,bottom-top)+'px' });
-}
-function sizeBoard(){ const b = $('board'); if(b) b.style.setProperty('--bw', b.offsetWidth + 'px'); }
-addEventListener('resize', () => setTimeout(() => { sizeBoard(); placeCenter(); if(G) drawTokens(); }, 80));
-function drawTokens(hopIds){
-  const L = $('tokens'); if(!L || !G) return;
-  G.players.forEach((p,k) => {
-    let el = $('tk'+k);
-    if(!el){ el = document.createElement('div'); el.className = 'tk'; el.id = 'tk'+k; el.innerHTML = `<div class="ch"></div>`; L.appendChild(el); }
-    el.hidden = p.out;
-    const at = DISP[p.id] ?? p.pos, [x,y] = cellXY(at);
-    const same = G.players.filter((q,j) => j < k && !q.out && (DISP[q.id] ?? q.pos) === at).length;
-    el.style.left = (x - same * 11) + 'px'; el.style.top = (y - same * 2) + 'px';
-    el.querySelector('.ch').innerHTML = chibi(p, k);
-    el.classList.toggle('cur', k === G.turn && !G.over);
-    if(hopIds && hopIds.includes(p.id)){ el.classList.remove('hop'); void el.offsetWidth; el.classList.add('hop'); }
-  });
-}
-function walk(){
-  clearTimeout(stepTimer);
-  if(!G) return;
-  if(Date.now() < throwingUntil){ walking = true; stepTimer = setTimeout(walk, throwingUntil - Date.now() + 20); return; }
-  let moving = false; const hop = [];
-  G.players.forEach(p => {
-    const d = DISP[p.id];
-    if(d == null || p.out){ DISP[p.id] = p.pos; return; }
-    if(d !== p.pos){ const fwd = (p.pos - d + N) % N;
-      if(fwd > 0 && fwd <= 10){ DISP[p.id] = (d + 1) % N; moving = true; hop.push(p.id); } else DISP[p.id] = p.pos; }
-  });
-  drawTokens(hop);
-  const was = walking; walking = moving;
-  if(moving) stepTimer = setTimeout(walk, STEP_MS);
-  else if(was){ renderActions(); paintPicks(); aiStep(); }
-}
-function throwAnim(L){
-  throwingUntil = Date.now() + 1150;
-  L.f.forEach((blk,k) => {
-    const el = $('st'+k); if(!el) return;
-    el.style.transform = '';
-    if(!el.animate) return;
-    const z = (Math.random()*40-20).toFixed(1), end = (blk ? 180 : 0) + 720;
-    el.animate([
-      { transform:`translateZ(0) rotateY(0deg) rotateZ(0deg)` },
-      { transform:`translateZ(${90+Math.random()*40}px) translateY(-${20+Math.random()*20}px) rotateY(${end/2}deg) rotateZ(${z}deg)`, offset:.45 },
-      { transform:`translateZ(0) rotateY(${end}deg) rotateZ(${(z/3).toFixed(1)}deg)` },
-    ], { duration: 1000 + k*30, easing:'cubic-bezier(.25,.7,.35,1)' });
-  });
-  setTimeout(() => setSticksStatic(L), 1160);
-}
-function setSticksStatic(L){ [0,1,2,3,4].forEach(k => { const el = $('st'+k); if(el) el.style.transform = `rotateY(${L && L.f[k] ? 180 : 0}deg)`; }); }
+      <div class="side-only">
+        <h2 id="vsTitle">나 vs 기준</h2>
+        <div id="vsTable"></div>
+      </div>
 
-let lastEvtN = 0, lastNoteN = 0;
-function paintPicks(){
-  if(!G) return;
-  CELLS.forEach((c,i) => {
-    const pickable = myTurn() && !animating() && ((G.phase === 'tp' && i !== SONG()) || (G.phase === 'pick' && G.pick && myProps(cur(), G.pick.kind).includes(i)));
-    $('c'+i)?.classList.toggle('pick', !!pickable);
-  });
-}
-function render(){
-  if(!G || !$('board')) return;
-  CELLS.forEach((c,i) => {
-    const el = $('c'+i), o = G.own[i];
-    el.classList.toggle('own', o >= 0); if(o >= 0) el.style.setProperty('--oc', G.players[o].c);
-    const bd = el.querySelector('.bld'); bd.innerHTML = o >= 0 ? building(i, G.players[o].c) : ''; bd.classList.toggle('gold', o >= 0 && (G.bl[i] || 1) >= MAX_BL);
-  });
-  paintPicks();
-  $('era').innerHTML = TURNS.map((t,k) => `<span class="${k<G.era?'past':k===G.era?'now':''}" title="${k+1}턴 · ${t.king}">${k<=G.era ? TURNS[k].ev[G.ev[k]].y : k+1+'턴'}</span>`).join('') + `<span class="${G.era>=TURNS.length?'now':''}">660</span>`;
-  { const E = curEvent(); $('eraCap').textContent = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${E.t}`; }
-  const L = G.last;
-  if(L && L.n !== lastThrowN){ lastThrowN = L.n; throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; markChip(-1); setTimeout(showResult, 1150); }
-  else if(Date.now() >= throwingUntil){ if(!L) setSticksStatic(null); showResult(); }
-  [0,1,2,3].forEach(k => { const el = $('pc'+k); if(el){ el.hidden = !G.players[k]; } });
-  G.players.forEach((q,i) => {
-    const s = score(q,i), rk = RANKS[q.rank];
-    $('pc'+i).innerHTML = `<div class="pl${i===G.turn&&!G.over?' cur':''}${q.out?' out':''}"><span class="face">${chibi(q, i)}</span>
-      <b>${esc(q.nm)}</b><span class="cash">${q.out ? '탈락' : q.cash}</span>
-      <span class="rank">${rk.n} ${rk.g}품 · ${q.laps}바퀴 · ${s.total}점${q.shield?' · 광배':''}${q.gate?' · 관문':''}${q.away?' · 왜국':''}${q.rank===10?` · 출발 ${Math.max(0,q.zp)}/2`:''}</span></div>`; });
-  walk();
-  if(G.evtN !== lastEvtN){ lastEvtN = G.evtN; const E = curEvent(), t = G.era; setTimeout(() => showEvent(E, t), animating() ? 1500 : 100); }
-  if(G.note && G.note.n !== lastNoteN){ lastNoteN = G.note.n; const t = G.note.t; setTimeout(() => toastSay(t), animating() ? 1300 : 0); }
-  if(G.phase === 'card' && G.card != null && myTurn()){ const k = G.card; setTimeout(() => { if(G.phase === 'card' && G.card === k) showCard(RELICS[k]); }, animating() ? 1500 : 0); }
-  else if(sheetMode === 'card') closeSheet();
-  renderActions();
-  renderLog();
-  aiStep();
-  if(G.over) setTimeout(showOver, 1800);
-}
-function markChip(k){ OUT.forEach((_,j) => $('ch'+j)?.classList.toggle('on', j === k)); }
-function showResult(){
-  if(!G || !$('result')) return;
-  const L = G.last;
-  if(!L){ $('result').innerHTML = '<span class="muted" style="font-size:.55em">꾹 눌렀다 놓아 던지기</span>'; $('faces').textContent = '두 막대: 흰 면에 꿩, 검은 면에 소'; markChip(-1); return; }
-  const r = OUT[L.k];
-  $('result').innerHTML = `${r.rare ? '' : `<span class="hz">${r.zh}</span> `}${r.ko} · ${L.mv}칸 <span class="badge ${r.king?'king':'peon'}">${r.king?'왕채 · 한 번 더':'맹채'}</span>${L.hit?'<span class="badge hit">명중 +1</span>':''}`;
-  $('faces').textContent = `${L.f.map((b,k) => k<2 ? (b?'소':'꿩') : (b?'검':'흰')).join(' · ')} → ${r.how}${r.pts ? ` · 『오목경』 ${r.pts}점` : ''}`;
-  markChip(L.k);
-}
-function toastSay(t){ const b = $('bubble'); if(!b) return; b.textContent = t; b.style.opacity = 1; clearTimeout(toastSay.t); toastSay.t = setTimeout(() => { b.style.opacity = 0; }, 3600); }
-function phaseText(p){
-  if(G.phase === 'buy') return `${CELLS[p.pos].n} 세울까? (${CELLS[p.pos].p})`;
-  if(G.phase === 'up') return `${G.bl[p.pos]+1}단계로 올릴까? (${upCost(p.pos)})`;
-  if(G.phase === 'take'){ const o = G.players[G.own[p.pos]]; return `인수할까? (${takeCost(p.pos)})`; }
-  if(G.phase === 'tp') return '갈 칸을 누르세요';
-  if(G.phase === 'pick') return '내 건물을 누르세요';
-  if(G.phase === 'card') return myTurn() ? '유물 카드' : '유물 카드 보는 중';
-  if(p.gate) return '관문 · 왕채가 나와야 통과';
-  return '던지기';
-}
-let TILT = 40;
-let gauge = { on:false, v:0, dir:1, t:null };
-function gaugeStart(e){ e.preventDefault(); if(gauge.on || !myTurn() || animating() || G.phase !== 'throw') return; gauge.on = true; gauge.v = 0; gauge.dir = 1;
-  gauge.t = setInterval(() => { gauge.v += gauge.dir * 4; if(gauge.v >= 100){ gauge.v = 100; gauge.dir = -1; } if(gauge.v <= 0){ gauge.v = 0; gauge.dir = 1; } const f = $('gfill'); if(f) f.style.width = gauge.v + '%'; }, 22); }
-function gaugeEnd(e){ if(!gauge.on) return; if(e) e.preventDefault(); clearInterval(gauge.t); gauge.on = false; send({ k:'throw', x: Math.round(gauge.v) }); }
-function renderActions(){
-  if(!G || !$('actrow')) return;
-  if(gauge.on) return;
-  const p = cur(), mine = myTurn() && !animating();
-  $('say').innerHTML = G.over ? '판이 끝났다.' : `<span id="tleft"></span><b style="color:${p.c}">${esc(p.nm)}</b> · ${phaseText(p)}`;
-  const A = $('actrow'); A.innerHTML = '';
-  if(!G.over && mine){
-    if(G.phase === 'throw'){
-      A.insertAdjacentHTML('beforeend', `<button class="btn main" id="throwBtn">꾹 눌렀다 놓기</button><div id="gauge" aria-label="힘 게이지"><div class="sweet"></div><div class="fill" id="gfill"></div><div class="lbl">명중 70~85</div></div>`);
-      const tb = $('throwBtn');
-      tb.addEventListener('pointerdown', gaugeStart); tb.addEventListener('pointerup', gaugeEnd); tb.addEventListener('pointerleave', gaugeEnd); tb.addEventListener('pointercancel', gaugeEnd);
-      tb.addEventListener('keydown', e => { if((e.key===' '||e.key==='Enter') && !gauge.on && !e.repeat) gaugeStart(e); });
-      tb.addEventListener('keyup', e => { if(e.key===' '||e.key==='Enter') gaugeEnd(e); });
-      if(p.gate) addBtn(`${GATE_FEE}수전 내고 나가기`, () => send({k:'pay'}), false, p.cash < GATE_FEE);
-    }
-    if(G.phase === 'buy'){ addBtn(`세우기 (${CELLS[p.pos].p})`, () => send({k:'buy'}), true); addBtn('지나가기', () => send({k:'skip'})); }
-    if(G.phase === 'up'){ addBtn(`${G.bl[p.pos]+1}단계로 올리기 (${upCost(p.pos)})`, () => send({k:'up'}), true); addBtn('지나가기', () => send({k:'skip'})); }
-    if(G.phase === 'take'){ addBtn(`인수하기 (${takeCost(p.pos)})`, () => send({k:'take'}), true); addBtn('지나가기', () => send({k:'skip'})); }
-    if(G.phase === 'card'){ addBtn('카드 읽음', () => send({k:'ok'}), true); }
-  }
-  $('fsBtn').textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '창 모드' : '전체화면';
-}
-let exitArm = 0;
-function wireSide(){
-  $('fsBtn').onclick = toggleFS; $('rulesBtn2').onclick = showRules;
-  $('exitBtn').onclick = () => {
-    if(Date.now() < exitArm){ location.reload(); return; }
-    exitArm = Date.now() + 3000; $('exitBtn').textContent = '한 번 더 누르면 나가요';
-    setTimeout(() => { if(Date.now() >= exitArm) $('exitBtn').textContent = '나가기'; }, 3100);
-  };
-}
-function renderLog(){ const L = $('liveLog'); if(!L || !G) return; L.innerHTML = G.log.slice().reverse().map((t,i) => `<div class="${i?'':'new'}">${hzify(esc(t))}</div>`).join(''); }
-function addBtn(t, fn, main, dis){ const b = document.createElement('button'); b.className = 'btn' + (main?' main':''); b.textContent = t; b.disabled = !!dis; b.onclick = fn; $('actrow').appendChild(b); }
+      <div class="front-only">
+        <h2>나 vs 기준</h2>
+        <div id="frontVsTable"></div>
+      </div>
 
-const srcLine = o => o.src ? `<div class="src" style="font-size:12px;color:var(--paper-dim)">출처: ${o.url ? `<a href="${o.url}" target="_blank" rel="noopener" style="color:#e0c27a">${o.src}</a>` : o.src}</div>` : '';
-const TAGN = { rec:'기록', leg:'설화', fic:'창작', chk:'확인 중', lit:'소설', re:'재현 이름' };
-let sheetMode = null;
-function openSheet(html, mode){ $('sheetIn').innerHTML = html + `<div class="row"><button class="btn" id="sheetClose">닫기</button></div>`; $('sheet').hidden = false; sheetMode = mode; $('sheetClose').onclick = closeSheet; }
-function closeSheet(){ $('sheet').hidden = true; sheetMode = null; }
-function tollText(i){
-  const c = CELLS[i];
-  if(c.g === 'F') return '포를 많이 가질수록 오름: 1곳 30 · 2곳 70 · 3곳 150';
-  if(c.g === 'S') return '저포 『오목경』 점수 × (1곳 5 · 2곳 10 · 3곳 15)';
-  return `기본 ${Math.round(c.p*0.5/5)*5}수전 (같은 무리 6칸을 다 가지면 두 배)`;
-}
-function cellClick(i){
-  if(G && myTurn() && !animating()){
-    if(G.phase === 'tp' && i !== SONG()) return send({ k:'tp', x:i });
-    if(G.phase === 'pick' && G.pick && myProps(cur(), G.pick.kind).includes(i)) return send({ k:'pick', x:i });
-  }
-  const c = CELLS[i], o = G ? G.own[i] : -1;
-  openSheet(`<h2>${hzify(c.n)}${c.tag?`<span class="tag ${c.tag}">${TAGN[c.tag]}</span>`:''}</h2>
-    ${c.g ? `<p class="muted">${GROUPS[c.g].name} · 세우는 값 ${c.p}수전 · 통행세 ${tollText(i)}${o>=0?` · 주인 ${esc(G.players[o].nm)}${G.bl[i]>1?` · ${G.bl[i]}단계`:''}${G.tmp[i]?' · 사찰':''}${G.lv[i]?` · 땅값 +${G.lv[i]}`:''}`:''}</p>` : ''}
-    <p>${hzify(c.info || '여기 서면 유물 카드를 한 장 뽑는다. 카드마다 유물 이야기와 출처가 있다.')}</p>
-    ${c.zh ? `<div class="zh">${c.zh}</div>` : ''}${srcLine(c)}`, 'cell');
-}
-function showCard(cd){
-  if(sheetMode === 'card') return;
-  openSheet(`<h2>유물 카드 · ${hzify(cd.t)}<span class="tag ${cd.tag}">${TAGN[cd.tag]}</span></h2>${cd.zh?`<div class="zh">${cd.zh}</div>`:''}<p>${cd.d}</p>${srcLine(cd)}`, 'card');
-}
-function showEvent(E, t){
-  $('evtIn').innerHTML = `<div class="muted" style="letter-spacing:.2em">${t >= TURNS.length ? '마지막' : (t+1)+'턴'} · ${kingOf(E, t)}</div><div class="yr">${E.y}</div><h2>${E.t}<span class="tag ${E.tag}">${TAGN[E.tag]}</span></h2>${E.zh?`<div class="zh">${E.zh}</div>`:''}<p>${E.d}</p><p class="fx">${E.fxt}</p>${srcLine(E)}<div class="muted" style="font-size:12px">빈 곳을 눌러 닫기</div>`;
-  $('evt').hidden = false; clearTimeout(showEvent.t); showEvent.t = setTimeout(() => { $('evt').hidden = true; }, 5200);
-  buddhaSay('era');
-}
-$('evt').onclick = e => { if(e.target.closest('a')) return; $('evt').hidden = true; };
-function showLog(){ openSheet(`<h2>기록</h2>${G.log.slice().reverse().map(s => `<p>${hzify(esc(s))}</p>`).join('')}`, 'log'); }
-let overShown = false;
-function showOver(){
-  if(overShown || !G || !G.over) return; overShown = true;
-  const rows = G.players.map((p,i) => ({ p, i, s:score(p,i) })).sort((a,b) => b.s.total - a.s.total);
-  const win = G.winner != null ? G.players[G.winner] : rows.find(r => !r.p.out)?.p || rows[0].p;
-  const why = { era:'660년, 사비가 무너졌다. 나라는 사라져도 세운 것은 남는다.', groups:'왕궁·성·절 가운데 두 무리를 모두 차지했다.', jwapyeong:'좌평이 되어 출발점을 두 번 더 밟았다.', last:'마지막까지 남았다.' }[G.over];
-  $('overIn').innerHTML = `<h2 style="color:var(--bronze);font-size:28px">${esc(win.nm)}의 승리</h2><p class="muted" style="margin:0">${why}</p>
-    <div style="overflow-x:auto"><table><tr><th>이름</th><th>건물</th><th>무리</th><th>도장</th><th>관등</th><th>오수전</th><th>합</th></tr>
-    ${rows.map(({p,s}) => `<tr><td>${esc(p.nm)}${p.out?' (탈락)':''}</td><td>${s.props}</td><td>${s.groups}</td><td>${s.stamps}</td><td>${s.rank}</td><td>${s.cash}</td><td><b>${s.total}</b></td></tr>`).join('')}</table></div>
-    <div class="row"><button class="btn main" id="again">처음 화면으로</button></div>`;
-  $('over').hidden = false; $('again').onclick = () => location.reload();
-  if(SOLO.on){ const won = win.id === 'Y'; $('over').hidden = true; story(won ? SOLO_WIN : SOLO_LOSE, SOLO_SRC).then(() => { $('over').hidden = false; }); }
-}
-function showRules(){
-  openSheet(`<h2>규칙</h2><div class="rules">
-  <p><b>저포 던지기.</b> 버튼을 꾹 누르면 힘 게이지가 오르내리고, 놓으면 막대 다섯 개가 굴러요. 게이지가 70~85(초록)에서 놓으면 <b>명중 +1칸</b>. 막대는 한쪽이 흰 면, 한쪽이 검은 면이고, 두 막대에는 흰 면에 꿩(<span class="hz">雉</span>), 검은 면에 소(<span class="hz">牛</span>)가 그려져 있어요. 모양의 이름과 점수는 당나라 이고의 『오목경』에서 왔고, 칸 수는 게임용이에요.</p>
-  <div style="overflow-x:auto"><table><tr><th>모양</th><th>『오목경』</th><th>칸</th><th></th></tr>
-  ${OUT.map(o => `<tr><td>${o.rare ? '희귀자 (𢳚, 대부분의 글꼴에 없는 한자)' : `<span class="hz">${o.zh}</span> ${o.ko}`}<div class="muted" style="font-size:11px">${o.how}</div></td><td>${o.pts ?? '—'}</td><td>${o.move}</td><td>${o.king?'왕채 · 한 번 더':'맹채'}</td></tr>`).join('')}</table></div>
-  <p><b>왕채</b>(노·치·독·백)가 나오거나, 다른 사람이 있는 칸에 서면(<span class="hz">擊馬</span>) 한 번 더 던져요. — 『오목경』 「<span class="hz">凡擊馬及王采皆又投</span>」</p>
-  <p><b>건물과 통행세.</b> 빈 칸에 서면 수전을 내고 건물을 세워요: 왕궁 → 전각, 성 → 성루, 절 → 가람, 포 → 나루터, 특수 → 기념 건물. 남의 건물 칸에 서면 통행세. 왕궁·성·절은 한 무리(6칸)를 다 가지면 두 배. 포는 가진 수만큼(30·70·150), 특수 건물은 저포 점수 × 가진 수(5·10·15). 정사암에서는 누구나 정사암 회의가, 국립부여박물관에서는 유물 카드가 기다려요.</p>
-  <p><b>업그레이드와 인수.</b> 내 왕궁·성·절 칸에 다시 도착하면 건물을 한 단계 올릴 수 있어요(최대 3단계, 통행세 1·2·3배, 세우는 값의 60%씩). 남의 건물에 도착하면 통행세를 낸 뒤 그 건물을 <b>지금 단계 그대로</b> 인수할 수 있어요(지금까지 들어간 값의 1.5배). 인수한 건물도 다음에 다시 도착하면 올릴 수 있어요. <b>3단계 건물은 금박을 입혀 인수할 수 없어요.</b></p>
-  <p><b>유물 카드.</b> 금동대향로(출발로), 연꽃무늬 벽돌(땅값 상승), 금동 광배(통행세 한 번 면제), 구구단 목간(가진 오수전 두 배), 사택지적비·자씨당·정림사지 유물·인물무늬 기와(내 건물 곁에 사찰 세우기, 통행세 1.5배).</p>
-  <p><b>기복(<span class="hz">棋卜</span>).</b> 바둑알 한 줌이 홀이면 +60, 짝이면 −40 (창작 놀이).</p>
-  <p><b>네 귀퉁이.</b> 출발(사비 천도) · 왜국 파견(한 번 쉬고 돌아오며 50) · 구태묘 제사(모두 40) · 과하마(원하는 칸으로).</p>
-  <p><b>관등과 봉급.</b> 출발을 지날 때마다 두 품씩 오르고 봉급을 받아요. 극우(흰 띠) → 계덕(푸른 띠) → 시덕(검은 띠) → 내솔(은꽃 관 장식) … 좌평은 <b>내솔(6품) 이상</b>이 <b>정사암 회의</b>에서 왕채를 내야 돼요. 『주서』에서 6품 이상만 관에 은꽃을 달았다는 구절에서 따왔어요.</p>
-  <div class="src">${RANK_SRC} · 봉급은 게임용</div>
-  <p><b>관문</b>(나성·부소산성)에 멈추면 다음 차례에 왕채가 나와야 나가요. 30수전을 내면 바로 나가요.</p>
-  <p><b>열두 턴.</b> 선두가 출발(사비 천도)이나 맞은편 구태묘 제사를 지날 때마다 다음 턴으로 넘어가요. 턴마다 그 시대(성왕 → 위덕왕 → 법왕·무왕 → 의자왕)의 사건 서너 개 가운데 하나가 무작위로 일어나요. 12턴 다음 바퀴에 660 사비 함락이 오면 점수를 세요.</p>
-  <p><b>이기는 법.</b> ① 사비 함락 때 점수가 가장 높은 사람 ② 왕궁·성·절 가운데 두 무리를 다 가진 사람 ③ 좌평이 된 뒤 출발을 두 번 더 지난 사람 ④ 혼자 남은 사람(파산하면 탈락).</p>
-  <p class="muted">기록·설화·창작·재현 이름·확인 중 표시는 칸과 카드에 붙어 있어요. 칸을 누르면 설명과 출처가 나와요.</p></div>`, 'rules');
-}
+      <h2>피드백 상세</h2>
+      <ul id="feedbackList" class="feedback"></ul>
+      <details id="missedBox" class="missed" hidden>
+        <summary>앱이 놓친 실수 알려 주기 <small id="missedCount" class="muted"></small></summary>
+        <div class="missed-form">
+          <select id="missedSel" aria-label="놓친 실수"></select>
+          <input id="missedRep" type="text" inputmode="numeric" placeholder="몇 회째? (예: 2 4)" aria-label="반복 번호">
+          <input id="missedNote" type="text" placeholder="메모 (선택)" aria-label="메모">
+          <button id="missedSave" class="btn">기록</button>
+        </div>
+      </details>
 
-/* =====================================================================
-   6. 혼자 하기: 양생과 부처님 (『금오신화』 「만복사저포기」에서 빌린 이야기 · 부처님 말은 창작)
-   ===================================================================== */
-const SOLO = { on:false };
-const SOLO_SRC = '김시습, 『금오신화』 「만복사저포기」 (15세기 조선) — 줄거리를 빌리고 말은 새로 씀';
-const SOLO_INTRO = [
-  '남원 만복사. 일찍 부모를 여의고 홀로 사는 서생 양생이 절 한쪽 방에 묵고 있었다.',
-  '봄밤, 양생은 저포 막대를 품고 부처님 앞에 나아가 말했다.',
-  '"부처님, 저와 저포 내기를 하시지요. 제가 지면 법회를 열어 갚겠습니다.<br>제가 이기면, 외로운 이 몸에게 짝을 보내 주십시오."',
-  '부처님은 말이 없으셨다. 그런데 이번에는 막대가 저절로 들썩였다.',
-  '<span style="font-size:.8em;color:var(--paper-dim)">— 여기서부터는 원작과 다른 이야기. 부처님과 부여 한 바퀴를 돈다.<br>660년이 오기 전에 더 많이 세우면 양생의 승리.</span>',
-];
-const SOLO_WIN = ['판이 멈추었다. 양생이 세운 것이 더 많이 남았다.', '부처님이 처음으로 빙그레 웃으신 것 같았다.', '원작에서는 이때 한 여인이 불당에 나타나, 양생과 짧고도 긴 인연을 맺는다.', '"이긴 것은 막대가 아니라, 끝까지 남긴 마음이다." — 어디선가 들린 듯한 말 (창작)'];
-const SOLO_LOSE = ['판이 멈추었다. 부처님이 세운 것이 더 많이 남았다.', '양생은 약속대로 법회를 열기로 했다. 진 내기는 진 내기.', '"다시 던져도 좋다. 지나간 판은 돌아오지 않지만, 다음 판은 온다." (창작)'];
-const BUDDHA = {
-  king:['허허, 왕채가 나왔구나.', '막대도 인연을 따르는 법이지.', '한 번 더 던지마.'],
-  toll:['통행세는 공덕으로 삼으마.', '지나는 길에 시주라 여기거라.'],
-  paid:['내가 네 길을 밟았구나. 받아라.', '빚진 것은 갚는 법.'],
-  era:['세월이 또 한 칸 흘렀구나.', '쉽게 가고, 돌아오기는 어렵지.'],
-  buy:['그 자리, 오래 기억해 다오.', '남기는 이가 이기는 판이다.'],
-};
-function buddhaSay(kind){ if(!SOLO.on) return; const a = BUDDHA[kind]; if(a) toastSay('부처님: ' + a[Math.floor(Math.random()*a.length)]); }
-function soloWatch(s){
-  if(!SOLO.on) return;
-  if(/^부처님: .*왕채/.test(s)) buddhaSay('king');
-  else if(/→ 부처님: 통행세/.test(s)) buddhaSay('toll');
-  else if(/^부처님 → .*통행세/.test(s)) buddhaSay('paid');
-  else if(/^부처님: .*세웠다/.test(s)) buddhaSay('buy');
-}
-function story(lines, src){
-  return new Promise(res => {
-    const box = $('story'), p = $('storyP'); let i = 0;
-    $('storySrc').textContent = src || '';
-    const show = () => { p.innerHTML = lines[i]; p.style.animation = 'none'; void p.offsetWidth; p.style.animation = ''; };
-    box.hidden = false; show();
-    box.onclick = () => { i++; if(i < lines.length) show(); else { box.hidden = true; box.onclick = null; res(); } };
-  });
-}
-$('startSolo').onclick = async () => {
-  const nm = ($('soloNick').value || '양생').trim().slice(0,10) || '양생';
-  SOLO.on = true;
-  await story(SOLO_INTRO, SOLO_SRC);
-  startGame(newGame([{ id:'Y', nm, c:'#e2574c' }, { id:'B', nm:'부처님', ai:true, c:'#e0c27a' }]));
-  ME = ['Y']; enterGame();
-};
+      <div class="side-only">
+        <h2>각도 곡선 비교</h2>
+        <p class="sub" id="compareSub"></p>
+        <canvas id="compareChart" class="chart"></canvas>
+        <ul id="diffList" class="diffs"></ul>
+      </div>
 
-/* =====================================================================
-   7. 한 기기 / 방
-   ===================================================================== */
-const isHostSide = () => !NET || NET.host;
-/* 차례 제한 10초: 온라인 방에서 사람 차례에만. 막대·말 움직임과 사건 창이 끝난 뒤부터 센다.
-   방장이 시간을 재고, 끝나면 대신 움직인다 (던지기 · 지나가기 · 카드 닫기). */
-const TURN_MS = 10000;
-let tmKey = null, tmStart = 0, tmFired = null;
-function turnClock(){
-  const el = $('tleft');
-  if(!G || G.over || !NET || cur().ai || cur().out){ if(el) el.textContent = ''; return; }
-  if(G.seq !== tmKey){ tmKey = G.seq; tmStart = 0; }
-  if(!tmStart){ if(animating() || !$('evt').hidden){ if(el) el.textContent = ''; return; } tmStart = Date.now(); }
-  const left = Math.max(0, TURN_MS - (Date.now() - tmStart));
-  if(el){ el.textContent = Math.ceil(left / 1000) + '초'; el.classList.toggle('hurry', left <= 3000); }
-  if(left === 0 && isHostSide() && tmFired !== tmKey){ tmFired = tmKey; timeUp(); }
-}
-function timeUp(){
-  const p = cur(), ph = G.phase;
-  if(gauge.on && myTurn()) return gaugeEnd();
-  let a = null;
-  if(ph === 'throw') a = { k:'throw', x:0 };
-  else if(['buy','up','take'].includes(ph)) a = { k:'skip' };
-  else if(ph === 'card') a = { k:'ok' };
-  else if(ph === 'tp') a = { k:'tp', x:(SONG() + 1) % N };
-  else if(ph === 'pick'){ const m = myProps(p, G.pick.kind); if(m.length) a = { k:'pick', x:m[0] }; }
-  if(a){ log(`${p.nm}: 시간 초과`); act(p.id, a); }
-}
-setInterval(turnClock, 200);
-const myTurn = () => G && !G.over && ME && ME.includes(cur().id);
-function send(a){
-  if(!myTurn()) return;
-  a = { ...a, s: G.seq };
-  if(isHostSide()) act(cur().id, a);
-  else { NET.n = (NET.n||0) + 1; NET.r.presence({ it:{ n:NET.n, pid:cur().id, a } }).catch(()=>{}); }
-}
-function publish(){
-  if(NET && NET.host){ const st = { ...G, log: G.log.slice(-3) }; NET.r.presence({ st }).catch(e => console.warn('상태가 너무 큼?', e)); }
-  render();
-}
-function enterGame(){
-  for(const k in DISP) delete DISP[k];
-  lastEvtN = 0; lastNoteN = G.note?.n || 0; lastThrowN = G.last?.n || 0;
-  $('lobby').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
-  buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { sizeBoard(); placeCenter(); render(); }); setTimeout(() => { sizeBoard(); placeCenter(); drawTokens(); }, 300);
-}
-addEventListener('resize', () => { if(G && $('tokens')) drawTokens(); });
+      <h2><span class="side-only">각도 변화</span><span class="front-only">높이·무릎 간격 변화</span></h2>
+      <canvas id="timelineChart" class="chart"></canvas>
 
-const seatState = [{ nm:'나', who:'me' }, { nm:'컴퓨터 1', who:'ai' }, { nm:'컴퓨터 2', who:'off' }, { nm:'컴퓨터 3', who:'off' }];
-function drawSeats(){
-  $('seats').innerHTML = seatState.map((s,i) => `<div class="seat"><span class="dot">${chibi({ id:'L'+i, c:COLORS[i], rank:0, nm:s.nm }, i)}</span>
-    <input type="text" id="sn${i}" value="${esc(s.nm)}" maxlength="10" style="max-width:150px" aria-label="${i+1}번 자리 이름">
-    <select id="sw${i}" aria-label="${i+1}번 자리"><option value="me"${s.who==='me'?' selected':''}>사람</option><option value="ai"${s.who==='ai'?' selected':''}>컴퓨터</option><option value="off"${s.who==='off'?' selected':''}>비움</option></select></div>`).join('');
-  seatState.forEach((s,i) => { $('sn'+i).oninput = e => s.nm = e.target.value; $('sw'+i).onchange = e => s.who = e.target.value; });
-}
-$('startLocal').onclick = () => {
-  const seats = seatState.map((s,i) => ({ ...s, id:'L'+i })).filter(s => s.who !== 'off');
-  if(seats.length < 2) return alertLobby('두 사람 이상이 있어야 해요. 한 자리를 컴퓨터로 바꿔 주세요.');
-  startGame(newGame(seats.map(s => ({ id:s.id, nm:(s.nm||'이름 없음').slice(0,10), ai:s.who==='ai' }))));
-  ME = seats.filter(s => s.who === 'me').map(s => s.id);
-  enterGame();
-};
-function alertLobby(t){ $('roomNote').textContent = t; $('roomNote').scrollIntoView({block:'center'}); }
-$('howBtn').onclick = showRules;
-const showMenu = id => ['menuMain','menuSingle','menuMulti'].forEach(m => $(m).hidden = m !== id);
-$('goSingle').onclick = () => showMenu('menuSingle');
-$('goMulti').onclick = () => showMenu('menuMulti');
-document.querySelectorAll('[data-back]').forEach(b => b.onclick = () => showMenu('menuMain'));
-// 전체화면: 버튼을 누를 때만 (브라우저가 허락하지 않으면 안내만)
-function toggleFS(){
-  const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
-  if(document.fullscreenElement || document.webkitFullscreenElement){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
-  if(!req){ toastSay('이 브라우저는 전체화면을 지원하지 않아요. 홈 화면에 추가해서 열어 보세요.'); return; }
-  try{ const r = req.call(el); if(r && r.catch) r.then(() => { try{ screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} }).catch(() => toastSay('여기서는 전체화면을 쓸 수 없어요. 게임 링크를 새 탭에서 열어 보세요.')); }catch(e){ toastSay('여기서는 전체화면을 쓸 수 없어요.'); }
-}
-$('fsBtn0').onclick = toggleFS;
-document.addEventListener('fullscreenchange', () => { if(G) renderActions(); setTimeout(() => { if(G && $('tokens')) drawTokens(); }, 200); });
-drawSeats();
+      <div class="front-only">
+        <h2>좌우 근육 사용 <span class="tag">추정</span></h2>
+        <p class="sub" id="frontMuscleSub"></p>
+        <ul id="frontMuscleView" class="muscle-lr"></ul>
+      </div>
+      <div class="side-only">
+        <h2>근육 부하 <span class="tag">추정</span></h2>
+        <div id="muscleView" class="muscle"></div>
+      </div>
 
-/* ---- Firebase 방 (아티팩트의 room과 같은 모양: join → presence / onPeers / peers) ----
-   FB_CONFIG에 Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹)의 firebaseConfig 값을 붙여 넣는다.
-   apiKey는 비밀이 아니다. 보안은 Realtime Database 규칙이 맡는다 (자기 peers/{uid}에만 쓰기).
-   상태는 JSON 문자열로 저장한다: Realtime Database는 null과 빈 배열을 지워 버리기 때문. */
-const FB_CONFIG = {
-  apiKey: 'AIzaSyAVSIFMxhpQRl3UtGaCZQ6-SXozK9LrJbw',
-  authDomain: 'test-d810d.firebaseapp.com',
-  databaseURL: 'https://test-d810d-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'test-d810d',
-  appId: '1:837047713907:web:7de42e23de537cda69ea06',
-};
-const FB_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
-async function firebaseRoom(){
-  if(!FB_CONFIG.apiKey || !FB_CONFIG.databaseURL) throw new Error('FB_CONFIG가 비어 있음');
-  const [{ initializeApp }, A, D] = await Promise.all(
-    ['firebase-app.js','firebase-auth.js','firebase-database.js'].map(f => import(FB_SDK + f)));
-  const app = initializeApp(FB_CONFIG), auth = A.getAuth(app), db = D.getDatabase(app);
-  await A.setPersistence(auth, A.browserSessionPersistence);   // 탭마다 다른 사람 (새로고침해도 유지)
-  const { user } = await A.signInAnonymously(auth);
-  return { async join(name){
-    const base = D.ref(db, `rooms/${name}/peers`), meRef = D.child(base, user.uid);
-    const joined = Date.now(); let mine = {}, list = [];
-    const subs = [];
-    await D.onDisconnect(meRef).remove();                      // 창을 닫으면 방에서 빠짐
-    D.onValue(base, snap => {
-      list = Object.entries(snap.val() || {}).map(([uid, x]) => {
-        let pr = {}; try{ pr = JSON.parse(x.j || '{}'); }catch(e){}
-        return { peer:uid, kind:'viewer', presence:pr, isMe: uid === user.uid, sameTab: uid === user.uid, t: x.t || 0 };
-      }).sort((a, b) => a.t - b.t);
-      subs.forEach(f => f({ peers: list }));
-    });
-    return {
-      presence(o){ Object.assign(mine, o); return D.set(meRef, { j: JSON.stringify(mine), t: joined }); },
-      onPeers(f){ subs.push(f); },
-      peers(){ return list; },
-    };
-  }};
-}
-let ROOM = null;
-(async () => {
-  try{ ROOM = await firebaseRoom(); }catch(e){ console.warn('Firebase 연결 실패:', e); ROOM = null; }
-  if(!ROOM){ $('roomNote').textContent = '온라인 서버에 연결하지 못했어요. 지금은 한 기기에서 하기만 돼요.'; return; }
-  $('roomNote').textContent = '방을 만들고 방 번호를 친구에게 알려 주세요. 2~4명.';
-  $('roomCtl').hidden = false;
-})();
-async function openRoom(code, host){
-  const nick = ($('nick').value || '').trim().slice(0,10) || (host ? '방장' : '손님');
-  let r;
-  try{ r = await ROOM.join('jeopo-' + code); }catch(e){ return alertLobby('방에 들어가지 못했어요. 잠시 뒤 다시 해 보세요.'); }
-  NET = { r, host, code, nick, seen:{} };
-  await r.presence({ nick, host, it:null, st:null }).catch(()=>{});
-  $('roomCtl').hidden = true; $('waiting').hidden = false;
-  r.onPeers(ch => onRoom(ch.peers));
-  onRoom(r.peers());
-}
-$('mkRoom').onclick = () => openRoom(String(Math.floor(1000 + Math.random()*9000)), true);
-$('joinRoom').onclick = () => { const c = ($('code').value||'').trim(); if(!/^\d{4}$/.test(c)) return alertLobby('방 번호 네 자리를 넣어 주세요.'); openRoom(c, false); };
-function onRoom(peers){
-  if(!NET) return;
-  const people = peers.filter(p => p.kind === 'viewer' && p.presence && p.presence.nick);
-  if(!G){
-    const hostPeer = people.find(p => p.presence.host);
-    $('waiting').innerHTML = `<b>방 번호 ${NET.code}</b><div class="muted" style="font-size:14px">${people.map(p => esc(p.presence.nick) + (p.presence.host?' (방장)':'') + (p.isMe&&p.sameTab?' · 나':'')).join(', ') || '연결하는 중…'}</div>` +
-      (NET.host ? `<div class="row"><button class="btn main" id="goRoom" ${people.length<2?'disabled':''}>판 열기 (${Math.min(people.length,4)}명)</button></div>` : `<div class="muted" style="font-size:13px">${hostPeer ? '방장이 판을 열기를 기다리는 중…' : '방장을 찾는 중… 방 번호가 맞는지 확인해 주세요.'}</div>`);
-    if(NET.host && $('goRoom')) $('goRoom').onclick = () => {
-      startGame(newGame(people.slice(0,4).map(p => ({ id:p.peer, nm:p.presence.nick })))); ME = [people.find(p => p.isMe && p.sameTab).peer];
-      enterGame(); publish();
-    };
-    if(!NET.host && hostPeer && hostPeer.presence.st){ G = JSON.parse(JSON.stringify(hostPeer.presence.st)); ME = [people.find(p => p.isMe && p.sameTab)?.peer]; enterGame(); }
-    return;
-  }
-  if(NET.host){
-    for(const p of people){
-      const it = p.presence.it; if(!it || p.isMe) continue;
-      if((NET.seen[p.peer]||0) >= it.n) continue;
-      NET.seen[p.peer] = it.n;
-      if(it.pid === p.peer) act(p.peer, it.a);
-    }
-  } else {
-    const hostPeer = people.find(p => p.presence.host);
-    if(hostPeer && hostPeer.presence.st && hostPeer.presence.st.seq !== G.seq){ G = JSON.parse(JSON.stringify(hostPeer.presence.st)); render(); }
-  }
-}
-</script>
+      <button id="csvBtn" class="btn block">CSV 내보내기</button>
+    </details>
+    <p class="disclaimer">참고용이에요. 의료 진단이 아니에요.</p>
+  </section>
 
+  <!-- 기록 -->
+  <section id="view-history" class="view" hidden>
+    <div id="histTabs" class="chips"></div>
+    <h2>추이</h2>
+    <canvas id="trendChart" class="chart"></canvas>
+    <h2>세트 목록</h2>
+    <div id="historyList" class="session-list"></div>
+  </section>
+
+  <!-- 설정 -->
+  <section id="view-settings" class="view" hidden>
+    <div class="card">
+      <label class="setting"><span><b>영상도 함께 저장</b><br><small>끄면 관절 데이터와 분석 결과만 저장해요.</small></span><input type="checkbox" id="setSaveVideo"></label>
+    </div>
+    <div class="card">
+      <p><b>데이터</b><br><small>모든 데이터는 이 기기의 브라우저 저장소에만 있어요.</small></p>
+      <p id="storageInfo" class="sub"></p>
+      <button id="deleteAll" class="btn danger">모든 기록·무게 삭제</button>
+    </div>
+    <div class="card">
+      <p><b>판정 평가 기록</b><br><small>'맞아요 / 틀렸어요'와 놓친 실수를 모은 기록이에요. 영상과 이름은 들어가지 않아요.</small></p>
+      <label class="setting"><span>평가자</span>
+        <select id="setRater"><option value="">선택 안 함</option><option>트레이너</option><option>체대생</option><option>본인</option><option>기타</option></select></label>
+      <p id="labelInfo" class="sub"></p>
+      <button id="exportLabels" class="btn">평가 기록 CSV 내보내기</button>
+    </div>
+    <div class="card">
+      <button id="replayOnboarding" class="btn">촬영 가이드 다시 보기</button>
+    </div>
+    <p class="disclaimer">폼 체크 MVP 웹 프로토타입 · 자세 추정: MediaPipe Pose (기기 내 처리)</p>
+  </section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+<script type="module" src="src/app.js"></script>
 </body>
 </html>
