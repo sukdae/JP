@@ -1,3 +1,11 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <title>모두의 저포</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1097,10 +1105,48 @@ $('fsBtn0').onclick = toggleFS;
 document.addEventListener('fullscreenchange', () => { if(G) renderActions(); setTimeout(() => { if(G && $('tokens')) drawTokens(); }, 200); });
 drawSeats();
 
+/* ---- Firebase 방 (아티팩트의 room과 같은 모양: join → presence / onPeers / peers) ----
+   FB_CONFIG에 Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹)의 firebaseConfig 값을 붙여 넣는다.
+   apiKey는 비밀이 아니다. 보안은 Realtime Database 규칙이 맡는다 (자기 peers/{uid}에만 쓰기).
+   상태는 JSON 문자열로 저장한다: Realtime Database는 null과 빈 배열을 지워 버리기 때문. */
+const FB_CONFIG = {
+  apiKey: 'AIzaSyAVSIFMxhpQRl3UtGaCZQ6-SXozK9LrJbw',
+  authDomain: 'test-d810d.firebaseapp.com',
+  databaseURL: 'https://test-d810d-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'test-d810d',
+  appId: '1:837047713907:web:7de42e23de537cda69ea06',
+};
+const FB_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
+async function firebaseRoom(){
+  if(!FB_CONFIG.apiKey || !FB_CONFIG.databaseURL) throw new Error('FB_CONFIG가 비어 있음');
+  const [{ initializeApp }, A, D] = await Promise.all(
+    ['firebase-app.js','firebase-auth.js','firebase-database.js'].map(f => import(FB_SDK + f)));
+  const app = initializeApp(FB_CONFIG), auth = A.getAuth(app), db = D.getDatabase(app);
+  await A.setPersistence(auth, A.browserSessionPersistence);   // 탭마다 다른 사람 (새로고침해도 유지)
+  const { user } = await A.signInAnonymously(auth);
+  return { async join(name){
+    const base = D.ref(db, `rooms/${name}/peers`), meRef = D.child(base, user.uid);
+    const joined = Date.now(); let mine = {}, list = [];
+    const subs = [];
+    await D.onDisconnect(meRef).remove();                      // 창을 닫으면 방에서 빠짐
+    D.onValue(base, snap => {
+      list = Object.entries(snap.val() || {}).map(([uid, x]) => {
+        let pr = {}; try{ pr = JSON.parse(x.j || '{}'); }catch(e){}
+        return { peer:uid, kind:'viewer', presence:pr, isMe: uid === user.uid, sameTab: uid === user.uid, t: x.t || 0 };
+      }).sort((a, b) => a.t - b.t);
+      subs.forEach(f => f({ peers: list }));
+    });
+    return {
+      presence(o){ Object.assign(mine, o); return D.set(meRef, { j: JSON.stringify(mine), t: joined }); },
+      onPeers(f){ subs.push(f); },
+      peers(){ return list; },
+    };
+  }};
+}
 let ROOM = null;
 (async () => {
-  try{ ROOM = window.claude && window.claude.use ? await window.claude.use('room') : null; }catch(e){ ROOM = null; }
-  if(!ROOM){ $('roomNote').textContent = '여럿이 하기는 claude.ai에 로그인해 이 게임을 함께 연 사람들끼리 쓸 수 있어요. 지금은 한 기기에서 하기만 돼요.'; return; }
+  try{ ROOM = await firebaseRoom(); }catch(e){ console.warn('Firebase 연결 실패:', e); ROOM = null; }
+  if(!ROOM){ $('roomNote').textContent = '온라인 서버에 연결하지 못했어요. 지금은 한 기기에서 하기만 돼요.'; return; }
   $('roomNote').textContent = '방을 만들고 방 번호를 친구에게 알려 주세요. 2~4명.';
   $('roomCtl').hidden = false;
 })();
@@ -1143,3 +1189,6 @@ function onRoom(peers){
   }
 }
 </script>
+
+</body>
+</html>
