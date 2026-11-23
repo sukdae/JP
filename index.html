@@ -58,6 +58,20 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 
 #game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
+#game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.scene .sky,.scene .dusk{position:absolute;inset:0}
+.scene .sky{background:linear-gradient(#f2b77a 0%,#d9825e 38%,#6b3f46 70%,#2a1d22 100%)}
+.scene .dusk{background:linear-gradient(#0d1024 0%,#2a1a3a 45%,#5a2420 80%,#1a1010 100%);opacity:var(--dusk,0);transition:opacity 3s ease}
+.scene svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%}
+.scene .m3{fill:#5a3a44;opacity:.55}.scene .m2{fill:#3a2730;opacity:.8}.scene .m1{fill:#22181c}
+.scene .tower{fill:#22181c;opacity:.9}
+.scene .river{fill:#1c2a38}.scene .shine rect{fill:#f2c98a;opacity:.35;animation:shine 4s ease-in-out infinite alternate}
+.scene .shine rect:nth-child(2){animation-delay:1.3s}.scene .shine rect:nth-child(3){animation-delay:2.1s}.scene .shine rect:nth-child(4){animation-delay:.6s}
+@keyframes shine{from{opacity:.1;transform:translateX(0)}to{opacity:.5;transform:translateX(18px)}}
+.scene .cloud{position:absolute;height:14px;border-radius:14px;background:#fbe3c2;opacity:.25;animation:drift 90s linear infinite}
+.scene .cloud.c1{top:12%;width:180px;left:-200px}.scene .cloud.c2{top:22%;width:120px;left:-140px;animation-duration:130s;animation-delay:-50s}
+@keyframes drift{to{transform:translateX(calc(100vw + 400px))}}
+@media (prefers-reduced-motion:reduce){.scene .cloud,.scene .shine rect{animation:none}}
 /* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
 #game #board{transform:rotateX(var(--tilt));transform-origin:50% 100%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc(100vw - 2 * var(--pw) - 40px), calc((100vh - 16px - 96px) * 1.25));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
 #game .cell{transform-style:preserve-3d;overflow:visible}
@@ -225,8 +239,8 @@ td:first-child,th:first-child{text-align:left}
 <section id="lobby">
   <div class="mark">모두의 저포<small><span class="hz">樗蒲</span> · 부여 한 바퀴</small></div>
   <div id="menuMain" class="menu">
-    <button class="btn main big" id="goSingle">싱글플레이</button>
-    <button class="btn main big" id="goMulti">멀티플레이</button>
+    <button class="btn main big" id="goSingle">혼자 하기</button>
+    <button class="btn main big" id="goMulti">함께 하기</button>
     <div class="row" style="justify-content:center"><button class="btn" id="howBtn">규칙</button><button class="btn" id="fsBtn0">전체화면</button></div>
   </div>
   <div id="menuSingle" class="menu" hidden>
@@ -256,7 +270,7 @@ td:first-child,th:first-child{text-align:left}
   </div>
 </section>
 
-<section id="game" hidden><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn" id="fsBtn">전체화면</button><button class="btn" id="rulesBtn2">규칙</button><button class="btn" id="exitBtn">나가기</button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
+<section id="game" hidden><div class="scene" aria-hidden="true"><div class="sky"></div><div class="dusk"></div><div class="cloud c1"></div><div class="cloud c2"></div><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice"><path class="m3" d="M0 330 L120 270 L260 300 L420 230 L560 280 L700 240 L860 290 L1000 220 L1180 280 L1320 245 L1480 285 L1600 260 L1600 500 L0 500Z"/><path class="m2" d="M0 370 Q180 300 360 345 T720 330 Q900 280 1080 340 T1600 320 L1600 500 L0 500Z"/><g class="tower"><rect x="1210" y="250" width="16" height="70"/><path d="M1196 262h44l-6 -8h-32zM1198 282h40l-6 -7h-28zM1200 300h36l-5 -6h-26zM1202 316h32l-5 -6h-22z"/></g><path class="m1" d="M0 410 Q260 360 520 395 T1040 390 Q1300 350 1600 385 L1600 500 L0 500Z"/><rect class="river" x="0" y="440" width="1600" height="60"/><g class="shine"><rect x="200" y="452" width="90" height="2"/><rect x="620" y="466" width="140" height="2"/><rect x="1100" y="458" width="110" height="2"/><rect x="1380" y="474" width="70" height="2"/></g></svg></div><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn" id="fsBtn">전체화면</button><button class="btn" id="rulesBtn2">규칙</button><button class="btn" id="exitBtn">나가기</button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
 <div id="sheet" hidden><div class="in" id="sheetIn"></div></div>
 <div id="evt" hidden><div class="in" id="evtIn"></div></div>
 <div id="over" hidden><div class="in" id="overIn"></div></div>
@@ -281,11 +295,11 @@ const GROUPS = {
 };
 const N = 32;
 const CELLS0 = [
-  { t:'start', n:'START', info:'538년, 성왕이 도읍을 사비로 옮기고 나라 이름을 남부여라 했다. 이 칸을 지날 때마다 관등이 오르고 봉급을 받는다.', zh:'移都於泗沘 一名所夫里', tag:'rec', ...sg('sg_026r_0060_0100','권26 성왕 (538년)') },
+  { t:'start', n:'출발', info:'538년, 성왕이 도읍을 사비로 옮기고 나라 이름을 남부여라 했다. 이 칸을 지날 때마다 관등이 오르고 봉급을 받는다.', zh:'移都於泗沘 一名所夫里', tag:'rec', ...sg('sg_026r_0060_0100','권26 성왕 (538년)') },
   { t:'prop', g:'P', n:'쌍북리 유적', p:140, info:'사비 도성 안 관청 터 일대. 2011년 6월 이곳 공사장에서 나온 목간이 2016년 곱셈구구를 적은 백제 목간으로 판정되었다. 국내에서 처음 나온 구구단 자료다.', tag:'rec', src:'「백제 시대 곱셈구구단 목간 재음미」(학술 논문) · 주간경향 「백제 \'구구단 목간\'의 수수께끼」', url:'https://scholar.kyobobook.co.kr/article/detail/4050028763450' },
   { t:'prop', g:'P', n:'문사전', p:150, info:'백제문화단지 사비궁의 동궁 정전. 다시 지은 건물의 이름이며, 백제 때 이름은 전하지 않는다.', src:'백제문화단지 재현 건물', tag:'re' },
   { t:'card', n:'유물 카드' },
-  { t:'prop', g:'P', n:'연영전', p:160, info:'백제문화단지 사비궁의 동궁 외전 (재현 이름).', src:'백제문화단지 재현 건물', tag:'re' },
+  { t:'prop', g:'P', n:'관북리 유적', p:160, info:'부소산 남쪽 기슭, 사비의 왕궁 터로 보는 곳. 큰 전각 건물 터와 도로, 연못, 공방 터가 나왔다. 2001년 사적.', tag:'rec', ...ek('E0024376','부여 관북리 유적') },
   { t:'prop', g:'P', n:'천정전', p:180, info:'백제문화단지 사비궁의 정전 (재현 이름). 왕이 조회를 여는 곳으로 지었다.', src:'백제문화단지 재현 건물', tag:'re' },
   { t:'prop', g:'F', n:'대왕포', p:120, info:'백제 왕이 늘 이곳에서 잔치를 열고 노래하고 춤추었기에 지금도 대왕포라 부른다고 한다.', zh:'百濟王每逰宴歌舞, 故至今稱爲大王浦.', src:'『삼국유사』 권2 기이 남부여·전백제 「대왕포의 유래」 · 국사편찬위원회 한국사데이터베이스', url: DB + 'sy_002r_0010_0200_0090', tag:'leg' },
   { t:'prop', g:'P', n:'무덕전', p:180, info:'백제문화단지 사비궁의 서궁 정전 (재현 이름).', src:'백제문화단지 재현 건물', tag:'re' },
@@ -304,14 +318,14 @@ const CELLS0 = [
   { t:'prop', g:'C', n:'석성산성', p:170, info:'사비 도성의 남동쪽 바깥 관문을 지키려고 6세기 전반에 쌓은 돌 산성. 세 겹 성벽이 있다.', tag:'rec', ...ek('E0024411','부여 석성산성') },
   { t:'prop', g:'S', n:'낙화암', p:150, info:'부소산 북쪽 백마강가 절벽. 백제가 무너질 때 여인들이 몸을 던졌다고 전한다. 본래 이름은 타사암이었고, 후궁이 궁녀로 바뀌어 전해지며 꽃에 빗댄 이름이 붙었다고 본다.', tag:'leg', ...ek('E0011673','낙화암',' · 『삼국유사』에 인용된 백제고기') },
   { t:'prop', g:'T', n:'용정리 사지', p:180, info:'부여읍 용정리의 백제 절터. 금당 터로 보이는 기단이 남아 있다.', tag:'rec', ...ek('E0039669','용정리 사지') },
-  { t:'prop', g:'T', n:'고란사', p:190, info:'부소산 백마강가의 절. 백제 때 지었다는 이야기가 전하고, 절 벼랑에 자라는 고란초에서 이름이 왔다.', tag:'rec', ...ek('E0003413','부소산 고란사') },
+  { t:'prop', g:'T', n:'고란사', p:190, info:'부소산 백마강가의 절. 백제 때 지었다는 이야기가 전하고, 절 벼랑에 자라는 고란초에서 이름이 왔다고 한다.', tag:'leg', ...ek('E0003413','부소산 고란사') },
   { t:'prop', g:'F', n:'궁남지', p:120, info:'634년(무왕 35) 대궐 남쪽에 판 못. 지금 알려진 우리나라에서 가장 오래된 궁원 연못이다. 지금 모습은 1960년대에 다시 꾸민 것이다.', zh:'三月, 穿池於宫南', tag:'rec', ...sg('sg_027r_0050_0450','권27 무왕 (634년 3월) · 한국민족문화대백과 「부여 궁남지」') },
   { t:'gibok', n:'기복 (棋卜)', info:'바둑알을 한 줌 쥐어 홀짝으로 길흉을 본다 (창작 놀이).', zh:'亦解醫藥卜筮占相之術. … 然尤尙奕棊.', src:'『주서』 이역열전 백제 (바둑알 점 자체는 창작)', tag:'fic' },
   { t:'prop', g:'T', n:'능산리 절터', p:210, info:'왕릉 곁에 있던 절의 터. 1993년 금동대향로가 나왔고, 1995년 목탑 터에서 창왕 13년 정해년에 \'매□공주\'(□는 읽을 수 없는 글자)가 사리를 공양했다는 글이 새겨진 돌 사리감이 나왔다. 정해년은 567년이다.', tag:'rec', ...ek('E0022382','부여 능산리 사지 석조 사리감') },
   { t:'song', n:'과하마', info:'무왕 22년(621) 10월, 당에 사신을 보내 과하마(키 작은 말)를 바쳤다. 작은 말을 타고 판 위 아무 칸으로나 건너간다. 출발을 지나면 한 바퀴로 친다.', tag:'rec', ...sg('sg_027r_0050_0210','권27 무왕 (621년 10월)') },
   { t:'prop', g:'T', n:'왕흥사지', p:220, info:'백마강 건너편의 절터. 목탑 터에서 나온 사리기(국보)에는 창왕이 정유년(577) 죽은 왕자를 위해 절을 세웠다고 새겨져 있어, 『삼국사기』의 법왕 창건·무왕 완성 기록과 엇갈린다. 공양품 가운데 중국 돈 상평오수전도 있었다.', tag:'rec', ...ek('E0039190','부여 왕흥사지') },
   { t:'prop', g:'S', n:'국립부여박물관', p:150, info:'금동대향로와 사택지적비를 볼 수 있는 박물관. 여기 서면 유물 카드를 한 장 본다.', tag:'rec', ...ek('E0006225','국립부여박물관') },
-  { t:'prop', g:'T', n:'정림사지', p:230, info:'사비 도성 한가운데 있던 절터. 국보 오층석탑(높이 8.33m)은 첫층에 당 소정방이 새긴 글이 있어 오랫동안 「평제탑」으로 불렸다.', tag:'rec', ...ek('E0024447','부여 정림사지 오층석탑') },
+  { t:'prop', g:'T', n:'정림사지', p:230, info:'사비 도성 한가운데 있던 절터. 국보 오층석탑(높이 8.33m)은 첫층에 당나라 장수 소정방이 백제를 평정한 공을 기리는 글이 새겨져 한때 「평제탑」으로 불렸다.', tag:'rec', ...ek('E0024447','부여 정림사지 오층석탑') },
   { t:'prop', g:'T', n:'부소산 사지', p:240, info:'부소산성 서쪽 기슭의 절터(서복사지). 강당이 없고 탑 터에서 금동 장식이 나와, 왕실이나 귀족의 원당으로 본다.', tag:'rec', ...ek('E0077885','서복사지') },
 ];
 // 정사각형 판(9×9 둘레 32칸): 귀퉁이가 0·8·16·24에 오도록 순서만 바꾼다
@@ -373,13 +387,13 @@ const TURNS = [
     { y:561, t:'신라 변경 공격', d:'신라의 변경을 쳤으나 신라군에게 져서 죽은 사람이 천여 명이었다.', zh:'羅兵出撃敗之', fx:'topRank-1', fxt:'관등이 가장 높은 사람이 한 품 내려간다.', tag:'rec', ...sg('sg_027r_0020_0040','권27 위덕왕 (561년 7월)') },
     { y:567, t:'진나라에 사신', d:'진나라에 사신을 보내 조공했다.', zh:'遣使入陳朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0050','권27 위덕왕 (567년 9월)') } ]},
   { king:'위덕왕', ev:[
-    { y:570, t:'북제의 책봉', d:'북제 후주가 왕을 사지절·거기대장군·대방군공·백제왕으로 삼았다. 이듬해(571)에는 동청주자사 칭호도 내렸다.', zh:'髙齊後主拜王爲使持節', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_027r_0020_0060','권27 위덕왕 (570년) · 동청주자사는 sg_027r_0020_0070') },
+    { y:570, t:'북제의 책봉', d:'북제 후주가 왕을 사지절·거기대장군·대방군공·백제왕으로 삼았다. 이듬해(571)에는 동청주자사 칭호도 내렸다.', zh:'髙齊後主拜王爲使持節', fx:'port+40', fxt:'왕이 받은 외교 칭호 — 포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0060','권27 위덕왕 (570년) · 동청주자사는 sg_027r_0020_0070') },
     { y:572, t:'일식', d:'9월 초하루에 해가 먹혔다.', zh:'秋九月庚子朔, 日有食之', fx:'all-20', fxt:'흉조 — 모두 20수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0090','권27 위덕왕 (572년 9월)') },
     { y:577, t:'북주에 사신', d:'북주에 사신을 보내 조공했다.', zh:'遣使入宇文周朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0120','권27 위덕왕 (577년 11월)') },
     { y:577, t:'신라 공격 실패', d:'10월 신라의 서쪽 변경을 쳤으나, 신라 이찬 세종이 군사를 이끌고 와서 쳐부수었다.', zh:'新羅伊湌丗宗帥兵擊破之', fx:'all-30', fxt:'모두 30수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0110','권27 위덕왕 (577년 10월)') } ]},
   { king:'위덕왕', ev:[
     { y:579, t:'혜성과 지진', d:'10월 긴 꼬리별이 하늘을 가로질렀고, 땅이 흔들렸다.', zh:'長星竟天', fx:'bld-10', fxt:'세운 건물 하나마다 10수전을 잃는다.', tag:'rec', ...sg('sg_027r_0020_0140','권27 위덕왕 (579년 10월) · 지진은 sg_027r_0020_0150') },
-    { y:581, t:'수나라의 책봉', d:'새로 선 수나라에 사신을 보냈고, 수가 왕을 상개부의동삼사·대방군공으로 삼았다.', zh:'拜王爲上開府儀同三司·帶方郡公', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_027r_0020_0170','권27 위덕왕 (581년)') },
+    { y:581, t:'수나라의 책봉', d:'새로 선 수나라에 사신을 보냈고, 수가 왕을 상개부의동삼사·대방군공으로 삼았다.', zh:'拜王爲上開府儀同三司·帶方郡公', fx:'port+40', fxt:'왕이 받은 외교 칭호 — 포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0170','권27 위덕왕 (581년)') },
     { y:586, t:'진나라에 사신', d:'진나라에 사신을 보내 조공했다.', zh:'遣使入陳朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0200','권27 위덕왕 (586년)') } ]},
   { king:'위덕왕', ev:[
     { y:589, t:'수나라 배를 돌려보냄', d:'수나라 전함이 탐모라국에 표류하자 백제가 돌려보냈고, 수 문제가 조서를 내렸다.', zh:'其舩得還', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0020_0220','권27 위덕왕 (589년)') },
@@ -397,7 +411,7 @@ const TURNS = [
     { y:612, t:'벼락과 홍수', d:'4월 대궐 남문에 벼락이 치고, 5월 큰물에 민가가 떠내려갔다.', zh:'震宮南門', fx:'palace-20', fxt:'왕궁을 가진 사람은 왕궁 하나마다 20수전을 잃는다.', tag:'rec', ...sg('sg_027r_0050_0160','권27 무왕 (612년 4월) · 홍수는 sg_027r_0050_0170') },
     { y:616, t:'왕도의 지진', d:'11월 왕도에 지진이 일어났다.', zh:'十一月, 王都地震.', fx:'bld-10', fxt:'세운 건물 하나마다 10수전을 잃는다.', tag:'rec', ...sg('sg_027r_0050_0190','권27 무왕 (616년 11월)') } ]},
   { king:'무왕', ev:[
-    { y:624, t:'당나라의 책봉', d:'당에 사신을 보내 조공하니, 당 고조가 왕을 대방군왕으로 책봉했다.', zh:'遣使就冊爲帶方郡王', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_027r_0050_0230','권27 무왕 (624년 1월)') },
+    { y:624, t:'당나라의 책봉', d:'당에 사신을 보내 조공하니, 당 고조가 왕을 대방군왕으로 책봉했다.', zh:'遣使就冊爲帶方郡王', fx:'port+40', fxt:'왕이 받은 외교 칭호 — 포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_027r_0050_0230','권27 무왕 (624년 1월)') },
     { y:624, t:'신라 여섯 성', d:'10월 신라의 속함·앵잠·기잠·봉잠·기현·용책 여섯 성을 빼앗았다.', zh:'柵等六城, 取之', fx:'castle+40', fxt:'성을 가진 사람은 성 하나마다 40수전.', tag:'rec', ...sg('sg_027r_0050_0250','권27 무왕 (624년 10월)') },
     { y:627, t:'장군 사걸', d:'장군 사걸이 신라 서쪽 변경의 두 성을 빼앗고 남녀 삼백여 명을 사로잡았다.', zh:'拔新羅西鄙二城, 虜男女三百餘口', fx:'all+30', fxt:'모두 30수전을 받는다.', tag:'rec', ...sg('sg_027r_0050_0300','권27 무왕 (627년 7월)') } ]},
   { king:'무왕', ev:[
@@ -405,7 +419,7 @@ const TURNS = [
     { y:634, t:'왕흥사 완성', d:'2월 왕흥사가 완성되었다. 절이 물가에 있어 왕은 늘 배를 타고 절에 들어가 향을 피웠다.', zh:'王每乗舟, 入寺行香', fx:'wanghung', fxt:'왕흥사지를 가진 사람은 100수전, 없으면 절을 가진 사람이 절마다 20수전.', tag:'rec', ...sg('sg_027r_0050_0440','권27 무왕 (634년 2월)') },
     { y:634, t:'궁남지', d:'3월 대궐 남쪽에 못을 파고 물을 끌어들였다.', zh:'三月, 穿池於宫南', fx:'gungnam', fxt:'이제부터 궁남지 통행세가 두 배.', tag:'rec', ...sg('sg_027r_0050_0450','권27 무왕 (634년 3월)') } ]},
   { king:'의자왕', ev:[
-    { y:641, t:'당의 책봉', d:'당 태종이 사부랑중 정문표를 보내 왕을 주국·대방군왕·백제왕으로 책봉했다.', zh:'太宗遣祠部郎中鄭文表', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_028r_0020_0010','권28 의자왕 (641년 3월)') },
+    { y:641, t:'당의 책봉', d:'당 태종이 사부랑중 정문표를 보내 왕을 주국·대방군왕·백제왕으로 책봉했다.', zh:'太宗遣祠部郎中鄭文表', fx:'port+40', fxt:'왕이 받은 외교 칭호 — 포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_028r_0020_0010','권28 의자왕 (641년 3월)') },
     { y:642, t:'순행과 사면', d:'2월 왕이 주군을 돌며 백성을 달래고, 죄수를 살펴 사형죄가 아니면 모두 풀어 주었다.', zh:'王巡撫州郡, 慮囚', fx:'amnesty', fxt:'관문에 갇힌 사람과 왜국에 간 사람이 풀려나고, 모두 30수전.', tag:'rec', ...sg('sg_028r_0020_0040','권28 의자왕 (642년 2월)') },
     { y:642, t:'대야성 함락', d:'8월 장군 윤충이 신라 대야성을 치자, 성주 품석이 처자와 함께 나와 항복했다.', zh:'城主品釋與妻子出降', fx:'castle+50', fxt:'성을 가진 사람은 성 하나마다 50수전.', tag:'rec', ...sg('sg_028r_0020_0060','권28 의자왕 (642년 8월)') },
     { y:643, t:'고구려와 화친', d:'11월 왕이 고구려와 화친했다.', zh:'冬十一月, 王與髙句麗和親.', fx:'all+30', fxt:'모두 30수전을 받는다.', tag:'rec', ...sg('sg_028r_0020_0080','권28 의자왕 (643년 11월)') } ]},
@@ -413,7 +427,7 @@ const TURNS = [
     { y:652, t:'당에 조공', d:'정월 당에 사신을 보내 조공했다.', zh:'春正月, 遣使入唐朝貢', fx:'port+40', fxt:'포를 가진 사람은 포 하나마다 40수전, 없으면 모두 20수전.', tag:'rec', ...sg('sg_028r_0020_0190','권28 의자왕 (652년 1월)') },
     { y:655, t:'망해정', d:'2월 태자의 궁을 매우 사치스럽고 화려하게 고치고, 왕궁 남쪽에 망해정을 세웠다.', zh:'立望海亭於王宮南', fx:'palaceLv', fxt:'왕궁 건물의 땅값이 한 단계 오른다.', tag:'rec', ...sg('sg_028r_0020_0220','권28 의자왕 (655년 2월)') },
     { y:656, t:'성충의 옥', d:'좌평 성충이 간언하다 옥에 갇혔고, 옥에서 죽기 전 나라를 지킬 방도를 글로 올렸다.', zh:'佐平成忠 或云淨忠.極諌', fx:'topRank-1', fxt:'관등이 가장 높은 사람이 한 품 내려간다.', tag:'rec', ...sg('sg_028r_0020_0260','권28 의자왕 (656년 3월)') },
-    { y:657, t:'서자 41명을 좌평으로', d:'정월 왕의 서자 41명을 좌평으로 삼았다.', zh:'拜王庻子四十一人爲佐平', fx:'allRank+1', fxt:'모두 관등이 한 품 오른다.', tag:'rec', ...sg('sg_028r_0020_0270','권28 의자왕 (657년 1월)') } ]},
+    { y:657, t:'서자 41명을 좌평으로', d:'정월 왕의 서자 41명을 좌평으로 삼았다.', zh:'拜王庻子四十一人爲佐平', fx:'topRank-1', fxt:'높은 자리가 한꺼번에 풀려 — 관등이 가장 높은 사람이 한 품 내려간다.', tag:'rec', ...sg('sg_028r_0020_0270','권28 의자왕 (657년 1월)') } ]},
 ];
 const FINAL = { y:660, t:'사비 함락', king:'의자왕', d:'왕과 태자 효가 여러 성과 함께 항복했다. 판이 멈춘다.', zh:'於是, 王及太子孝與諸城皆降', fxt:'점수를 센다.', tag:'rec', ...sg('sg_028r_0020_0380','권28 의자왕 (660년)') };
 const curEvent = () => G.era >= TURNS.length ? FINAL : TURNS[G.era].ev[G.ev[G.era]];
@@ -444,9 +458,9 @@ const RELICS = [
   { id:'halo', t:'금동 광배', d:'부여 관북리에서 나온 6세기 금동 광배. 불꽃무늬를 새기고 테두리에 비천을 다는 고리가 있다. 그 빛이 지켜 주어 다음 통행세 한 번을 내지 않는다.', tag:'rec', fx:'shield', ...ek('E0005130','광배') },
   { id:'gugu', t:'구구단 목간', d:'2011년 부여 쌍북리에서 나와 2016년 곱셈구구로 판정된 백제 목간. 구구셈처럼 가진 오수전이 두 배가 된다.', tag:'rec', fx:'double', src:'「백제 시대 곱셈구구단 목간 재음미」(학술 논문) · 주간경향', url:'https://scholar.kyobobook.co.kr/article/detail/4050028763450' },
   { id:'sataek', t:'사택지적비', d:'"금을 뚫어 금당을 세우고 옥을 다듬어 탑을 세웠다." 내 건물 하나 곁에 사찰을 세운다 (통행세 1.5배).', zh:'穿金以建珍堂鑿玉以立寶塔', src:'부여 사택지적비 · 국사편찬위원회 한국사데이터베이스 금석문', url: DB + 'gskh_002_0010_0010_0030', tag:'rec', fx:'temple' },
-  { id:'jassi', t:'자씨당', d:'미륵(자씨)을 모신 집. 내 건물 하나 곁에 사찰을 세운다.', src:'확인 중', tag:'chk', fx:'temple' },
-  { id:'jeongnim', t:'정림사지 유물', d:'정림사지에서 나온 유물들. 내 건물 하나 곁에 사찰을 세운다.', src:'정림사지 출토 유물 (세부 확인 중)', tag:'chk', fx:'temple' },
-  { id:'face', t:'인물무늬 기와', d:'사람 얼굴을 새긴 기와. 내 건물 하나 곁에 사찰을 세운다.', src:'확인 중', tag:'chk', fx:'temple' },
+  { id:'gyuam', t:'규암리 금동관음보살 입상', d:'부여 규암리 절터에서 나온 백제 금동 관음보살 입상. 국보(1997년 지정). 내 건물 하나 곁에 사찰을 세운다 (통행세 1.5배).', tag:'rec', fx:'temple', ...ek('E0024379','부여군',' · 「불상」(E0024979)') },
+  { id:'wanghung', t:'왕흥사지 사리기', d:'왕흥사지 목탑 터에서 나온 사리기. 정유년(577) 창왕이 죽은 왕자를 위해 절을 세웠다는 글이 새겨져 있다. 내 건물 하나 곁에 사찰을 세운다.', tag:'rec', fx:'temple', ...ek('E0039190','부여 왕흥사지') },
+  { id:'sarigam', t:'창왕명 석조 사리감', d:'능산리 절터 목탑 터에서 나온 돌 사리감. 창왕 13년 정해년(567)에 사리를 공양했다는 글이 새겨져 있다. 내 건물 하나 곁에 사찰을 세운다.', tag:'rec', fx:'temple', ...ek('E0022382','부여 능산리 사지 석조 사리감') },
 ];
 
 /* =====================================================================
@@ -859,6 +873,7 @@ function paintPicks(){
 }
 function render(){
   if(!G || !$('board')) return;
+  $('game').style.setProperty('--dusk', Math.min(1, Math.max(0, G.era) / (TURNS.length)).toFixed(2));
   CELLS.forEach((c,i) => {
     const el = $('c'+i), o = G.own[i];
     el.classList.toggle('own', o >= 0); if(o >= 0) el.style.setProperty('--oc', G.players[o].c);
@@ -905,7 +920,7 @@ function phaseText(p){
   if(G.phase === 'pick') return '내 건물을 누르세요';
   if(G.phase === 'card') return myTurn() ? '유물 카드' : '유물 카드 보는 중';
   if(p.gate) return '관문 · 왕채가 나와야 통과';
-  return '던지기';
+  return '막대를 던질 차례';
 }
 let TILT = 40;
 let gauge = { on:false, v:0, dir:1, t:null };
@@ -1000,15 +1015,16 @@ function showRules(){
   <p><b>왕채</b>(노·치·독·백)가 나오거나, 다른 사람이 있는 칸에 서면(<span class="hz">擊馬</span>) 한 번 더 던져요. — 『오목경』 「<span class="hz">凡擊馬及王采皆又投</span>」</p>
   <p><b>건물과 통행세.</b> 빈 칸에 서면 수전을 내고 건물을 세워요: 왕궁 → 전각, 성 → 성루, 절 → 가람, 포 → 나루터, 특수 → 기념 건물. 남의 건물 칸에 서면 통행세. 왕궁·성·절은 한 무리(6칸)를 다 가지면 두 배. 포는 가진 수만큼(30·70·150), 특수 건물은 저포 점수 × 가진 수(5·10·15). 정사암에서는 누구나 정사암 회의가, 국립부여박물관에서는 유물 카드가 기다려요.</p>
   <p><b>업그레이드와 인수.</b> 내 왕궁·성·절 칸에 다시 도착하면 건물을 한 단계 올릴 수 있어요(최대 3단계, 통행세 1·2·3배, 세우는 값의 60%씩). 남의 건물에 도착하면 통행세를 낸 뒤 그 건물을 <b>지금 단계 그대로</b> 인수할 수 있어요(지금까지 들어간 값의 1.5배). 인수한 건물도 다음에 다시 도착하면 올릴 수 있어요. <b>3단계 건물은 금박을 입혀 인수할 수 없어요.</b></p>
-  <p><b>유물 카드.</b> 금동대향로(출발로), 연꽃무늬 벽돌(땅값 상승), 금동 광배(통행세 한 번 면제), 구구단 목간(가진 오수전 두 배), 사택지적비·자씨당·정림사지 유물·인물무늬 기와(내 건물 곁에 사찰 세우기, 통행세 1.5배).</p>
+  <p><b>유물 카드.</b> 금동대향로(출발로), 연꽃무늬 벽돌(땅값 상승), 금동 광배(통행세 한 번 면제), 구구단 목간(가진 오수전 두 배), 사택지적비·규암리 금동관음보살 입상·왕흥사지 사리기·창왕명 석조 사리감(내 건물 곁에 사찰 세우기, 통행세 1.5배).</p>
   <p><b>기복(<span class="hz">棋卜</span>).</b> 바둑알 한 줌이 홀이면 +60, 짝이면 −40 (창작 놀이).</p>
   <p><b>네 귀퉁이.</b> 출발(사비 천도) · 왜국 파견(한 번 쉬고 돌아오며 50) · 구태묘 제사(모두 40) · 과하마(원하는 칸으로).</p>
-  <p><b>관등과 봉급.</b> 출발을 지날 때마다 두 품씩 오르고 봉급을 받아요. 극우(흰 띠) → 계덕(푸른 띠) → 시덕(검은 띠) → 내솔(은꽃 관 장식) … 좌평은 <b>내솔(6품) 이상</b>이 <b>정사암 회의</b>에서 왕채를 내야 돼요. 『주서』에서 6품 이상만 관에 은꽃을 달았다는 구절에서 따왔어요.</p>
+  <p><b>관등과 봉급.</b> 출발을 지날 때마다 두 품씩 오르고 봉급을 받아요. 극우(흰 띠) → 계덕(푸른 띠) → 시덕(검은 띠) → 내솔(은꽃 관 장식) … 좌평은 <b>내솔(6품) 이상</b>이 <b>정사암 회의</b>에서 왕채를 내야 돼요. 『주서』에서 6품 이상만 관에 은꽃을 달았다는 구절에서 따왔어요. 16품 가운데 12~15품(문독·무독·좌군·진무)은 게임에서 줄였어요.</p>
   <div class="src">${RANK_SRC} · 봉급은 게임용</div>
   <p><b>관문</b>(나성·부소산성)에 멈추면 다음 차례에 왕채가 나와야 나가요. 30수전을 내면 바로 나가요.</p>
   <p><b>열두 턴.</b> 선두가 출발(사비 천도)이나 맞은편 구태묘 제사를 지날 때마다 다음 턴으로 넘어가요. 턴마다 그 시대(성왕 → 위덕왕 → 법왕·무왕 → 의자왕)의 사건 서너 개 가운데 하나가 무작위로 일어나요. 12턴 다음 바퀴에 660 사비 함락이 오면 점수를 세요.</p>
   <p><b>이기는 법.</b> ① 사비 함락 때 점수가 가장 높은 사람 ② 왕궁·성·절 가운데 두 무리를 다 가진 사람 ③ 좌평이 된 뒤 출발을 두 번 더 지난 사람 ④ 혼자 남은 사람(파산하면 탈락).</p>
-  <p class="muted">기록·설화·창작·재현 이름·확인 중 표시는 칸과 카드에 붙어 있어요. 칸을 누르면 설명과 출처가 나와요.</p></div>`, 'rules');
+  <p class="muted">기록·설화·창작·재현 이름·확인 중 표시는 칸과 카드에 붙어 있어요. 칸을 누르면 설명과 출처가 나와요.</p>
+  <p class="muted">사건은 대부분 『삼국사기』(1145년, 고려)에서 가져왔어요. 백제가 망하고 500년 가까이 지나 쓴 책이라, 의자왕 때 기사처럼 나라가 망한 까닭을 설명하려는 시각이 들어갔다는 견해도 있어요. 중국의 책봉은 백제 왕이 받은 외교 칭호라서 게임에서는 포(나루) 수입으로 나타냈어요.</p></div>`, 'rules');
 }
 
 /* =====================================================================
@@ -1114,7 +1130,7 @@ function drawSeats(){
 }
 $('startLocal').onclick = () => {
   const seats = seatState.map((s,i) => ({ ...s, id:'L'+i })).filter(s => s.who !== 'off');
-  if(seats.length < 2) return alertLobby('두 사람 이상이 있어야 해요. 한 자리를 컴퓨터로 바꿔 주세요.');
+  if(seats.length < 2) return alertLobby('두 자리 이상 채워야 해요. 빈 자리를 사람이나 컴퓨터로 바꿔 주세요.');
   startGame(newGame(seats.map(s => ({ id:s.id, nm:(s.nm||'이름 없음').slice(0,10), ai:s.who==='ai' }))));
   ME = seats.filter(s => s.who === 'me').map(s => s.id);
   enterGame();
@@ -1205,7 +1221,7 @@ async function openRoom(code, host){
   onRoom(r.peers());
 }
 $('mkRoom').onclick = () => openRoom(String(Math.floor(1000 + Math.random()*9000)), true);
-$('joinRoom').onclick = () => { const c = ($('code').value||'').trim(); if(!/^\d{4}$/.test(c)) return alertLobby('방 번호 네 자리를 넣어 주세요.'); openRoom(c, false); };
+$('joinRoom').onclick = () => { const c = ($('code').value||'').trim(); if(!/^\d{4}$/.test(c)) return alertLobby('방 번호 네 자리를 입력해 주세요.'); openRoom(c, false); };
 function onRoom(peers){
   if(!NET) return;
   const people = peers.filter(p => p.kind === 'viewer' && p.presence && p.presence.nick);
