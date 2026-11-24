@@ -53,10 +53,11 @@ h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);color:var(--paper);border-radius:6px;padding:.45em .7em;font:inherit;font-size:15px;min-width:0;flex:1}
 .seat{display:flex;gap:8px;align-items:center}
+.lvrow{gap:6px 14px;font-size:14px}.lvrow label{display:flex;gap:4px;align-items:center;cursor:pointer}
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;--pw:clamp(104px,min(17vw,30vh),250px);
+#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;--spin:-45deg;--unspin:45deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 #game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .scene .sky,.scene .dusk{position:absolute;inset:0}
@@ -73,14 +74,14 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 @keyframes drift{to{transform:translateX(calc(100vw + 400px))}}
 @media (prefers-reduced-motion:reduce){.scene .cloud,.scene .shine rect{animation:none}}
 /* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
-#game #board{transform:rotateX(var(--tilt));transform-origin:50% 100%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc(100vw - 2 * var(--pw) - 40px), calc((100vh - 16px - 96px) * 1.25));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
+#game #board{transform:rotateX(var(--tilt)) rotateZ(var(--spin));transform-origin:50% 50%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc((100vw - 2 * var(--pw) - 40px) / 1.414), calc((100vh - 16px - 56px) / 1.38));margin-bottom:calc(var(--bw,600px) * .13);box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
 #game .cell{transform-style:preserve-3d;overflow:visible}
-#game .cell .bld{transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:3%;bottom:40%}
+#game .cell .bld{transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));height:92%;width:62%;right:19%;bottom:46%}
 #game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
-#game .cell .lab{position:absolute;left:3px;bottom:2px;max-width:62%;z-index:2}
+#game .cell .lab{position:absolute;left:50%;top:62%;width:128%;transform:translate(-50%,-50%) rotateZ(var(--unspin));text-align:center;z-index:2;pointer-events:none;text-shadow:0 1px 2px #000}
 #game .cell .nm{margin:0;font-size:calc(var(--bw,600px) / 9 * .17);line-height:1.1;word-break:keep-all;overflow-wrap:normal;white-space:normal}
 #game .cell .pr{font-size:calc(var(--bw,600px) / 9 * .13)}
-#game .cell.corner .lab{max-width:96%}
+#game .cell.corner .lab{top:72%}
 #game .cell .cimg{position:absolute;inset:14% 14% 26% 14%;opacity:.9;pointer-events:none}
 #game .cell .cimg svg{width:100%;height:100%}
 #game .cell.corner[id="c0"] .nm{font-family:var(--body);font-weight:700;letter-spacing:.12em;color:#f0d79a}
@@ -96,19 +97,20 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .pc .pl .face{width:calc(var(--pw) * .24)}
 .pc .pl .rank{white-space:normal}
 .rare{font-size:.75em;border:1px dashed currentColor;border-radius:3px;padding:0 .2em}
-#game .cell.own::after{content:'';position:absolute;right:6%;bottom:34%;width:50%;height:16%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(2px);pointer-events:none}
+#game .cell.own::after{content:'';position:absolute;right:24%;bottom:40%;width:52%;height:16%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(2px);pointer-events:none}
 /* 입체: 칸은 판에서 살짝 솟은 타일, 앞면에 두께가 보인다. 모서리 그림과 말은 판 위에 서고 그림자를 드리운다 */
 #game{--th:calc(var(--bw,600px) * .022)}
 #game #board{gap:calc(var(--bw,600px) * .006);background:linear-gradient(#2a1c12,#140d08)}
 #game .cell{transform:translateZ(var(--th));box-shadow:inset 0 1px 0 rgba(255,236,200,.12),inset 0 -2px 3px rgba(0,0,0,.35)}
 #game .cell::before{content:'';position:absolute;left:0;right:0;top:100%;height:var(--th);background:linear-gradient(#6b4c33,#2a1c12);transform-origin:50% 0;transform:rotateX(-90deg);pointer-events:none}
+#game .cell .skl{position:absolute;top:0;bottom:0;right:100%;width:var(--th);background:linear-gradient(90deg,#2a1c12,#5a402a);transform-origin:100% 50%;transform:rotateY(-90deg);pointer-events:none}
 #game .cell .band{height:12%;transform:translateZ(calc(var(--th) * .5));box-shadow:0 2px 2px rgba(0,0,0,.45)}
 #game .cell.own{box-shadow:inset 0 0 0 2px var(--oc),inset 0 -2px 3px rgba(0,0,0,.35)}
-#game .cell .cimg{inset:auto 18% 30% 18%;height:62%;transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
-#game .cell.corner::after{content:'';position:absolute;left:24%;right:24%;bottom:27%;height:10%;border-radius:50%;background:rgba(0,0,0,.4);filter:blur(2px);pointer-events:none}
+#game .cell .cimg{inset:auto 18% 40% 18%;height:62%;transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
+#game .cell.corner::after{content:'';position:absolute;left:24%;right:24%;bottom:37%;height:10%;border-radius:50%;background:rgba(0,0,0,.4);filter:blur(2px);pointer-events:none}
 #game{--cu:calc(var(--bw,600px) / 9)}
 #game .tk .ch{bottom:calc(var(--cu) * .07)}
-#game .tk .base{position:absolute;left:calc(var(--cu) * -.19);top:calc(var(--cu) * -.19);width:calc(var(--cu) * .38);height:calc(var(--cu) * .38);transform:rotateX(var(--tilt));transform-style:preserve-3d;pointer-events:none}
+#game .tk .base{position:absolute;left:calc(var(--cu) * -.19);top:calc(var(--cu) * -.19);width:calc(var(--cu) * .38);height:calc(var(--cu) * .38);transform:rotateX(var(--tilt)) rotateZ(var(--spin));transform-style:preserve-3d;pointer-events:none}
 #game .tk .base i{position:absolute;inset:0;border-radius:50%}
 #game .tk .base i:nth-child(1){background:rgba(0,0,0,.5);filter:blur(2px);transform:translate(8%,10%) scale(1.15)}
 #game .tk .base i:nth-child(2){background:color-mix(in srgb,var(--pc,#c9a25a) 45%,#000);transform:translateZ(calc(var(--cu) * .035))}
@@ -117,7 +119,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .mdl i{position:absolute;display:block;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.35)}
 #game .cell .water{position:absolute;left:6%;right:6%;top:22%;height:44%;border-radius:40%;background:repeating-linear-gradient(170deg,rgba(95,154,154,.55) 0 3px,rgba(40,80,90,.5) 3px 8px);pointer-events:none}
 #game #tokens{transform-style:preserve-3d}
-#game .tk{transform-style:preserve-3d;transform:rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
+#game .tk{transform-style:preserve-3d;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
 #game .tk .ch{width:calc(var(--bw,600px) / 9 * .5);left:calc(var(--bw,600px) / 9 * -.25)}
 #game .ctrHole{grid-column:2/9;grid-row:2/9;background:radial-gradient(ellipse at 50% 50%,#3a2c22,#241b16 75%);position:relative}
 #game .ctrHole i{position:absolute;width:0;height:0}
@@ -143,7 +145,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .edge.front{left:0;right:0;top:100%;height:calc(var(--bw,600px) * .11);transform-origin:50% 0;transform:rotateX(-90deg)}
 #game .edge.left{top:0;bottom:0;left:0;width:calc(var(--bw,600px) * .11);transform-origin:0 50%;transform:rotateY(90deg);background:linear-gradient(90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset 2px 0 0 #c9a25a}
 #game .edge.right{top:0;bottom:0;right:0;width:calc(var(--bw,600px) * .11);transform-origin:100% 50%;transform:rotateY(-90deg);background:linear-gradient(-90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset -2px 0 0 #c9a25a}
-@media (max-height:520px){ #game > #center #result{font-size:clamp(15px,5vh,30px)} #game > #center #actrow .btn{font-size:clamp(11px,3.4vh,16px);padding:.3em .8em} #game > #center #say{font-size:clamp(10px,3vh,14px)} }
+@media (max-height:520px){ #game > #center #result{font-size:clamp(12px,4vh,20px)} #game > #center #say{font-size:11px} #game > #center #actrow .btn{font-size:12px} #game > #center #result{font-size:clamp(15px,5vh,30px)} #game > #center #actrow .btn{font-size:clamp(11px,3.4vh,16px);padding:.3em .8em} #game > #center #say{font-size:clamp(10px,3vh,14px)} }
 #tiltBox{display:flex;align-items:center;gap:4px;font-size:clamp(9px,1vw,12px);color:var(--paper-dim)}
 #tiltBox input{width:70px}
 #board{position:relative;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(6,1fr);gap:2px;
@@ -203,7 +205,23 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #mid{position:relative;display:flex}
 #bubble{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);max-width:92%;padding:.15em .8em;border-radius:999px;background:rgba(20,14,10,.78);border:1px solid rgba(224,194,122,.35);pointer-events:none;opacity:0}
 #bubble:empty{display:none}
+#game > #center #bubble{bottom:calc(100% + 6px);z-index:9}
+#game > #center.side #bubble{left:auto;right:calc(100% + 8px);top:4px;bottom:auto;transform:none;max-width:45vw}
+#game > #center.side #actrow{flex-wrap:wrap}
+#game > #center.side #gauge{flex-basis:100%}
+#game > #center #faces{display:none}
+#game > #center #st3d{min-height:0}
+#game > #center #mid{flex:1 1 0;min-height:0}
+#game > #center #result,#game > #center #say,#game > #center #actrow{flex:none}
+#game > #center #actrow{flex-wrap:nowrap;min-height:0}
+#game > #center #actrow .btn{white-space:nowrap;padding:.3em .7em;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#game > #center #gauge{min-width:70px}
+#game > #center #result{font-size:clamp(14px,2.2vw,30px)}
+#game > #center{padding:6px 10px}
+#game .cell .nm{font-size:calc(var(--bw,600px) / 9 * .2)}
+#game > #center #stage{min-height:0}
 #faces{text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eraCap .modpill{font-weight:700;color:var(--lacquer);background:#e0b85a;border-radius:999px;padding:0 .55em;margin-left:.3em;white-space:nowrap}
 #tleft{font-weight:700;color:#f0d79a;margin-right:.3em}#tleft.hurry{color:#e2574c}
 #say{font-size:clamp(8.5px,1.05vw,13px);color:var(--paper);min-height:1.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #bubble{font-family:var(--display);font-size:clamp(9px,1.1vw,14px);color:#f0d79a;min-height:1.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .4s}
@@ -258,6 +276,7 @@ td:first-child,th:first-child{text-align:left}
     <div class="panel" id="soloPanel">
     <h3>양생과 부처님</h3>
     <p class="muted" style="margin:0;font-size:14px;line-height:1.7">김시습의 『금오신화』 「만복사저포기」에서 가난한 서생 양생은 만복사 부처님께 저포 내기를 청한다. 지면 법회를 열어 갚고, 이기면 짝을 만나게 해 달라고. 이번 판의 상대는 부처님이다.</p>
+    <div class="row lvrow" role="radiogroup" aria-label="부처님 세기"><label><input type="radio" name="soloLv" value="0"> 너그러운 부처님 <small class="muted">쉬움</small></label><label><input type="radio" name="soloLv" value="1" checked> 부처님 <small class="muted">보통</small></label><label><input type="radio" name="soloLv" value="2"> 깐깐한 부처님 <small class="muted">어려움</small></label></div>
     <div class="row"><input type="text" id="soloNick" maxlength="10" value="양생" aria-label="내 이름"><button class="btn main" id="startSolo">만복사로 가기</button></div>
   </div>
     <button class="btn back" data-back>← 처음으로</button>
@@ -345,7 +364,7 @@ const CELLS = ORDER.map(i => CELLS0[i]);
 const IDX = n => CELLS.findIndex(c => c.n === n);
 const SONG = () => CELLS.findIndex(c => c.t === 'song');
 
-const GATE_FEE = 30, RITE = 40, AWAY_PAY = 50, START_CASH = 900;
+const GATE_FEE = 30, RITE = 40, AWAY_PAY = 50, START_CASH = 900, CATCHUP = 80, SEAT_COMP = 60;   // 뒤에 던지는 사람일수록 시작 오수전을 조금 더 (먼저 던지는 쪽이 유리해서)
 const fullGroup = (o, g) => !!g && CELLS.every((c,i) => c.g !== g || G.own[i] === o);
 function toll(k, roll){
   const c = CELLS[k], o = G.own[k]; if(o < 0) return 0;
@@ -441,6 +460,38 @@ const TURNS = [
     { y:657, t:'서자 41명을 좌평으로', d:'정월 왕의 서자 41명을 좌평으로 삼았다.', zh:'拜王庻子四十一人爲佐平', fx:'topRank-1', fxt:'높은 자리가 한꺼번에 풀려 — 관등이 가장 높은 사람이 한 품 내려간다.', tag:'rec', ...sg('sg_028r_0020_0270','권28 의자왕 (657년 1월)') } ]},
 ];
 const FINAL = { y:660, t:'사비 함락', king:'의자왕', d:'왕과 태자 효가 여러 성과 함께 항복했다. 판이 멈춘다.', zh:'於是, 王及太子孝與諸城皆降', fxt:'점수를 센다.', tag:'rec', ...sg('sg_028r_0020_0380','권28 의자왕 (660년)') };
+/* 턴 효과: 사건은 그 턴(다음 사건이 올 때까지) 내내 이어진다. inst = 사건이 터질 때 한 번 일어나는 일 */
+const MOD = {
+  omen:     { s:'통행세 +50%',            d:'흉조 — 이번 턴 동안 모든 통행세가 1.5배.', toll:{'*':1.5} },
+  boon:     { s:'봉급 +50%',              d:'이번 턴 동안 출발에서 받는 봉급이 1.5배.', pay:1.5 },
+  hard:     { s:'봉급 −40%',              d:'이번 턴 동안 출발에서 받는 봉급이 0.6배.', pay:.6 },
+  castle:   { s:'성 통행세 2배',          d:'이번 턴 동안 성 통행세가 두 배.', toll:{C:2} },
+  portUp:   { s:'포 통행세 2배',          d:'이번 턴 동안 포(나루) 통행세가 두 배.', toll:{F:2} },
+  portDown: { s:'포 통행세 없음',         d:'이번 턴 동안 바닷길이 막혀 포 통행세를 받지 못한다.', toll:{F:0} },
+  quake:    { s:'짓는 값 +30%',           d:'이번 턴 동안 건물 세우기·올리기 값이 1.3배.', cost:1.3 },
+  palaceHit:{ s:'왕궁 통행세 절반',       d:'이번 턴 동안 왕궁 통행세가 절반.', toll:{P:.5} },
+  drought:  { s:'절 통행세 2배 · 나머지 −20%', d:'가뭄 — 이번 턴 동안 절 통행세는 두 배, 다른 통행세는 0.8배.', toll:{T:2,'*':.8} },
+  purge:    { s:'정사암 회의 없음',       d:'이번 턴 동안 정사암 회의가 열리지 않는다.', nojwa:true, inst:'관등이 가장 높은 사람이 한 품 내려간다.' },
+  envoy:    { s:'왜국 귀환 100',          d:'이번 턴 동안 왜국에서 돌아오면 100수전(평소 50).', away:2, inst:'관등이 가장 낮은 사람이 한 품 오른다.' },
+  amnesty:  { s:'관문 열림',              d:'이번 턴 동안 관문에 갇히지 않는다.', nogate:true, inst:'관문·왜국에 있던 사람이 풀려난다.' },
+  wanghung: { s:'절 통행세 1.5배',        d:'이번 턴 동안 절 통행세가 1.5배.', toll:{T:1.5} },
+  gungnam:  { s:'포 통행세 1.5배',        d:'이번 턴 동안 포 통행세가 1.5배.', toll:{F:1.5}, inst:'이제부터 궁남지 통행세가 늘 두 배.' },
+  palaceLv: { s:'왕궁 짓는 값 −30%',      d:'이번 턴 동안 왕궁 건물 세우기 값이 0.7배.', costG:{P:.7}, inst:'왕궁 건물의 땅값이 한 단계 오른다.' },
+};
+function modKey(E){
+  if(!E || !E.fx) return null;
+  const code = E.fx.replace(/[+-]\d+$/,''), num = +(E.fx.match(/[+-]\d+$/)||[0])[0];
+  if(code === 'all') return /일식/.test(E.t) ? 'omen' : num > 0 ? 'boon' : 'hard';
+  if(code === 'bld') return E.t === '혜성' ? 'omen' : 'quake';
+  if(code === 'port') return num > 0 ? 'portUp' : 'portDown';
+  return { castle:'castle', palace:'palaceHit', temple:'drought', topRank:'purge', lowRank:'envoy', amnesty:'amnesty', wanghung:'wanghung', gungnam:'gungnam', palaceLv:'palaceLv' }[code] || null;
+}
+const curMod = () => (G && G.mod && MOD[G.mod]) || {};
+const fxText = E => { const m = MOD[modKey(E)]; return m ? (m.inst ? m.inst + ' ' : '') + m.d : (E.fxt || ''); };
+const modToll = k => { const t = curMod().toll; if(!t) return 1; const g = CELLS[k].g; return t[g] ?? t['*'] ?? 1; };
+const modCost = k => (curMod().cost || 1) * ((curMod().costG || {})[CELLS[k].g] || 1);
+const buyCost = k => Math.round(CELLS[k].p * modCost(k) / 10) * 10;
+const upCostNow = k => Math.round(upCost(k) * modCost(k) / 10) * 10;
 const curEvent = () => G.era >= TURNS.length ? FINAL : TURNS[G.era].ev[G.ev[G.era]];
 const kingOf = (e, t) => e.king || (t < TURNS.length ? TURNS[t].king : '의자왕');
 
@@ -482,7 +533,7 @@ let G = null, ME = null, NET = null;
 function newGame(seats){
   return {
     v:2, seq:0, turn:0, phase:'throw', extra:0, era:0, round:0, over:false, winner:null,
-    players: seats.map((s,i) => ({ id:s.id, nm:s.nm, c:s.c || COLORS[i], ai:!!s.ai, pos:0, cash:START_CASH, rank:0, laps:0,
+    players: seats.map((s,i) => ({ id:s.id, nm:s.nm, c:s.c || COLORS[i], ai:!!s.ai, lv:s.lv ?? 1, pos:0, cash:START_CASH + i * SEAT_COMP + (s.bonus || 0), rank:0, laps:0,
       away:0, gate:0, shield:false, out:false, seen:[], zp:-1, prog:0 })),
     own: Array(N).fill(-1), lv: Array(N).fill(0), tmp: Array(N).fill(0), bl: Array(N).fill(0),
     last:null, card:null, deck: shuffle(RELICS.map((_,i)=>i)), log:['사비에 판이 열렸다.'], evtN:0, note:null, pick:null, pendingGoto:null,
@@ -535,8 +586,11 @@ function passStart(p){
   const before = p.rank;
   if(p.rank < LAP_TOP) p.rank = Math.min(LAP_TOP, p.rank + 2);
   if(p.rank === 10) p.zp++;
-  const pay = RANKS[p.rank].pay; p.cash += pay;
+  const pay = Math.round(RANKS[p.rank].pay * (curMod().pay || 1) / 10) * 10; p.cash += pay;
   log(`${p.nm}: 한 바퀴 · ${before !== p.rank ? RANKS[p.rank].n+' · ' : ''}봉급 ${pay}`);
+  // 뒤처진 사람 보정: 출발을 지날 때 점수가 꼴찌면 격려금 (두 사람 이상 남았을 때)
+  const alive = G.players.filter(q => !q.out);
+  if(alive.length > 1){ const me = score(p, idx(p)).total; if(alive.every(q => q === p || score(q, idx(q)).total > me + 30)){ p.cash += CATCHUP; log(`${p.nm}: 뒤처진 사람 격려금 +${CATCHUP}`); } }
   if(p.rank === 10 && p.zp >= JWA_LAPS){ G.winner = idx(p); return finish('jwapyeong'); }
 }
 function moveTo(p, to){ const d = (to - p.pos + N) % N || N; let pos = p.pos; for(let i=0;i<d;i++){ pos = (pos+1) % N; if(pos === 0) passStart(p); if(!G.over) tick(p); if(G.over) return done(); } p.pos = to; land(p); }
@@ -546,11 +600,11 @@ function land(p){
   if(c.t === 'prop' && !p.seen.includes(p.pos)) p.seen.push(p.pos);
   if(G.players.some(q => q !== p && !q.out && q.pos === p.pos) && c.t !== 'start'){ G.extra++; log(`${p.nm}: 擊馬 — 한 번 더`); }
   if(c.t === 'prop'){
-    if(c.gate) p.gate = 1;
+    if(c.gate && !curMod().nogate) p.gate = 1;
     if(p.pos === IDX('정사암')) jeongsa(p);
     const o = G.own[p.pos];
-    if(o === -1){ if(p.cash >= c.p){ G.phase = 'buy'; return done(); } return afterProp(p); }
-    if(o === me){ if(canLevel(p.pos) && G.bl[p.pos] < MAX_BL && p.cash >= upCost(p.pos)){ G.phase = 'up'; return done(); } return afterProp(p); }
+    if(o === -1){ if(p.cash >= buyCost(p.pos)){ G.phase = 'buy'; return done(); } return afterProp(p); }
+    if(o === me){ if(canLevel(p.pos) && G.bl[p.pos] < MAX_BL && p.cash >= upCostNow(p.pos)){ G.phase = 'up'; return done(); } return afterProp(p); }
     payToll(p, o, p.pos);
     if(G.over) return done();
     if(!p.out && G.own[p.pos] === o && (G.bl[p.pos] || 1) < MAX_BL && p.cash >= takeCost(p.pos)){ G.phase = 'take'; return done(); }
@@ -567,6 +621,7 @@ function afterProp(p){ if(p.pos === IDX('국립부여박물관') && !G.over && !
 function jeongsa(p){
   const t = throwSticks(), r = OUT[t.k];
   if(p.rank === 10) return;
+  if(curMod().nojwa){ log(`${p.nm}: 정사암 · 이번 턴엔 회의가 없다`); note('정사암 회의 없음'); return; }
   if(p.rank < JWA_MIN){ log(`${p.nm}: 정사암 · 관등이 낮다`); note(`정사암 · ${RANKS[JWA_MIN].n} 이상만`); return; }
   if(r.king){ p.rank = 10; p.zp = 0; p.cash += 200; log(`${p.nm}: 정사암 왕채 — 좌평! (+200)`); note(`${p.nm} 좌평!`); }
   else { log(`${p.nm}: 정사암 · 도장 없음`); note('정사암 · 도장 없음'); }
@@ -579,16 +634,17 @@ function gibok(p){
 }
 function buy(p){
   const c = CELLS[p.pos];
-  if(G.own[p.pos] !== -1 || p.cash < c.p) return;
-  p.cash -= c.p; G.own[p.pos] = idx(p); G.bl[p.pos] = 1;
+  const cost = buyCost(p.pos);
+  if(G.own[p.pos] !== -1 || p.cash < cost) return;
+  p.cash -= cost; G.own[p.pos] = idx(p); G.bl[p.pos] = 1;
   log(`${p.nm}: ${c.n} ${bldName(p.pos)} 세웠다`);
   G.phase = 'throw';
   if(['P','C','T'].filter(g => fullGroup(idx(p), g)).length >= 2){ G.winner = idx(p); finish('groups'); return done(); }
   afterProp(p);
 }
 function upgrade(p){
-  const k = p.pos; if(G.own[k] !== idx(p) || !canLevel(k) || G.bl[k] >= MAX_BL || p.cash < upCost(k)) return;
-  p.cash -= upCost(k); G.bl[k]++;
+  const k = p.pos; if(G.own[k] !== idx(p) || !canLevel(k) || G.bl[k] >= MAX_BL || p.cash < upCostNow(k)) return;
+  p.cash -= upCostNow(k); G.bl[k]++;
   log(`${p.nm}: ${CELLS[k].n} ${G.bl[k]}단계`);
   G.phase = 'throw'; afterProp(p);
 }
@@ -603,7 +659,7 @@ function takeover(p){
 function payToll(p, o, k){
   const owner = G.players[o]; if(owner.out) return;
   const roll = G.last ? (OUT[G.last.k].pts || 6) : 6;
-  const fee = portToll(k, toll(k, roll));
+  const fee = Math.round(portToll(k, toll(k, roll)) * modToll(k) / 5) * 5;
   if(p.shield){ p.shield = false; log(`${p.nm}: 광배로 통행세 면제`); return; }
   const paid = Math.min(fee, p.cash); p.cash -= paid; owner.cash += paid;
   log(`${p.nm} → ${owner.nm}: 통행세 ${paid}`);
@@ -648,7 +704,7 @@ function nextTurn(){
     G.turn = (G.turn + 1) % G.players.length;
     const q = cur();
     if(q.out) continue;
-    if(q.away){ q.away = 0; q.cash += AWAY_PAY; log(`${q.nm}: 왜국에서 귀환 +${AWAY_PAY}`); continue; }
+    if(q.away){ q.away = 0; const ap = AWAY_PAY * (curMod().away || 1); q.cash += ap; log(`${q.nm}: 왜국에서 귀환 +${ap}`); continue; }
     break;
   }
   done();
@@ -661,24 +717,14 @@ function advanceEra(){
   applyEvent(pool[G.ev[G.era]]);
 }
 function applyEvent(E){
-  const alive = G.players.filter(q => !q.out), own = (q, f) => { const i = idx(q); return G.own.filter((o,k) => o === i && f(CELLS[k], k)).length; };
-  const pay = (q, n) => { if(n >= 0) q.cash += n; else q.cash -= Math.min(q.cash, -n); };
-  G.evtN++;
-  log(`— ${E.y} ${E.t}: ${E.fxt}`);
-  const [code, num] = [E.fx.replace(/[+-]\d+$/,''), +(E.fx.match(/[+-]\d+$/)||[0])[0]];
-  if(code === 'all') alive.forEach(q => pay(q, num));
-  if(code === 'castle') alive.forEach(q => pay(q, num * own(q, c => c.g === 'C')));
-  if(code === 'port'){ if(num > 0 && !alive.some(q => own(q, c => c.g === 'F'))) alive.forEach(q => pay(q, 20)); else alive.forEach(q => pay(q, num * own(q, c => c.g === 'F'))); }
-  if(code === 'bld') alive.forEach(q => pay(q, num * own(q, () => true)));
-  if(code === 'palace') alive.forEach(q => pay(q, num * own(q, c => c.g === 'P')));
-  if(code === 'temple') alive.forEach(q => pay(q, -num + num * own(q, (c,k) => c.g === 'T' || G.tmp[k])));
-  if(code === 'topRank'){ const top = alive.slice().sort((a,b) => b.rank - a.rank)[0]; if(top.rank === 10){ top.rank = LAP_TOP; top.zp = -1; } else if(top.rank > 0) top.rank--; }
-  if(code === 'allRank') alive.forEach(q => { if(q.rank < LAP_TOP) q.rank++; });
-  if(code === 'lowRank'){ const low = alive.slice().sort((a,b) => a.rank - b.rank)[0]; if(low.rank < LAP_TOP) low.rank++; }
-  if(code === 'amnesty') alive.forEach(q => { q.gate = 0; q.away = 0; pay(q, 30); });
-  if(code === 'wanghung'){ const o = G.own[IDX('왕흥사지')]; if(o >= 0 && !G.players[o].out) G.players[o].cash += 100; else alive.forEach(q => pay(q, 20 * own(q, c => c.g === 'T'))); }
-  if(code === 'gungnam') G.fx.gungnam = true;
-  if(code === 'palaceLv') G.own.forEach((o,k) => { if(o >= 0 && CELLS[k].g === 'P' && G.lv[k] < 2) G.lv[k]++; });
+  const alive = G.players.filter(q => !q.out);
+  G.evtN++; G.mod = modKey(E);
+  log(`— ${E.y} ${E.t}: ${MOD[G.mod] ? MOD[G.mod].s + ' (이번 턴)' : E.fxt}`);
+  if(G.mod === 'purge'){ const top = alive.slice().sort((a,b) => b.rank - a.rank)[0]; if(top.rank === 10){ top.rank = LAP_TOP; top.zp = -1; } else if(top.rank > 0) top.rank--; }
+  if(G.mod === 'envoy'){ const low = alive.slice().sort((a,b) => a.rank - b.rank)[0]; if(low.rank < LAP_TOP) low.rank++; }
+  if(G.mod === 'amnesty') alive.forEach(q => { q.gate = 0; q.away = 0; });
+  if(G.mod === 'gungnam') G.fx.gungnam = true;
+  if(G.mod === 'palaceLv') G.own.forEach((o,k) => { if(o >= 0 && CELLS[k].g === 'P' && G.lv[k] < 2) G.lv[k]++; });
 }
 function score(p, i){
   let props = 0;
@@ -698,22 +744,36 @@ const bldName = k => ({ palace:'전각', castle:'성루', temple:'가람', port:
    3. 컴퓨터 상대
    ===================================================================== */
 let aiTimer = null;
+/* 컴퓨터 세기: 0 너그러운 · 1 보통 · 2 깐깐한
+   남겨 둘 돈(buy/up/take), 인수할 확률, 힘 게이지 명중률, 관문에서 돈 내고 나갈 기준 */
+const AI_LV = [
+  { buy:450, up:450, take:9999, takeP:0,  hit:.05, gate:800, tpBest:false },
+  { buy:150, up:150, take:250,  takeP:.5, hit:.25, gate:400, tpBest:false },
+  { buy:40,  up:60,  take:80,   takeP:1,  hit:.85, gate:100, tpBest:true  },
+];
+function aiDecide(p){
+  const L = AI_LV[p.lv ?? 1];
+  if(G.phase === 'throw') return p.gate && p.cash > L.gate ? { k:'pay' } : { k:'throw', x: Math.random() < L.hit ? 70 + Math.floor(Math.random()*16) : Math.floor(Math.random()*101) };
+  if(G.phase === 'buy') return { k: p.cash - buyCost(p.pos) >= L.buy ? 'buy' : 'skip' };
+  if(G.phase === 'up') return { k: p.cash - upCostNow(p.pos) >= L.up ? 'up' : 'skip' };
+  if(G.phase === 'take') return { k: p.cash - takeCost(p.pos) >= L.take && Math.random() < L.takeP ? 'take' : 'skip' };
+  if(G.phase === 'tp'){
+    const opts = CELLS.map((c,k)=>k).filter(k => CELLS[k].t==='prop' && G.own[k]===-1 && buyCost(k) <= p.cash - L.buy);
+    if(!opts.length) return { k:'tp', x:0 };
+    if(L.tpBest){ const me = idx(p), mine = g => CELLS.filter((c,k) => c.g === g && G.own[k] === me).length; opts.sort((a,b) => mine(CELLS[b].g) - mine(CELLS[a].g) || CELLS[b].p - CELLS[a].p); return { k:'tp', x:opts[0] }; }
+    return { k:'tp', x: opts[Math.floor(Math.random()*opts.length)] };
+  }
+  if(G.phase === 'pick'){ const m = myProps(p, G.pick.kind).sort((a,b) => CELLS[b].p - CELLS[a].p); return { k:'pick', x:m[0] }; }
+  if(G.phase === 'card') return { k:'ok' };
+  return null;
+}
 function aiStep(){
   clearTimeout(aiTimer);
   if(!G || G.over || !isHostSide()) return;
   const p = cur(); if(!p.ai) return;
   aiTimer = setTimeout(() => {
     if(animating()) return aiStep();
-    if(G.phase === 'throw') act(p.id, p.gate && p.cash > 400 ? { k:'pay' } : { k:'throw', x: Math.floor(Math.random()*101) });
-    else if(G.phase === 'buy') act(p.id, { k: p.cash - CELLS[p.pos].p >= 150 ? 'buy' : 'skip' });
-    else if(G.phase === 'up') act(p.id, { k: p.cash - upCost(p.pos) >= 150 ? 'up' : 'skip' });
-    else if(G.phase === 'take') act(p.id, { k: p.cash - takeCost(p.pos) >= 250 && Math.random() < .5 ? 'take' : 'skip' });
-    else if(G.phase === 'tp'){
-      const opts = CELLS.map((c,k)=>k).filter(k => CELLS[k].t==='prop' && G.own[k]===-1 && CELLS[k].p <= p.cash - 100);
-      act(p.id, { k:'tp', x: opts.length ? opts[Math.floor(Math.random()*opts.length)] : 0 });
-    }
-    else if(G.phase === 'pick'){ const m = myProps(p, G.pick.kind).sort((a,b) => CELLS[b].p - CELLS[a].p); act(p.id, { k:'pick', x:m[0] }); }
-    else if(G.phase === 'card') act(p.id, { k:'ok' });
+    const a = aiDecide(p); if(a) act(p.id, a);
   }, G.phase === 'card' ? 1500 : 800);
 }
 
@@ -828,7 +888,7 @@ function buildBoard(){
     const d = document.createElement('div'), [r,col] = gridPos(i);
     d.className = 'cell' + (['start','away','rite','song'].includes(c.t) ? ' corner' : '') + (['card','gibok'].includes(c.t) ? ' cardc' : '');
     d.style.gridRow = r; d.style.gridColumn = col; d.id = 'c'+i; d.tabIndex = 0;
-    d.innerHTML = (c.g ? `<div class="band" style="background:${GROUPS[c.g].color}"></div>` : '') +
+    d.innerHTML = '<i class="skl"></i>' + (c.g ? `<div class="band" style="background:${GROUPS[c.g].color}"></div>` : '') +
       (MODEL3[c.t] ? MODEL3[c.t] + (c.t === 'away' ? '<div class="water"></div>' : '') : CORNER_ART[c.t] ? `<div class="cimg">${CORNER_ART[c.t]}</div>` : '') + `<div class="lab"><div class="nm">${hzify(c.n)}</div>` + (c.p ? `<div class="pr">${c.p}${c.gate?' · 관문':''}</div>` : '') + `</div><div class="bld"></div>`;
     d.onclick = () => cellClick(i);
     d.onkeydown = e => { if(e.key === 'Enter') cellClick(i); };
@@ -837,11 +897,11 @@ function buildBoard(){
   const ctr = document.createElement('div'); ctr.id = 'center';
   ctr.innerHTML = `<div id="stage">
       <div id="result"></div>
-      <div id="mid"><div id="tray"><div id="sticks"></div></div><div id="bubble"></div></div>
+      <div id="mid"><div id="tray"><div id="sticks"></div></div></div>
       <div id="faces"></div>
       <div id="say"></div><div id="actrow"></div>
     </div>`;
-  $('game').appendChild(ctr);
+  ctr.insertAdjacentHTML('beforeend', '<div id="bubble"></div>'); $('game').appendChild(ctr);
   const hole = document.createElement('div'); hole.className = 'ctrHole';
   hole.innerHTML = '<i id="hTL" style="left:0;top:0"></i><i id="hTR" style="right:0;top:0"></i><i id="hBL" style="left:0;bottom:0"></i><i id="hBR" style="right:0;bottom:0"></i>';
   b.appendChild(hole);
@@ -1062,10 +1122,21 @@ function cellXY(i){
 }
 function placeCenter(){
   const c = $('center'), g = $('game'); if(!c || !$('hTL')) return;
-  const gr = g.getBoundingClientRect(), p = id => $(id).getBoundingClientRect();
-  const tl = p('hTL'), tr = p('hTR'), bl = p('hBL');
-  const pad = 6, left = tl.left - gr.left + pad, right = tr.left - gr.left - pad, top = tl.top - gr.top + pad, bottom = bl.top - gr.top - pad;
-  Object.assign(c.style, { left:left+'px', top:top+'px', width:Math.max(0,right-left)+'px', height:Math.max(0,bottom-top)+'px' });
+  const gr = g.getBoundingClientRect(), pts = ['hTL','hTR','hBL','hBR'].map(id => { const r = $(id).getBoundingClientRect(); return [r.left - gr.left, r.top - gr.top]; });
+  c.classList.toggle('side', innerHeight <= 520);
+  if(innerHeight <= 520){
+    // 휴대폰 가로: 마름모 안쪽이 좁아서 오른쪽 세로 칸(플레이어 카드 아래)에 둔다
+    const pr = $('pc1').getBoundingClientRect(), b2 = $('pc2'), bb = $('board').getBoundingClientRect();
+    const top = pr.bottom - gr.top + 6, bottom = (b2 && !b2.hidden && b2.innerHTML ? b2.getBoundingClientRect().top - gr.top - 6 : gr.height - 6);
+    const w = Math.min(Math.max(pr.width, gr.right - bb.right - 10), pr.width * 1.7);
+    Object.assign(c.style, { left:(gr.width - 6 - w)+'px', top:top+'px', width:w+'px', height:Math.max(0, bottom - top)+'px' });
+    return;
+  }
+  const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  // 마름모(위·아래가 원근으로 조금 다름) 안에 들어가는 상자: 가로 56%, 세로 44%
+  const w = (maxX - minX) * .56, hh = (maxY - minY) * .5, cx = (minX + maxX) / 2, cy = minY + (maxY - minY) * .53;
+  Object.assign(c.style, { left:(cx - w/2)+'px', top:(cy - hh/2)+'px', width:w+'px', height:hh+'px' });
 }
 function sizeBoard(){ const b = $('board'); if(b) b.style.setProperty('--bw', b.offsetWidth + 'px'); }
 addEventListener('resize', () => setTimeout(() => { sizeBoard(); placeCenter(); if(G) drawTokens(); }, 80));
@@ -1123,7 +1194,7 @@ function render(){
   });
   paintPicks();
   $('era').innerHTML = TURNS.map((t,k) => `<span class="${k<G.era?'past':k===G.era?'now':''}" title="${k+1}턴 · ${t.king}">${k<=G.era ? TURNS[k].ev[G.ev[k]].y : k+1+'턴'}</span>`).join('') + `<span class="${G.era>=TURNS.length?'now':''}">660</span>`;
-  { const E = curEvent(); $('eraCap').textContent = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${E.t}`; }
+  { const E = curEvent(); $('eraCap').innerHTML = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${esc(E.t)}${MOD[G.mod] ? ` <b class="modpill">${MOD[G.mod].s}</b>` : ''}`; }
   const L = G.last;
   if(L && L.n !== lastThrowN){ lastThrowN = L.n; throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; markChip(-1); setTimeout(showResult, 1150); }
   else if(Date.now() >= throwingUntil){ if(!L) setSticksStatic(null); showResult(); }
@@ -1156,8 +1227,8 @@ function showResult(){
 }
 function toastSay(t){ const b = $('bubble'); if(!b) return; b.textContent = t; b.style.opacity = 1; clearTimeout(toastSay.t); toastSay.t = setTimeout(() => { b.style.opacity = 0; }, 3600); }
 function phaseText(p){
-  if(G.phase === 'buy') return `${CELLS[p.pos].n} 세울까? (${CELLS[p.pos].p})`;
-  if(G.phase === 'up') return `${G.bl[p.pos]+1}단계로 올릴까? (${upCost(p.pos)})`;
+  if(G.phase === 'buy') return `${CELLS[p.pos].n} 세울까? (${buyCost(p.pos)})`;
+  if(G.phase === 'up') return `${G.bl[p.pos]+1}단계로 올릴까? (${upCostNow(p.pos)})`;
   if(G.phase === 'take'){ const o = G.players[G.own[p.pos]]; return `인수할까? (${takeCost(p.pos)})`; }
   if(G.phase === 'tp') return '갈 칸을 누르세요';
   if(G.phase === 'pick') return '내 건물을 누르세요';
@@ -1185,8 +1256,8 @@ function renderActions(){
       tb.addEventListener('keyup', e => { if(e.key===' '||e.key==='Enter') gaugeEnd(e); });
       if(p.gate) addBtn(`${GATE_FEE}수전 내고 나가기`, () => send({k:'pay'}), false, p.cash < GATE_FEE);
     }
-    if(G.phase === 'buy'){ addBtn(`세우기 (${CELLS[p.pos].p})`, () => send({k:'buy'}), true); addBtn('지나가기', () => send({k:'skip'})); }
-    if(G.phase === 'up'){ addBtn(`${G.bl[p.pos]+1}단계로 올리기 (${upCost(p.pos)})`, () => send({k:'up'}), true); addBtn('지나가기', () => send({k:'skip'})); }
+    if(G.phase === 'buy'){ addBtn(`세우기 (${buyCost(p.pos)})`, () => send({k:'buy'}), true); addBtn('지나가기', () => send({k:'skip'})); }
+    if(G.phase === 'up'){ addBtn(`${G.bl[p.pos]+1}단계로 올리기 (${upCostNow(p.pos)})`, () => send({k:'up'}), true); addBtn('지나가기', () => send({k:'skip'})); }
     if(G.phase === 'take'){ addBtn(`인수하기 (${takeCost(p.pos)})`, () => send({k:'take'}), true); addBtn('지나가기', () => send({k:'skip'})); }
     if(G.phase === 'card'){ addBtn('카드 읽음', () => send({k:'ok'}), true); }
   }
@@ -1231,7 +1302,7 @@ function showCard(cd){
   openSheet(`<h2>유물 카드 · ${hzify(cd.t)}<span class="tag ${cd.tag}">${TAGN[cd.tag]}</span></h2>${cd.zh?`<div class="zh">${cd.zh}</div>`:''}<p>${cd.d}</p>${srcLine(cd)}`, 'card');
 }
 function showEvent(E, t){
-  $('evtIn').innerHTML = `<div class="muted" style="letter-spacing:.2em">${t >= TURNS.length ? '마지막' : (t+1)+'턴'} · ${kingOf(E, t)}</div><div class="yr">${E.y}</div><h2>${E.t}<span class="tag ${E.tag}">${TAGN[E.tag]}</span></h2>${E.zh?`<div class="zh">${E.zh}</div>`:''}<p>${E.d}</p><p class="fx">${E.fxt}</p>${srcLine(E)}<div class="muted" style="font-size:12px">빈 곳을 눌러 닫기</div>`;
+  $('evtIn').innerHTML = `<div class="muted" style="letter-spacing:.2em">${t >= TURNS.length ? '마지막' : (t+1)+'턴'} · ${kingOf(E, t)}</div><div class="yr">${E.y}</div><h2>${E.t}<span class="tag ${E.tag}">${TAGN[E.tag]}</span></h2>${E.zh?`<div class="zh">${E.zh}</div>`:''}<p>${E.d}</p><p class="fx">${fxText(E)}</p>${srcLine(E)}<div class="muted" style="font-size:12px">빈 곳을 눌러 닫기</div>`;
   $('evt').hidden = false; clearTimeout(showEvent.t); showEvent.t = setTimeout(() => { $('evt').hidden = true; }, 5200);
   buddhaSay('era');
 }
@@ -1264,7 +1335,8 @@ function showRules(){
   <p><b>관등과 봉급.</b> 출발을 지날 때마다 두 품씩 오르고 봉급을 받아요. 극우(흰 띠) → 계덕(푸른 띠) → 시덕(검은 띠) → 내솔(은꽃 관 장식) … 좌평은 <b>내솔(6품) 이상</b>이 <b>정사암 회의</b>에서 왕채를 내야 돼요. 『주서』에서 6품 이상만 관에 은꽃을 달았다는 구절에서 따왔어요. 16품 가운데 12~15품(문독·무독·좌군·진무)은 게임에서 줄였어요.</p>
   <div class="src">${RANK_SRC} · 봉급은 게임용</div>
   <p><b>관문</b>(나성·부소산성)에 멈추면 다음 차례에 왕채가 나와야 나가요. 30수전을 내면 바로 나가요.</p>
-  <p><b>열두 턴.</b> 선두가 출발(사비 천도)이나 맞은편 구태묘 제사를 지날 때마다 다음 턴으로 넘어가요. 턴마다 그 시대(성왕 → 위덕왕 → 법왕·무왕 → 의자왕)의 사건 서너 개 가운데 하나가 무작위로 일어나요. 12턴 다음 바퀴에 660 사비 함락이 오면 점수를 세요.</p>
+  <p><b>열두 턴.</b> 선두가 출발(사비 천도)이나 맞은편 구태묘 제사를 지날 때마다 다음 턴으로 넘어가요. 턴마다 그 시대(성왕 → 위덕왕 → 법왕·무왕 → 의자왕)의 사건 서너 개 가운데 하나가 무작위로 일어나요. 사건의 효과는 <b>다음 사건이 올 때까지 그 턴 내내</b> 이어져요(예: 일식 → 그 턴 동안 통행세 1.5배, 성 방어 → 성 통행세 두 배). 지금 걸린 효과는 위쪽 시대 띠에 노란 표시로 보여요. 12턴 다음 바퀴에 660 사비 함락이 오면 점수를 세요.</p>
+  <p><b>뒤처진 사람 돕기.</b> 출발을 지날 때 점수가 꼴찌면 격려금 80수전을 받아요. 뒤에 던지는 사람은 시작 오수전이 60씩 더 많아요(먼저 던지는 쪽이 유리해서). 혼자 하기에서는 부처님 세기를 너그러운·보통·깐깐한 가운데 고를 수 있어요.</p>
   <p><b>이기는 법.</b> ① 사비 함락 때 점수가 가장 높은 사람 ② 왕궁·성·절 가운데 두 무리를 다 가진 사람 ③ 좌평이 된 뒤 출발을 두 번 더 지난 사람 ④ 혼자 남은 사람(파산하면 탈락).</p>
   <p class="muted">기록·설화·창작·재현 이름·확인 중 표시는 칸과 카드에 붙어 있어요. 칸을 누르면 설명과 출처가 나와요.</p>
   <p class="muted">사건은 대부분 『삼국사기』(1145년, 고려)에서 가져왔어요. 백제가 망하고 500년 가까이 지나 쓴 책이라, 의자왕 때 기사처럼 나라가 망한 까닭을 설명하려는 시각이 들어갔다는 견해도 있어요. 중국의 책봉은 백제 왕이 받은 외교 칭호라서 게임에서는 포(나루) 수입으로 나타냈어요.</p></div>`, 'rules');
@@ -1294,10 +1366,10 @@ const BUDDHA = {
 function buddhaSay(kind){ if(!SOLO.on) return; const a = BUDDHA[kind]; if(a) toastSay('부처님: ' + a[Math.floor(Math.random()*a.length)]); }
 function soloWatch(s){
   if(!SOLO.on) return;
-  if(/^부처님: .*왕채/.test(s)) buddhaSay('king');
-  else if(/→ 부처님: 통행세/.test(s)) buddhaSay('toll');
-  else if(/^부처님 → .*통행세/.test(s)) buddhaSay('paid');
-  else if(/^부처님: .*세웠다/.test(s)) buddhaSay('buy');
+  if(/^(?:\S+ )?부처님: .*왕채/.test(s)) buddhaSay('king');
+  else if(/→ (?:\S+ )?부처님: 통행세/.test(s)) buddhaSay('toll');
+  else if(/^(?:\S+ )?부처님 → .*통행세/.test(s)) buddhaSay('paid');
+  else if(/^(?:\S+ )?부처님: .*세웠다/.test(s)) buddhaSay('buy');
 }
 function story(lines, src){
   return new Promise(res => {
@@ -1312,7 +1384,8 @@ $('startSolo').onclick = async () => {
   const nm = ($('soloNick').value || '양생').trim().slice(0,10) || '양생';
   SOLO.on = true;
   await story(SOLO_INTRO, SOLO_SRC);
-  startGame(newGame([{ id:'Y', nm, c:'#e2574c' }, { id:'B', nm:'부처님', ai:true, c:'#e0c27a' }]));
+  const lv = +(document.querySelector('input[name=soloLv]:checked')?.value ?? 1);
+  startGame(newGame([{ id:'Y', nm, c:'#e2574c', bonus:[200,0,0][lv] }, { id:'B', nm:['너그러운 부처님','부처님','깐깐한 부처님'][lv], ai:true, lv, c:'#e0c27a', bonus:[0,0,340][lv] }]));
   ME = ['Y']; enterGame();
 };
 
