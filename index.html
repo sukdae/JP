@@ -57,7 +57,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:40deg;--spin:-45deg;--unspin:45deg;--pw:clamp(104px,min(17vw,30vh),250px);
+#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:48deg;--spin:-45deg;--unspin:45deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 #game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .scene .sky,.scene .dusk{position:absolute;inset:0}
@@ -74,7 +74,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 @keyframes drift{to{transform:translateX(calc(100vw + 400px))}}
 @media (prefers-reduced-motion:reduce){.scene .cloud,.scene .shine rect{animation:none}}
 /* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
-#game #board{transform:rotateX(var(--tilt)) rotateZ(var(--spin));transform-origin:50% 50%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc((100vw - 2 * var(--pw) - 40px) / 1.414), calc((100vh - 16px - 56px) / 1.38));margin-bottom:calc(var(--bw,600px) * .13);box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
+#game #board{transform:translate(var(--dx,0px),var(--dy,0px)) rotateX(var(--tilt)) rotateZ(var(--spin));transform-origin:50% 50%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc((100vw - 2 * var(--pw) - 40px) / 1.414), calc((100vh - 16px - 56px) / 1.38));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
 #game .cell{transform-style:preserve-3d;overflow:visible}
 #game .cell .bld{transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));height:92%;width:62%;right:19%;bottom:46%}
 #game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
@@ -1139,7 +1139,24 @@ function placeCenter(){
   Object.assign(c.style, { left:(cx - w/2)+'px', top:(cy - hh/2)+'px', width:w+'px', height:hh+'px' });
 }
 function sizeBoard(){ const b = $('board'); if(b) b.style.setProperty('--bw', b.offsetWidth + 'px'); }
-addEventListener('resize', () => setTimeout(() => { sizeBoard(); placeCenter(); if(G) drawTokens(); }, 80));
+/* 판 맞추기: 기울이고 돌린 판의 실제 크기를 재서, 시대 띠 아래 · 양쪽 플레이어 카드 사이 빈 곳에 꽉 차게 키우고 가운데로 옮긴다 */
+function fitBoard(){
+  const b = $('board'), g = $('game'); if(!b || g.hidden) return;
+  const gr = g.getBoundingClientRect(), era = $('eraBar').getBoundingClientRect(), pw = $('pc0').offsetWidth || 120;
+  const top = era.top - gr.top + Math.max(era.height, 40) + 14, bot = gr.height - 10;
+  const left = pw + 14, right = gr.width - (innerHeight <= 520 ? Math.min(pw * 1.7, gr.width * .26) + 14 : pw + 14);
+  for(let i = 0; i < 4; i++){
+    let r = b.getBoundingClientRect(); if(!r.width) return;
+    const s = Math.min((right - left) / r.width, (bot - top) / r.height);
+    b.style.width = Math.max(120, b.offsetWidth * s) + 'px';
+    r = b.getBoundingClientRect();
+    const dx = parseFloat(b.style.getPropertyValue('--dx')) || 0, dy = parseFloat(b.style.getPropertyValue('--dy')) || 0;
+    b.style.setProperty('--dx', (dx + (left + right) / 2 - (r.left + r.right) / 2 + gr.left) + 'px');
+    b.style.setProperty('--dy', (dy + (top + bot) / 2 - (r.top + r.bottom) / 2 + gr.top) + 'px');
+  }
+  sizeBoard(); placeCenter(); if(G) drawTokens();
+}
+addEventListener('resize', () => setTimeout(fitBoard, 80));
 function drawTokens(hopIds){
   const L = $('tokens'); if(!L || !G) return;
   G.players.forEach((p,k) => {
@@ -1433,7 +1450,7 @@ function enterGame(){
   for(const k in DISP) delete DISP[k];
   lastEvtN = 0; lastNoteN = G.note?.n || 0; lastThrowN = G.last?.n || 0;
   $('lobby').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
-  buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { sizeBoard(); placeCenter(); render(); }); setTimeout(() => { sizeBoard(); placeCenter(); drawTokens(); }, 300);
+  buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { render(); fitBoard(); }); setTimeout(fitBoard, 300);
 }
 addEventListener('resize', () => { if(G && $('tokens')) drawTokens(); });
 
@@ -1478,7 +1495,7 @@ function toggleFS(){
 addEventListener('pointerup', e => { if(fsAuto && !isFS() && !e.target.closest('#fsBtn,#fsBtn0')) enterFS(true); }, true);
 $('rotTip').textContent = canFS() ? '화면을 누르면 전체화면으로 바뀌어요' : '홈 화면에 추가하면 더 넓게 보여요';
 $('fsBtn0').onclick = toggleFS;
-document.addEventListener('fullscreenchange', () => { if(G) renderActions(); setTimeout(() => { if(G && $('tokens')) drawTokens(); }, 200); });
+document.addEventListener('fullscreenchange', () => { if(G) renderActions(); setTimeout(fitBoard, 200); });
 drawSeats();
 
 /* ---- Firebase 방 (아티팩트의 room과 같은 모양: join → presence / onPeers / peers) ----
