@@ -1284,12 +1284,12 @@ function renderActions(){
   const A = $('actrow'); A.innerHTML = '';
   if(!G.over && mine){
     if(G.phase === 'throw'){
-      A.insertAdjacentHTML('beforeend', `<button class="btn main" id="throwBtn">꾹 눌렀다 놓기</button><div id="gauge" aria-label="힘 게이지"><div class="sweet"></div><div class="fill" id="gfill"></div><div class="lbl">명중 70~85</div></div>`);
+      A.insertAdjacentHTML('beforeend', `<button class="btn main" id="throwBtn" aria-label="꾹 눌렀다 놓아 던지기">터치</button><div id="gauge" aria-label="힘 게이지"><div class="sweet"></div><div class="fill" id="gfill"></div><div class="lbl">명중 70~85</div></div>`);
       const tb = $('throwBtn');
       tb.addEventListener('pointerdown', gaugeStart); tb.addEventListener('pointerup', gaugeEnd); tb.addEventListener('pointerleave', gaugeEnd); tb.addEventListener('pointercancel', gaugeEnd);
       tb.addEventListener('keydown', e => { if((e.key===' '||e.key==='Enter') && !gauge.on && !e.repeat) gaugeStart(e); });
       tb.addEventListener('keyup', e => { if(e.key===' '||e.key==='Enter') gaugeEnd(e); });
-      if(p.gate) addBtn(`${GATE_FEE}수전 내고 나가기`, () => send({k:'pay'}), false, p.cash < GATE_FEE);
+      if(p.gate) addBtn(`${GATE_FEE}수전`, () => send({k:'pay'}), false, p.cash < GATE_FEE);
     }
     if(G.phase === 'buy'){ addBtn(`세우기 (${buyCost(p.pos)})`, () => send({k:'buy'}), true); addBtn('지나가기', () => send({k:'skip'})); }
     if(G.phase === 'up'){ addBtn(`${G.bl[p.pos]+1}단계로 올리기 (${upCostNow(p.pos)})`, () => send({k:'up'}), true); addBtn('지나가기', () => send({k:'skip'})); }
