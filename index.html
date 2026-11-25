@@ -35,7 +35,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
 h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
 .hz{font-family:var(--hz)}
-.btn{background:transparent;border:1px solid var(--bronze);color:var(--paper);border-radius:6px;padding:.5em 1em;font-size:15px;touch-action:none;user-select:none;-webkit-user-select:none}
+.btn{background:transparent;border:1px solid var(--bronze);color:var(--paper);border-radius:6px;padding:.5em 1em;font-size:15px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .btn.main{background:var(--bronze);color:var(--lacquer);font-weight:700}
 .btn:disabled{opacity:.35;cursor:default}
 .muted{color:var(--paper-dim)}
@@ -57,7 +57,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--pw:clamp(104px,min(17vw,30vh),250px);
+#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);height:calc(100dvh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 #game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .scene .sky,.scene .dusk{position:absolute;inset:0}
@@ -108,12 +108,6 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .cell .cimg{inset:auto 18% 30% 18%;height:62%;transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
 #game .cell.corner::after{content:'';position:absolute;left:24%;right:24%;bottom:27%;height:10%;border-radius:50%;background:rgba(0,0,0,.4);filter:blur(2px);pointer-events:none}
 #game{--cu:calc(var(--bw,600px) / 9)}
-#game .tk .ch{bottom:calc(var(--cu) * .07)}
-#game .tk .base{position:absolute;left:calc(var(--cu) * -.19);top:calc(var(--cu) * -.19);width:calc(var(--cu) * .38);height:calc(var(--cu) * .38);transform:rotateX(var(--tilt));transform-style:preserve-3d;pointer-events:none}
-#game .tk .base i{position:absolute;inset:0;border-radius:50%}
-#game .tk .base i:nth-child(1){background:rgba(0,0,0,.5);filter:blur(2px);transform:translate(8%,10%) scale(1.15)}
-#game .tk .base i:nth-child(2){background:color-mix(in srgb,var(--pc,#c9a25a) 45%,#000);transform:translateZ(calc(var(--cu) * .035))}
-#game .tk .base i:nth-child(3){background:radial-gradient(circle at 40% 35%,color-mix(in srgb,var(--pc,#c9a25a) 60%,#fff),var(--pc,#c9a25a) 70%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);transform:translateZ(calc(var(--cu) * .07))}
 #game .mdl{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none}
 #game .mdl i{position:absolute;display:block;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.35)}
 #game .cell .water{position:absolute;left:6%;right:6%;top:22%;height:44%;border-radius:40%;background:repeating-linear-gradient(170deg,rgba(95,154,154,.55) 0 3px,rgba(40,80,90,.5) 3px 8px);pointer-events:none}
@@ -537,6 +531,7 @@ function throwSticks(){ const f = Array.from({length:5},()=>Math.random()<.5); r
 function act(pid, a){
   if(!G || G.over) return;
   const p = cur(); if(p.id !== pid) return;
+  lastAct = Date.now();
   if(a.s != null && a.s !== G.seq) return;
   G.eraThisAct = false;
   if(G.phase === 'throw' && a.k === 'pay' && p.gate){ if(p.cash < GATE_FEE) return; p.cash -= GATE_FEE; p.gate = 0; log(`${p.nm}: 30수전 내고 관문 통과`); return done(); }
@@ -753,6 +748,12 @@ function aiDecide(p){
   if(G.phase === 'card') return { k:'ok' };
   return null;
 }
+// 멈춤 감시: 컴퓨터 차례인데 3초 넘게 아무 일이 없으면 다시 움직이게 한다 (화면 그리기 오류 등으로 예약이 끊긴 경우)
+setInterval(() => {
+  if(!G || G.over || !isHostSide()) return;
+  if(walking && Date.now() - lastWalk > 3000){ walking = false; walk(); }
+  if(cur().ai && !animating() && Date.now() - lastAct > 3000){ lastAct = Date.now(); aiStep(); }
+}, 1000);
 function aiStep(){
   clearTimeout(aiTimer);
   if(!G || G.over || !isHostSide()) return;
@@ -900,7 +901,7 @@ function buildBoard(){
 const S3 = (() => {
   const LEN = 1.0, WID = 0.17, THK = 0.06, DUR = 1150;
   const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let salt = 0, cv = null, ctx = null, raf = 0, plan = null, t0 = 0, faces = null, ro = null;
+  let resizing = false, cssW = 0, cssH = 0, salt = 0, cv = null, ctx = null, raf = 0, plan = null, t0 = 0, faces = null, ro = null;
   const tex = [];   // tex[k] = { w: canvas, b: canvas }
   const rad = d => d * Math.PI / 180;
   const easeOut = s => 1 - Math.pow(1 - s, 3);
@@ -1027,10 +1028,10 @@ const S3 = (() => {
 
   function draw(){
     if(!ctx) return;
-    // 상자 크기가 바뀌었으면(버튼이 사라지거나 생길 때) 다시 맞춘 뒤 그린다
-    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-    cv.style.visibility = cv.clientHeight < 34 ? 'hidden' : '';
-    if(cv.clientHeight && Math.abs(cv.width - Math.round(cv.clientWidth * dpr)) + Math.abs(cv.height - Math.round(cv.clientHeight * dpr)) > 2) return resize();
+    // 상자 크기가 바뀌었으면(버튼이 사라지거나 생길 때) 다시 맞춘 뒤 그린다. 같은 값(소수점 크기)으로 비교하고 한 번만
+    const box = cv.getBoundingClientRect();
+    cv.style.visibility = box.height < 34 ? 'hidden' : '';
+    if(!resizing && box.height && (Math.abs(box.width - cssW) > 1 || Math.abs(box.height - cssH) > 1)){ resizing = true; try{ resize(); } finally { resizing = false; } return; }
     const t = plan && plan.anim ? Math.min((performance.now() - t0) / DUR, 1) : 1;
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
     const sticks = (plan || { s: makePlan(faces, false, salt) }).s;
@@ -1080,6 +1081,7 @@ const S3 = (() => {
     const r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     cv.style.visibility = r.height < 34 ? 'hidden' : '';   // 자리가 너무 작으면 막대를 숨긴다
     if(!r.width || !r.height) return;
+    cssW = r.width; cssH = r.height;
     cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
     W = cv.width; H = cv.height; F = Math.min(W * 1.65, H * 2.6);
     draw();
@@ -1149,19 +1151,20 @@ function drawTokens(hopIds){
   const L = $('tokens'); if(!L || !G) return;
   G.players.forEach((p,k) => {
     let el = $('tk'+k);
-    if(!el){ el = document.createElement('div'); el.className = 'tk'; el.id = 'tk'+k; el.innerHTML = `<div class="base"><i></i><i></i><i></i></div><div class="ch"></div>`; L.appendChild(el); }
+    if(!el){ el = document.createElement('div'); el.className = 'tk'; el.id = 'tk'+k; el.innerHTML = `<div class="ch"></div>`; L.appendChild(el); }
     el.hidden = p.out;
     const at = DISP[p.id] ?? p.pos, [x,y] = cellXY(at);
     const same = G.players.filter((q,j) => j < k && !q.out && (DISP[q.id] ?? q.pos) === at).length;
     el.style.left = (x - same * 11) + 'px'; el.style.top = (y - same * 2) + 'px';
     const ck = [p.c, p.rank, p.nm].join('|');   // 말 그림은 관등·색·이름이 바뀔 때만 새로
-    if(el.dataset.k !== ck){ el.dataset.k = ck; el.querySelector('.ch').innerHTML = chibi(p, k); el.style.setProperty('--pc', p.c); }
+    if(el.dataset.k !== ck){ el.dataset.k = ck; el.querySelector('.ch').innerHTML = chibi(p, k); }
     el.classList.toggle('cur', k === G.turn && !G.over);
     if(hopIds && hopIds.includes(p.id)){ el.classList.remove('hop'); void el.offsetWidth; el.classList.add('hop'); }
   });
 }
+let lastWalk = 0, lastAct = 0;
 function walk(){
-  clearTimeout(stepTimer);
+  clearTimeout(stepTimer); lastWalk = Date.now();
   if(!G) return;
   if(Date.now() < throwingUntil){ walking = true; stepTimer = setTimeout(walk, throwingUntil - Date.now() + 20); return; }
   let moving = false; const hop = [];
@@ -1178,9 +1181,9 @@ function walk(){
 }
 function throwAnim(L){
   throwingUntil = Date.now() + 1150;
-  S3.toss(L.f, L.n);
+  try{ S3.toss(L.f, L.n); }catch(e){ console.warn('막대 그리기 오류', e); }
 }
-function setSticksStatic(L){ S3.show(L ? L.f : null, L ? L.n : 0); }
+function setSticksStatic(L){ try{ S3.show(L ? L.f : null, L ? L.n : 0); }catch(e){ console.warn('막대 그리기 오류', e); } }
 
 let lastEvtN = 0, lastNoteN = 0;
 function paintPicks(){
@@ -1257,6 +1260,7 @@ function renderActions(){
     if(G.phase === 'throw'){
       A.insertAdjacentHTML('beforeend', `<button class="btn main" id="throwBtn" aria-label="꾹 눌렀다 놓아 던지기">터치</button><div id="gauge" aria-label="힘 게이지"><div class="sweet"></div><div class="fill" id="gfill"></div><div class="lbl">명중 70~85</div></div>`);
       const tb = $('throwBtn');
+      tb.addEventListener('contextmenu', e => e.preventDefault());   // 휴대폰에서 꾹 누를 때 메뉴가 뜨지 않게
       tb.addEventListener('pointerdown', gaugeStart); tb.addEventListener('pointerup', gaugeEnd); tb.addEventListener('pointerleave', gaugeEnd); tb.addEventListener('pointercancel', gaugeEnd);
       tb.addEventListener('keydown', e => { if((e.key===' '||e.key==='Enter') && !gauge.on && !e.repeat) gaugeStart(e); });
       tb.addEventListener('keyup', e => { if(e.key===' '||e.key==='Enter') gaugeEnd(e); });
