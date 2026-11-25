@@ -112,7 +112,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .mdl{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none}
 #game .mdl i{position:absolute;display:block;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.35)}
 #game .cell .water{position:absolute;left:6%;right:6%;top:22%;height:44%;border-radius:40%;background:repeating-linear-gradient(170deg,rgba(95,154,154,.55) 0 3px,rgba(40,80,90,.5) 3px 8px);pointer-events:none}
-#game #tokens{transform-style:preserve-3d}
+#game #tokens{transform-style:preserve-3d;transform:translateZ(calc(var(--th) + 1px))}  /* 말은 솟은 칸 윗면 위에 선다 (안 그러면 칸에 묻힌다) */
 #game .tk{transform-style:preserve-3d;transform:rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
 #game .tk .ch{width:calc(var(--bw,600px) / 9 * .5);left:calc(var(--bw,600px) / 9 * -.25)}
 #game .ctrHole{grid-column:2/9;grid-row:2/9;background:radial-gradient(ellipse at 50% 50%,#3a2c22,#241b16 75%);position:relative}
