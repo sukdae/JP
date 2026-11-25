@@ -57,7 +57,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--spin:0deg;--unspin:0deg;--pw:clamp(104px,min(17vw,30vh),250px);
+#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 #game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .scene .sky,.scene .dusk{position:absolute;inset:0}
@@ -74,9 +74,9 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 @keyframes drift{to{transform:translateX(calc(100vw + 400px))}}
 @media (prefers-reduced-motion:reduce){.scene .cloud,.scene .shine rect{animation:none}}
 /* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
-#game #board{transform:translate(var(--dx,0px),var(--dy,0px)) rotateX(var(--tilt)) rotateZ(var(--spin));transform-origin:50% 50%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc((100vw - 2 * var(--pw) - 40px) / 1.414), calc((100vh - 16px - 56px) / 1.38));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
+#game #board{transform:translate(var(--dx,0px),var(--dy,0px)) rotateX(var(--tilt));transform-origin:50% 50%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc((100vw - 2 * var(--pw) - 40px) / 1.414), calc((100vh - 16px - 56px) / 1.38));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
 #game .cell{transform-style:preserve-3d;overflow:visible}
-#game .cell .bld{transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:3%;bottom:40%}
+#game .cell .bld{transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:3%;bottom:40%}
 #game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
 #game .cell .lab{position:absolute;left:3px;bottom:2px;max-width:62%;z-index:2;pointer-events:none;text-shadow:0 1px 2px #000}
 #game .cell .nm{margin:0;font-size:calc(var(--bw,600px) / 9 * .17);line-height:1.1;word-break:keep-all;overflow-wrap:normal;white-space:normal}
@@ -103,14 +103,13 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game #board{gap:calc(var(--bw,600px) * .006);background:linear-gradient(#2a1c12,#140d08)}
 #game .cell{transform:translateZ(var(--th));box-shadow:inset 0 1px 0 rgba(255,236,200,.12),inset 0 -2px 3px rgba(0,0,0,.35)}
 #game .cell::before{content:'';position:absolute;left:0;right:0;top:100%;height:var(--th);background:linear-gradient(#6b4c33,#2a1c12);transform-origin:50% 0;transform:rotateX(-90deg);pointer-events:none}
-#game .cell .skl{position:absolute;top:0;bottom:0;right:100%;width:var(--th);background:linear-gradient(90deg,#2a1c12,#5a402a);transform-origin:100% 50%;transform:rotateY(-90deg);pointer-events:none}
 #game .cell .band{height:12%;transform:translateZ(calc(var(--th) * .5));box-shadow:0 2px 2px rgba(0,0,0,.45)}
 #game .cell.own{box-shadow:inset 0 0 0 2px var(--oc),inset 0 -2px 3px rgba(0,0,0,.35)}
-#game .cell .cimg{inset:auto 18% 30% 18%;height:62%;transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
+#game .cell .cimg{inset:auto 18% 30% 18%;height:62%;transform-origin:50% 100%;transform:rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
 #game .cell.corner::after{content:'';position:absolute;left:24%;right:24%;bottom:27%;height:10%;border-radius:50%;background:rgba(0,0,0,.4);filter:blur(2px);pointer-events:none}
 #game{--cu:calc(var(--bw,600px) / 9)}
 #game .tk .ch{bottom:calc(var(--cu) * .07)}
-#game .tk .base{position:absolute;left:calc(var(--cu) * -.19);top:calc(var(--cu) * -.19);width:calc(var(--cu) * .38);height:calc(var(--cu) * .38);transform:rotateX(var(--tilt)) rotateZ(var(--spin));transform-style:preserve-3d;pointer-events:none}
+#game .tk .base{position:absolute;left:calc(var(--cu) * -.19);top:calc(var(--cu) * -.19);width:calc(var(--cu) * .38);height:calc(var(--cu) * .38);transform:rotateX(var(--tilt));transform-style:preserve-3d;pointer-events:none}
 #game .tk .base i{position:absolute;inset:0;border-radius:50%}
 #game .tk .base i:nth-child(1){background:rgba(0,0,0,.5);filter:blur(2px);transform:translate(8%,10%) scale(1.15)}
 #game .tk .base i:nth-child(2){background:color-mix(in srgb,var(--pc,#c9a25a) 45%,#000);transform:translateZ(calc(var(--cu) * .035))}
@@ -119,7 +118,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .mdl i{position:absolute;display:block;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.35)}
 #game .cell .water{position:absolute;left:6%;right:6%;top:22%;height:44%;border-radius:40%;background:repeating-linear-gradient(170deg,rgba(95,154,154,.55) 0 3px,rgba(40,80,90,.5) 3px 8px);pointer-events:none}
 #game #tokens{transform-style:preserve-3d}
-#game .tk{transform-style:preserve-3d;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
+#game .tk{transform-style:preserve-3d;transform:rotateX(calc(-1 * var(--tilt)));transform-origin:0 0}
 #game .tk .ch{width:calc(var(--bw,600px) / 9 * .5);left:calc(var(--bw,600px) / 9 * -.25)}
 #game .ctrHole{grid-column:2/9;grid-row:2/9;background:radial-gradient(ellipse at 50% 50%,#3a2c22,#241b16 75%);position:relative}
 #game .ctrHole i{position:absolute;width:0;height:0}
@@ -130,7 +129,6 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game > #center #stage{overflow:hidden}
 #game > #center #result{position:relative;z-index:3;text-shadow:0 2px 8px #000}
 #game > #center #faces{font-size:clamp(10px,1.2vw,15px)}
-#game > #center #chips span{font-size:clamp(9px,1.05vw,13px);padding:.1em .45em}
 #game > #center #say{font-size:clamp(11px,1.3vw,16px)}
 #game > #center #actrow .btn{font-size:clamp(12px,1.4vw,18px);padding:.45em 1em}
 #game > #center #gauge{height:clamp(18px,2.4vw,28px);max-width:none;min-width:140px}
@@ -146,10 +144,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .edge.left{top:0;bottom:0;left:0;width:calc(var(--bw,600px) * .11);transform-origin:0 50%;transform:rotateY(90deg);background:linear-gradient(90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset 2px 0 0 #c9a25a}
 #game .edge.right{top:0;bottom:0;right:0;width:calc(var(--bw,600px) * .11);transform-origin:100% 50%;transform:rotateY(-90deg);background:linear-gradient(-90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset -2px 0 0 #c9a25a}
 @media (max-height:520px){ #game > #center #result{font-size:clamp(12px,4vh,20px)} #game > #center #say{font-size:11px} #game > #center #actrow .btn{font-size:12px} #game > #center #result{font-size:clamp(15px,5vh,30px)} #game > #center #actrow .btn{font-size:clamp(11px,3.4vh,16px);padding:.3em .8em} #game > #center #say{font-size:clamp(10px,3vh,14px)} }
-#tiltBox{display:flex;align-items:center;gap:4px;font-size:clamp(9px,1vw,12px);color:var(--paper-dim)}
-#tiltBox input{width:70px}
-#board{position:relative;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(6,1fr);gap:2px;
-  width:min(100%, calc((100vh - 16px) * 2.05));aspect-ratio:2.05/1;background:var(--bronze-dim);padding:2px;border-radius:6px}
+#board{position:relative;display:grid;padding:2px;border-radius:6px}
 .cell{position:relative;background:var(--lacquer2);overflow:hidden;cursor:pointer;min-width:0;display:flex;flex-direction:column;padding:2px 3px}
 .cell .band{position:absolute;inset:0 0 auto;height:4px}
 .cell .nm{font-family:var(--display);font-size:clamp(7.5px,1.15vw,13px);line-height:1.12;margin-top:4px;word-break:keep-all;overflow-wrap:anywhere;position:relative;z-index:1}
@@ -172,8 +167,6 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 @media (prefers-reduced-motion:reduce){.tk{transition:none}.tk.hop .ch{animation:none}}
 .chibi{overflow:visible;filter:drop-shadow(0 1px 0 rgba(0,0,0,.5))}
 
-#center{grid-column:2/12;grid-row:2/6;background:radial-gradient(ellipse at 55% 45%,#2f251f,var(--lacquer) 75%);display:grid;grid-template-columns:minmax(0,26%) minmax(0,1fr);gap:6px;padding:5px 8px;min-width:0;min-height:0}
-#players{display:flex;flex-direction:column;gap:4px;min-width:0;overflow:hidden}
 .pl{border:1px solid var(--bronze-dim);border-radius:6px;padding:2px 6px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0 6px;align-items:center;background:var(--lacquer2);font-size:clamp(8px,1vw,12px)}
 .pl.cur{border-color:var(--bronze);box-shadow:0 0 0 1px var(--bronze)}
 .pl.out{opacity:.35}
@@ -196,10 +189,6 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .badge{font-family:var(--body);font-size:clamp(9px,1vw,12px);border-radius:999px;padding:.1em .6em;font-weight:700}
 .badge.king{background:#e0b85a;color:#2a1a08}.badge.peon{background:#4a3c30;color:var(--paper-dim)}.badge.hit{background:#3f8a86;color:#fff}
 #faces{font-size:clamp(8px,.95vw,12px);color:var(--paper-dim);min-height:1.2em}
-#chips{display:flex;flex-wrap:wrap;gap:2px}
-#chips span{font-size:clamp(7px,.85vw,11px);padding:0 .35em;border-radius:3px;background:#2a211b;color:#8f8371;border:1px solid transparent;white-space:nowrap}
-#chips span.k{border-color:#6b5531}
-#chips span.on{background:var(--bronze);color:var(--lacquer);font-weight:700}
 #game > #center #tray{flex:1;width:100%;height:100%}
 #st3d{display:block;width:100%;height:100%;min-height:80px}
 #mid{position:relative;display:flex}
@@ -779,7 +768,6 @@ function aiStep(){
    ===================================================================== */
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const zhOf = o => o.rare ? `<span class="rare" title="𢳚 (유니코드 U+22CDA) — 대부분의 글꼴에 없는 한자">⿰</span>` : `<span class="hz">${o.zh}</span>`;
 const hzify = s => String(s).replace(/([㐀-鿿\u{20000}-\u{2ffff}]+)/gu,'<span class="hz">$1</span>');
 const SEAT_LOOK = ['scholar','noble','merchant','artisan'];
 function lookOf(p, i){ return p.id === 'B' ? 'buddha' : p.id === 'Y' ? 'scholar' : SEAT_LOOK[i % 4]; }
@@ -875,8 +863,6 @@ const MODEL3 = {
 };
 const CORNER_ART = {
   start: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="none" stroke="#c9a25a" stroke-width="2"/><path d="M14 30 h26 l-8 -8 M40 30 l-8 8" stroke="#e0c27a" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
-  away: `<svg viewBox="0 0 60 60"><path d="M6 40 q24 10 48 0 l-6 8 q-18 6 -36 0z" fill="#6b4a2e"/><path d="M28 40 V12 L46 36Z" fill="#efe6d2"/><path d="M26 40 V18 L12 36Z" fill="#d9ccae"/><path d="M0 52 q10 -4 20 0 t20 0 t20 0" stroke="#5f9a9a" stroke-width="2.5" fill="none"/></svg>`,
-  rite: `<svg viewBox="0 0 60 60"><path d="M8 20 h44 M12 26 h36" stroke="#b8473a" stroke-width="4" stroke-linecap="round"/><path d="M16 20 V50 M44 20 V50" stroke="#b8473a" stroke-width="4"/><rect x="22" y="38" width="16" height="12" fill="#7d6640"/><path d="M30 34 v-6" stroke="#e0c27a" stroke-width="2"/><circle cx="30" cy="26" r="2" fill="#f0d79a"/></svg>`,
   song: `<svg viewBox="0 0 60 60"><ellipse cx="30" cy="52" rx="17" ry="3" fill="rgba(0,0,0,.35)"/><g stroke="#4a2e18" stroke-width="1.4" stroke-linejoin="round"><rect x="19" y="40" width="5" height="11" rx="2.5" fill="#a8703e"/><rect x="34" y="40" width="5" height="11" rx="2.5" fill="#a8703e"/><ellipse cx="29" cy="38" rx="15" ry="9.5" fill="#c98a4b"/><path d="M14 36 q-7 2 -6 10 q4 -3 7 -6" fill="#6b3f1d"/><circle cx="43" cy="25" r="10" fill="#c98a4b"/><ellipse cx="50" cy="29" rx="5" ry="4" fill="#e6b27a"/><path d="M37 17 l1 -7 l5 5z" fill="#c98a4b"/><path d="M34 22 q2 -9 10 -10 q-3 4 -1 7 q-4 0 -6 6z" fill="#6b3f1d"/></g><circle cx="45" cy="24" r="2.3" fill="#2a1a0e"/><circle cx="45.8" cy="23.2" r=".8" fill="#fff"/><circle cx="51.5" cy="29" r=".9" fill="#4a2e18"/><ellipse cx="41" cy="29" rx="2.4" ry="1.4" fill="#f08a8a" opacity=".75"/><path d="M47 32.5 q2 1.4 4 0" stroke="#4a2e18" stroke-width="1" fill="none"/><rect x="22" y="29" width="14" height="5" rx="2" fill="#b8473a"/></svg>`,
 };
 function buildBoard(){
@@ -885,7 +871,7 @@ function buildBoard(){
     const d = document.createElement('div'), [r,col] = gridPos(i);
     d.className = 'cell' + (['start','away','rite','song'].includes(c.t) ? ' corner' : '') + (['card','gibok'].includes(c.t) ? ' cardc' : '');
     d.style.gridRow = r; d.style.gridColumn = col; d.id = 'c'+i; d.tabIndex = 0;
-    d.innerHTML = '<i class="skl"></i>' + (c.g ? `<div class="band" style="background:${GROUPS[c.g].color}"></div>` : '') +
+    d.innerHTML = (c.g ? `<div class="band" style="background:${GROUPS[c.g].color}"></div>` : '') +
       (MODEL3[c.t] ? MODEL3[c.t] + (c.t === 'away' ? '<div class="water"></div>' : '') : CORNER_ART[c.t] ? `<div class="cimg">${CORNER_ART[c.t]}</div>` : '') + `<div class="lab"><div class="nm">${hzify(c.n)}</div>` + (c.p ? `<div class="pr">${c.p}${c.gate?' · 관문':''}</div>` : '') + `</div><div class="bld"></div>`;
     d.onclick = () => cellClick(i);
     d.onkeydown = e => { if(e.key === 'Enter') cellClick(i); };
@@ -906,7 +892,6 @@ function buildBoard(){
   ['front','left','right'].forEach(k => { const e = document.createElement('div'); e.className = 'edge ' + k; b.appendChild(e); });
   $('sticks').innerHTML = '<canvas id="st3d" role="img" aria-label="저포 막대 다섯 개"></canvas>';
   S3.attach($('st3d'), G && G.last ? G.last.f : null, G && G.last ? G.last.n : 0);
-  if($('chips')) $('chips').innerHTML = OUT.map((o,k) => `<span id="ch${k}" class="${o.king?'k':''}" title="${o.how}">${o.rare ? '' : `<span class="hz">${o.zh}</span> `}${o.ko}</span>`).join('');
 }
 
 /* 저포 막대 3D: 외부 라이브러리 없이 캔버스에 직접 그린다 (아티팩트에서도 동작).
@@ -1169,7 +1154,8 @@ function drawTokens(hopIds){
     const at = DISP[p.id] ?? p.pos, [x,y] = cellXY(at);
     const same = G.players.filter((q,j) => j < k && !q.out && (DISP[q.id] ?? q.pos) === at).length;
     el.style.left = (x - same * 11) + 'px'; el.style.top = (y - same * 2) + 'px';
-    el.querySelector('.ch').innerHTML = chibi(p, k); el.style.setProperty('--pc', p.c);
+    const ck = [p.c, p.rank, p.nm].join('|');   // 말 그림은 관등·색·이름이 바뀔 때만 새로
+    if(el.dataset.k !== ck){ el.dataset.k = ck; el.querySelector('.ch').innerHTML = chibi(p, k); el.style.setProperty('--pc', p.c); }
     el.classList.toggle('cur', k === G.turn && !G.over);
     if(hopIds && hopIds.includes(p.id)){ el.classList.remove('hop'); void el.offsetWidth; el.classList.add('hop'); }
   });
@@ -1210,13 +1196,15 @@ function render(){
   CELLS.forEach((c,i) => {
     const el = $('c'+i), o = G.own[i];
     el.classList.toggle('own', o >= 0); if(o >= 0) el.style.setProperty('--oc', G.players[o].c);
-    const bd = el.querySelector('.bld'); bd.innerHTML = o >= 0 ? building(i, G.players[o].c) : ''; bd.classList.toggle('gold', o >= 0 && (G.bl[i] || 1) >= MAX_BL);
+    // 건물 그림은 주인·단계·땅값·사찰이 바뀐 칸만 새로 만든다
+    const bd = el.querySelector('.bld'), key = o < 0 ? '' : [G.players[o].c, G.bl[i], G.lv[i], G.tmp[i]].join('|');
+    if(bd.dataset.k !== key){ bd.dataset.k = key; bd.innerHTML = o >= 0 ? building(i, G.players[o].c) : ''; bd.classList.toggle('gold', o >= 0 && (G.bl[i] || 1) >= MAX_BL); }
   });
   paintPicks();
   $('era').innerHTML = TURNS.map((t,k) => `<span class="${k<G.era?'past':k===G.era?'now':''}" title="${k+1}턴 · ${t.king}">${k<=G.era ? TURNS[k].ev[G.ev[k]].y : k+1+'턴'}</span>`).join('') + `<span class="${G.era>=TURNS.length?'now':''}">660</span>`;
   { const E = curEvent(); $('eraCap').innerHTML = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${esc(E.t)}${MOD[G.mod] ? ` <b class="modpill">${MOD[G.mod].s}</b>` : ''}`; }
   const L = G.last;
-  if(L && L.n !== lastThrowN){ lastThrowN = L.n; throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; markChip(-1); setTimeout(showResult, 1150); }
+  if(L && L.n !== lastThrowN){ lastThrowN = L.n; throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; setTimeout(showResult, 1150); }
   else if(Date.now() >= throwingUntil){ if(!L) setSticksStatic(null); showResult(); }
   [0,1,2,3].forEach(k => { const el = $('pc'+k); if(el){ el.hidden = !G.players[k]; } });
   G.players.forEach((q,i) => {
@@ -1234,16 +1222,15 @@ function render(){
   aiStep();
   if(G.over) setTimeout(showOver, 1800);
 }
-function markChip(k){ OUT.forEach((_,j) => $('ch'+j)?.classList.toggle('on', j === k)); }
 function showResult(){
   if(!G || !$('result')) return;
   const L = G.last;
-  if(!L){ $('result').innerHTML = '<span class="muted" style="font-size:.55em">꾹 눌렀다 놓아 던지기</span>'; $('faces').textContent = '꿩 막대 · 뒤집으면 소'; $('faces').title = '두 막대는 흰 면에 꿩, 검은 면에 소가 그려져 있다'; markChip(-1); return; }
+  if(!L){ $('result').innerHTML = '<span class="muted" style="font-size:.55em">꾹 눌렀다 놓아 던지기</span>'; $('faces').textContent = '꿩 막대 · 뒤집으면 소'; $('faces').title = '두 막대는 흰 면에 꿩, 검은 면에 소가 그려져 있다'; return; }
   const r = OUT[L.k];
   $('result').innerHTML = `${r.rare ? '' : `<span class="hz">${r.zh}</span> `}${r.ko} · ${L.mv}칸 <span class="badge ${r.king?'king':'peon'}">${r.king?'왕채 · 한 번 더':'맹채'}</span>${L.hit?'<span class="badge hit">명중 +1</span>':''}`;
   $('faces').textContent = r.how.replace(/\s*\(.*\)/, '');
   $('faces').title = `${L.f.map((b,k) => k<2 ? (b?'소':'꿩') : (b?'검':'흰')).join(' · ')} → ${r.how}${r.pts ? ` · 『오목경』 ${r.pts}점` : ''}`;
-  markChip(L.k);
+ 
 }
 function toastSay(t){ const b = $('bubble'); if(!b) return; b.textContent = t; b.style.opacity = 1; clearTimeout(toastSay.t); toastSay.t = setTimeout(() => { b.style.opacity = 0; }, 3600); }
 function phaseText(p){
@@ -1256,7 +1243,6 @@ function phaseText(p){
   if(p.gate) return '관문 · 왕채가 나와야 통과';
   return '막대를 던질 차례';
 }
-let TILT = 40;
 let gauge = { on:false, v:0, dir:1, t:null };
 function gaugeStart(e){ e.preventDefault(); if(gauge.on || !myTurn() || animating() || G.phase !== 'throw') return; gauge.on = true; gauge.v = 0; gauge.dir = 1;
   gauge.t = setInterval(() => { gauge.v += gauge.dir * 4; if(gauge.v >= 100){ gauge.v = 100; gauge.dir = -1; } if(gauge.v <= 0){ gauge.v = 0; gauge.dir = 1; } const f = $('gfill'); if(f) f.style.width = gauge.v + '%'; }, 22); }
@@ -1327,7 +1313,6 @@ function showEvent(E, t){
   buddhaSay('era');
 }
 $('evt').onclick = () => { $('evt').hidden = true; };
-function showLog(){ openSheet(`<h2>기록</h2>${G.log.slice().reverse().map(s => `<p>${hzify(esc(s))}</p>`).join('')}`, 'log'); }
 let overShown = false;
 function showOver(){
   if(overShown || !G || !G.over) return; overShown = true;
@@ -1455,7 +1440,6 @@ function enterGame(){
   $('lobby').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
   buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { render(); fitBoard(); }); setTimeout(fitBoard, 300);
 }
-addEventListener('resize', () => { if(G && $('tokens')) drawTokens(); });
 
 const seatState = [{ nm:'나', who:'me' }, { nm:'컴퓨터 1', who:'ai' }, { nm:'컴퓨터 2', who:'off' }, { nm:'컴퓨터 3', who:'off' }];
 function drawSeats(){
