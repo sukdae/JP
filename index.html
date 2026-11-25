@@ -57,7 +57,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:48deg;--spin:-45deg;--unspin:45deg;--pw:clamp(104px,min(17vw,30vh),250px);
+#game{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + 7vh);box-sizing:border-box;height:calc(100vh - 16px);min-height:300px;position:relative;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--spin:0deg;--unspin:0deg;--pw:clamp(104px,min(17vw,30vh),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 #game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .scene .sky,.scene .dusk{position:absolute;inset:0}
@@ -76,12 +76,12 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 /* 2.5D: 판은 뒤로 눕고, 건물과 캐릭터는 판 위에 선다. 가운데 화면은 판 밖에서 평평하게 뜬다 */
 #game #board{transform:translate(var(--dx,0px),var(--dy,0px)) rotateX(var(--tilt)) rotateZ(var(--spin));transform-origin:50% 50%;transform-style:preserve-3d;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);aspect-ratio:1;width:min(calc((100vw - 2 * var(--pw) - 40px) / 1.414), calc((100vh - 16px - 56px) / 1.38));box-shadow:0 0 0 2px #c9a25a, 0 60px 80px rgba(0,0,0,.75)}
 #game .cell{transform-style:preserve-3d;overflow:visible}
-#game .cell .bld{transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:4%;bottom:58%}
+#game .cell .bld{transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));height:92%;width:58%;right:3%;bottom:40%}
 #game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
-#game .cell .lab{position:absolute;left:40%;top:70%;width:128%;transform:translate(-50%,-50%) rotateZ(var(--unspin));text-align:center;z-index:2;pointer-events:none;text-shadow:0 1px 2px #000}
+#game .cell .lab{position:absolute;left:3px;bottom:2px;max-width:62%;z-index:2;pointer-events:none;text-shadow:0 1px 2px #000}
 #game .cell .nm{margin:0;font-size:calc(var(--bw,600px) / 9 * .17);line-height:1.1;word-break:keep-all;overflow-wrap:normal;white-space:normal}
 #game .cell .pr{font-size:calc(var(--bw,600px) / 9 * .13)}
-#game .cell.corner .lab{left:30%;top:78%;width:110%}
+#game .cell.corner .lab{max-width:96%}
 #game .cell .cimg{position:absolute;inset:14% 14% 26% 14%;opacity:.9;pointer-events:none}
 #game .cell .cimg svg{width:100%;height:100%}
 #game .cell.corner[id="c0"] .nm{font-family:var(--body);font-weight:700;letter-spacing:.12em;color:#f0d79a}
@@ -91,13 +91,13 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .pc{position:absolute;z-index:9;width:var(--pw);aspect-ratio:1}
 .pc.tl{left:6px;top:6px}.pc.tr{right:6px;top:6px}.pc.br{right:6px;bottom:6px}.pc.bl{left:6px;bottom:6px}
 .pc .pl{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;font-size:calc(var(--pw) * .075);padding:10px;background:rgba(42,32,28,.94);border-width:2px;border-radius:10px}
-.pc .pl b{font-size:1.35em;white-space:normal}
+.pc .pl b{font-size:1.35em;white-space:normal;overflow:visible;line-height:1.35;padding-top:.08em}
 .pc .pl .cash{font-size:1.4em;font-weight:700;text-align:center}
 .pc .pl .rank{text-align:center;line-height:1.45}
 .pc .pl .face{width:calc(var(--pw) * .24)}
 .pc .pl .rank{white-space:normal}
 .rare{font-size:.75em;border:1px dashed currentColor;border-radius:3px;padding:0 .2em}
-#game .cell.own::after{content:'';position:absolute;right:8%;bottom:52%;width:50%;height:16%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(2px);pointer-events:none}
+#game .cell.own::after{content:'';position:absolute;right:6%;bottom:34%;width:50%;height:16%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(2px);pointer-events:none}
 /* 입체: 칸은 판에서 살짝 솟은 타일, 앞면에 두께가 보인다. 모서리 그림과 말은 판 위에 서고 그림자를 드리운다 */
 #game{--th:calc(var(--bw,600px) * .022)}
 #game #board{gap:calc(var(--bw,600px) * .006);background:linear-gradient(#2a1c12,#140d08)}
@@ -106,8 +106,8 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .cell .skl{position:absolute;top:0;bottom:0;right:100%;width:var(--th);background:linear-gradient(90deg,#2a1c12,#5a402a);transform-origin:100% 50%;transform:rotateY(-90deg);pointer-events:none}
 #game .cell .band{height:12%;transform:translateZ(calc(var(--th) * .5));box-shadow:0 2px 2px rgba(0,0,0,.45)}
 #game .cell.own{box-shadow:inset 0 0 0 2px var(--oc),inset 0 -2px 3px rgba(0,0,0,.35)}
-#game .cell .cimg{inset:auto 18% 40% 18%;height:62%;transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
-#game .cell.corner::after{content:'';position:absolute;left:24%;right:24%;bottom:37%;height:10%;border-radius:50%;background:rgba(0,0,0,.4);filter:blur(2px);pointer-events:none}
+#game .cell .cimg{inset:auto 18% 30% 18%;height:62%;transform-origin:50% 100%;transform:rotateZ(var(--unspin)) rotateX(calc(-1 * var(--tilt)));filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
+#game .cell.corner::after{content:'';position:absolute;left:24%;right:24%;bottom:27%;height:10%;border-radius:50%;background:rgba(0,0,0,.4);filter:blur(2px);pointer-events:none}
 #game{--cu:calc(var(--bw,600px) / 9)}
 #game .tk .ch{bottom:calc(var(--cu) * .07)}
 #game .tk .base{position:absolute;left:calc(var(--cu) * -.19);top:calc(var(--cu) * -.19);width:calc(var(--cu) * .38);height:calc(var(--cu) * .38);transform:rotateX(var(--tilt)) rotateZ(var(--spin));transform-style:preserve-3d;pointer-events:none}
@@ -206,9 +206,6 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #bubble{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);max-width:92%;padding:.15em .8em;border-radius:999px;background:rgba(20,14,10,.78);border:1px solid rgba(224,194,122,.35);pointer-events:none;opacity:0}
 #bubble:empty{display:none}
 #game > #center #bubble{bottom:calc(100% + 6px);z-index:9}
-#game > #center.side #bubble{left:auto;right:calc(100% + 8px);top:4px;bottom:auto;transform:none;max-width:45vw}
-#game > #center.side #actrow{flex-wrap:wrap}
-#game > #center.side #gauge{flex-basis:100%}
 #game > #center #faces{display:none}
 #game > #center #st3d{min-height:0}
 #game > #center #mid{flex:1 1 0;min-height:0}
@@ -1127,31 +1124,19 @@ function cellXY(i){
 }
 function placeCenter(){
   const c = $('center'), g = $('game'); if(!c || !$('hTL')) return;
-  const gr = g.getBoundingClientRect(), pts = ['hTL','hTR','hBL','hBR'].map(id => { const r = $(id).getBoundingClientRect(); return [r.left - gr.left, r.top - gr.top]; });
-  c.classList.toggle('side', innerHeight <= 520);
-  if(innerHeight <= 520){
-    // 휴대폰 가로: 마름모 안쪽이 좁아서 오른쪽 세로 칸(플레이어 카드 아래)에 둔다
-    const pr = $('pc1').getBoundingClientRect(), b2 = $('pc2'), bb = $('board').getBoundingClientRect();
-    const top = pr.bottom - gr.top + 6, bottom = (b2 && !b2.hidden && b2.innerHTML ? b2.getBoundingClientRect().top - gr.top - 6 : gr.height - 6);
-    const w = Math.min(Math.max(pr.width, gr.right - bb.right - 10), pr.width * 1.7);
-    Object.assign(c.style, { left:(gr.width - 6 - w)+'px', top:top+'px', width:w+'px', height:Math.max(0, bottom - top)+'px' });
-    return;
-  }
-  // 네 꼭짓점(왼·위·오른·아래) 다각형 안에 들어가는 가장 큰 가로 상자를 찾는다
-  const T = pts.reduce((m,q) => q[1] < m[1] ? q : m), B = pts.reduce((m,q) => q[1] > m[1] ? q : m);
-  const L = pts.reduce((m,q) => q[0] < m[0] ? q : m), R = pts.reduce((m,q) => q[0] > m[0] ? q : m);
-  const xAt = (y, p1, p2) => p1[0] + (p2[0] - p1[0]) * (y - p1[1]) / ((p2[1] - p1[1]) || 1);
-  const span = y => [ y < L[1] ? xAt(y, T, L) : xAt(y, L, B), y < R[1] ? xAt(y, T, R) : xAt(y, R, B) ];
+  const gr = g.getBoundingClientRect(), pts = ['hTL','hTR','hBR','hBL'].map(id => { const r = $(id).getBoundingClientRect(); return [r.left - gr.left, r.top - gr.top]; });
+  // 판 안쪽(원근 때문에 위가 좁은 사각형) 안에 들어가는 가장 큰 가로 상자를 찾는다
+  const top = Math.min(...pts.map(q => q[1])), bot = Math.max(...pts.map(q => q[1])), H = bot - top;
+  const span = y => { const xs = [];
+    for(let i = 0; i < 4; i++){ const p1 = pts[i], p2 = pts[(i + 1) % 4], lo = Math.min(p1[1], p2[1]), hi = Math.max(p1[1], p2[1]);
+      if(y >= lo && y <= hi && hi > lo) xs.push(p1[0] + (p2[0] - p1[0]) * (y - p1[1]) / (p2[1] - p1[1])); }
+    return xs.length ? [Math.min(...xs), Math.max(...xs)] : [0, -1]; };
   let best = null;
-  for(let f = .3; f <= .62; f += .02){
-    const hh = (B[1] - T[1]) * f;
-    for(let c = .38; c <= .62; c += .02){
-      const y1 = T[1] + (B[1] - T[1]) * c - hh / 2, y2 = y1 + hh;
-      const a1 = span(y1), a2 = span(y2), l = Math.max(a1[0], a2[0]) + 8, r = Math.min(a1[1], a2[1]) - 8;
-      const w = r - l; if(w <= 0) continue;
-      const score = Math.min(w, 3.2 * hh) * hh;   // 넓이가 가장 큰 상자 (지나치게 납작한 것만 피함)
-      if(!best || score > best.s) best = { s:score, l, t:y1 + 6, w, h:hh - 12 };
-    }
+  for(let f = .3; f <= .96; f += .02) for(let m = .3; m <= .7; m += .02){
+    const y1 = top + H * m - H * f / 2, y2 = y1 + H * f; if(y1 < top || y2 > bot) continue;
+    const a1 = span(y1), a2 = span(y2), l = Math.max(a1[0], a2[0]) + 8, w = Math.min(a1[1], a2[1]) - 8 - l; if(w <= 0) continue;
+    const score = Math.min(w, 3.2 * H * f) * H * f;
+    if(!best || score > best.s) best = { s:score, l, t:y1 + 6, w, h:H * f - 12 };
   }
   if(best) Object.assign(c.style, { left:best.l+'px', top:best.t+'px', width:best.w+'px', height:best.h+'px' });
 }
@@ -1162,7 +1147,7 @@ function fitBoard(){
   const b = $('board'), g = $('game'); if(!b || g.hidden) return;
   const gr = g.getBoundingClientRect(), era = $('eraBar').getBoundingClientRect(), pw = $('pc0').offsetWidth || 120;
   const top = era.top - gr.top + Math.max(era.height, 40) + 14, bot = gr.height - 10;
-  const left = pw + 14, right = gr.width - (innerHeight <= 520 ? Math.min(pw * 1.7, gr.width * .26) + 14 : pw + 14);
+  const left = pw + 14, right = gr.width - pw - 14;
   for(let i = 0; i < 4; i++){
     let r = boxOf(b); if(!r.width) return;
     const s = Math.min((right - left) / r.width, (bot - top) / r.height);
