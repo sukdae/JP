@@ -58,7 +58,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .seat .dot{width:24px;display:flex;justify-content:center}.seat .dot .chibi{width:22px}
 .seat select{background:var(--lacquer);color:var(--paper);border:1px solid var(--bronze-dim);border-radius:6px;padding:.3em}
 
-#game{--W:800px;--H:450px;--vw:10px;--vh:4.5px;display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + calc(7 * var(--vh)));box-sizing:border-box;position:fixed;left:50%;top:50%;width:var(--W);height:var(--H);transform:translate(-50%,-50%) scale(var(--sc,1));transform-origin:50% 50%;overflow:hidden;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--pw:clamp(104px,min(calc(17 * var(--vw)),calc(30 * var(--vh))),250px);
+#game{--W:800px;--H:450px;--vw:10px;--vh:4.5px;display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(26px + calc(7 * var(--vh)));box-sizing:border-box;position:fixed;left:50%;top:50%;width:var(--W);height:var(--H);transform:translate(-50%,-50%) scale(var(--sc,1));transform-origin:50% 50%;perspective:1300px;perspective-origin:50% 10%;--tilt:42deg;--pw:clamp(104px,min(calc(17 * var(--vw)),calc(30 * var(--vh))),250px);
   background:radial-gradient(ellipse at 50% 70%,#2a211b,var(--lacquer) 70%)}
 #game > .scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .scene .sky,.scene .dusk{position:absolute;inset:0}
@@ -81,13 +81,17 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game .cell .bld.gold svg{filter:sepia(1) saturate(4.5) hue-rotate(-8deg) brightness(1.18) drop-shadow(0 0 4px #f5c75a)}
 #game .cell .lab{position:absolute;left:3px;bottom:2px;max-width:62%;z-index:2;pointer-events:none;text-shadow:0 1px 2px #000}
 #game .cell .nm{margin:0;font-size:calc(var(--bw,600px) / 9 * .17);line-height:1.1;word-break:keep-all;overflow-wrap:normal;white-space:normal}
-#game .cell .pr{font-size:calc(var(--bw,600px) / 9 * .13)}
+#game .cell .pr{font-size:calc(var(--bw,600px) / 9 * .155);color:#ddd0b6}
 #game .cell.corner .lab{max-width:96%}
+#game .cell.corner .nm{white-space:nowrap}  /* 귀퉁이 이름은 한 줄로: 두 줄이면 배·사당 모형에 가린다 */
 #game .cell .cimg{position:absolute;inset:14% 14% 26% 14%;opacity:.9;pointer-events:none}
 #game .cell .cimg svg{width:100%;height:100%}
 #game .cell.corner[id="c0"] .nm{font-family:var(--body);font-weight:700;letter-spacing:.12em;color:#f0d79a}
 #eraBar{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:min(calc(var(--W) - 2 * var(--pw) - 40px),900px);z-index:9;display:flex;flex-direction:column;gap:2px}
-#eraBar #era span{font-size:clamp(9px,calc(1.05 * var(--vw)),13px)}
+#eraBar{background:rgba(22,15,12,.78);border-radius:8px;padding:3px 10px 4px;box-shadow:0 2px 10px rgba(0,0,0,.4)}  /* 밝은 노을 위에서도 읽히게 */
+#eraBar #era span{font-size:clamp(9px,calc(1.05 * var(--vw)),13px);color:#d9ccb2;border-color:#5a4838}
+#eraBar #era span.past{color:#a08660;border-color:#a08660}#eraBar #era span.now{color:#f0d79a;border-color:#e0b85a}
+#eraBar #eraCap{color:#d9ccb2}
 #eraBar #eraCap{font-size:clamp(10px,calc(1.15 * var(--vw)),14px)}
 .pc{position:absolute;z-index:9;width:var(--pw);aspect-ratio:1}
 .pc.tl{left:6px;top:6px}.pc.tr{right:6px;top:6px}.pc.br{right:6px;bottom:6px}.pc.bl{left:6px;bottom:6px}
@@ -198,7 +202,8 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game > #center #gauge{min-width:80px;flex:1 1 80px}
 #game > #center #result{font-size:clamp(14px,calc(2.2 * var(--vw)),30px)}
 #game > #center{padding:6px 10px}
-#game .cell .nm{font-size:calc(var(--bw,600px) / 9 * .2)}
+#game .cell .nm{font-size:calc(var(--bw,600px) / 9 * .225)}
+#game .cell .lab{background:rgba(16,11,8,.62);border-radius:3px;padding:0 2px 1px;box-shadow:0 0 3px rgba(16,11,8,.62)}  /* 그림 위에서도 글자가 읽히게 */
 #game > #center #stage{min-height:0}
 #faces{text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #eraCap .modpill{font-weight:700;color:var(--lacquer);background:#e0b85a;border-radius:999px;padding:0 .55em;margin-left:.3em;white-space:nowrap}
@@ -222,7 +227,7 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #sheet p{margin:0;line-height:1.6}
 #over{position:fixed;inset:0;z-index:30;background:rgba(15,11,9,.92);display:flex;align-items:center;justify-content:center;padding:16px}
 #over .in{max-width:560px;width:100%;display:flex;flex-direction:column;gap:12px}
-#evt{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;background:rgba(10,8,7,.72);padding:16px;cursor:pointer}
+#evt{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;background:rgba(10,8,7,.9);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:16px;cursor:pointer}
 #evt .in{max-width:520px;text-align:center;display:flex;flex-direction:column;gap:8px;animation:fadeup .5s ease}
 #evt .yr{font-family:var(--display);color:var(--bronze);font-size:clamp(28px,calc(5 * var(--vw)),52px);letter-spacing:.1em}
 #evt h2{font-size:clamp(18px,calc(2.6 * var(--vw)),28px)}
@@ -317,12 +322,12 @@ const CELLS0 = [
   { t:'gibok', n:'기복 (棋卜)', info:'바둑알을 한 줌 쥐어 홀짝으로 길흉을 본다. 백제 사람들이 점(卜筮)에 밝고 바둑(奕棊)을 특히 좋아했다는 기록에서 떠올린 창작 놀이.', zh:'亦解醫藥卜筮占相之術. … 然尤尙奕棊.', src:'『주서』 이역열전 백제 (바둑알 점 자체는 창작)', tag:'fic' },
   { t:'prop', g:'P', n:'인덕전', p:190, info:'백제문화단지 사비궁의 서궁 외전 (재현 이름).', src:'백제문화단지 재현 건물', tag:'re' },
   { t:'prop', g:'S', n:'정사암', p:150, info:'재상을 뽑을 때 후보의 이름을 함에 넣어 바위에 두었다가, 도장 자국이 찍힌 사람을 재상으로 삼았다는 바위. 누구든 여기 서면 정사암 회의가 열려, 왕채가 나오면 좌평이 된다.', zh:'國家將議宰相。則書當選者名。或三四函封置嵒上。須臾取看。名上有印跡者為相。', src:'『삼국유사』 권2 기이 남부여·전백제 「정사암의 유래」 · 국사편찬위원회 한국사데이터베이스', url: DB + 'sy_002r_0010_0200_0050', tag:'leg' },
-  { t:'away', n:'왜국 파견 · 오경박사', info:'백제는 513년 오경박사 단양이를, 516년 고안무를 왜에 보내 교대하게 했다(무령왕 때). 여기 멈추면 사신으로 떠나 한 번 쉬고, 돌아올 때 50수전을 받는다.', tag:'rec', ...ek('E0036601','역박사',' · 근거 사료는 『일본서기』') },
+  { t:'away', n:'왜국 파견 · 오경박사', sn:'왜국 파견', info:'백제는 513년 오경박사 단양이를, 516년 고안무를 왜에 보내 교대하게 했다(무령왕 때). 여기 멈추면 사신으로 떠나 한 번 쉬고, 돌아올 때 50수전을 받는다.', tag:'rec', ...ek('E0036601','역박사',' · 근거 사료는 『일본서기』') },
   { t:'prop', g:'C', n:'증산성', p:120, info:'부여 규암면 신성리에 있는 산성. 사적.', tag:'rec', ...ek('E0024379','부여군') },
   { t:'prop', g:'C', n:'나성', p:130, gate:true, info:'사비 도성을 둘러싸 안팎을 가르던 바깥 성. 538년 무렵 쌓은 것으로 보며, 북쪽과 동쪽 성벽 약 6.6km가 확인되었다. 관문 칸: 여기 멈추면 다음 차례에 왕채가 나와야 나간다(『오목경』 「非王采不出關」을 빌린 창작 규칙). 30수전을 내고 나가도 된다.', tag:'rec', ...ek('E0024388','부여나성') },
   { t:'prop', g:'F', n:'구드래 나루', p:120, info:'부소산 서쪽 기슭 백마강가의 나루. 2009년 「부여 구드래 일원」으로 명승이 되었다.', tag:'rec', ...ek('E0069836','부여 구드래 일원') },
   { t:'prop', g:'C', n:'부소산성', p:140, gate:true, info:'부소산 일대의 산성. 사비 도성의 왕성이자 방어성, 후원 구실을 했다. 관문 칸: 여기 멈추면 다음 차례에 왕채가 나와야 나간다(창작 규칙). 30수전을 내고 나가도 된다.', tag:'rec', ...ek('E0024406','부여 부소산성') },
-  { t:'rite', n:'구태묘 제사', info:'『주서』 백제전 등은 백제의 시조를 구태라 하고, 백제 사람들이 구태의 사당에 제사를 지냈다고 전한다. 이 칸에 서면 모두가 40수전씩 받는다.', tag:'rec', ...ek('E0006085','구태',' · 근거 사료는 『주서』·『수서』 백제전') },
+  { t:'rite', n:'구태묘 제사', sn:'구태묘', info:'『주서』 백제전 등은 백제의 시조를 구태라 하고, 백제 사람들이 구태의 사당에 제사를 지냈다고 전한다. 이 칸에 서면 모두가 40수전씩 받는다.', tag:'rec', ...ek('E0006085','구태',' · 근거 사료는 『주서』·『수서』 백제전') },
   { t:'prop', g:'C', n:'가림성', p:150, info:'사비 도성을 지키려고 성흥산에 쌓은 산성. 『삼국사기』에 따라 501년(동성왕 23)에 쌓은 것으로 본다. 성흥산성이라고도 불렀다.', tag:'rec', ...ek('E0024415','부여 가림성') },
   { t:'prop', g:'C', n:'청산성', p:160, info:'부여읍 쌍북리에 있는 산성. 사적.', tag:'rec', ...ek('E0024379','부여군') },
   { t:'card', n:'유물 카드' },
@@ -874,7 +879,7 @@ function buildBoard(){
     d.className = 'cell' + (['start','away','rite','song'].includes(c.t) ? ' corner' : '') + (['card','gibok'].includes(c.t) ? ' cardc' : '');
     d.style.gridRow = r; d.style.gridColumn = col; d.id = 'c'+i; d.tabIndex = 0;
     d.innerHTML = (c.g ? `<div class="band" style="background:${GROUPS[c.g].color}"></div>` : '') +
-      (MODEL3[c.t] ? MODEL3[c.t] + (c.t === 'away' ? '<div class="water"></div>' : '') : CORNER_ART[c.t] ? `<div class="cimg">${CORNER_ART[c.t]}</div>` : '') + `<div class="lab"><div class="nm">${hzify(c.n)}</div>` + (c.p ? `<div class="pr">${c.p}${c.gate?' · 관문':''}</div>` : '') + `</div><div class="bld"></div>`;
+      (MODEL3[c.t] ? MODEL3[c.t] + (c.t === 'away' ? '<div class="water"></div>' : '') : CORNER_ART[c.t] ? `<div class="cimg">${CORNER_ART[c.t]}</div>` : '') + `<div class="lab"><div class="nm">${hzify(c.sn || c.n)}</div>` + (c.p ? `<div class="pr">${c.p}${c.gate?' · 관문':''}</div>` : '') + `</div><div class="bld"></div>`;
     d.onclick = () => cellClick(i);
     d.onkeydown = e => { if(e.key === 'Enter') cellClick(i); };
     b.appendChild(d);
@@ -1120,6 +1125,10 @@ function fitStage(){
   const k = Math.max(.2, Math.min((vw - sl - sr) / STW, (vh - st - sb) / STH));
   g.style.setProperty('--sc', k);
   g.style.left = `calc(50% + ${(sl - sr) / 2}px)`; g.style.top = `calc(50% + ${(st - sb) / 2}px)`;
+  // 풍경(하늘·산·강)은 무대 밖 빈 띠까지 늘려 화면 전체를 채운다
+  const sc = g.querySelector('.scene');
+  if(sc){ const ex = Math.max(0, (vw / k - STW) / 2 + Math.abs(sl - sr) / k), ey = Math.max(0, (vh / k - STH) / 2 + Math.abs(st - sb) / k);
+    sc.style.inset = `${-ey - 2}px ${-ex - 2}px`; }
   return k;
 }
 const stageK = g => { const r = g.getBoundingClientRect(); return r.width / (g.offsetWidth || STW) || 1; };
