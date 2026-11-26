@@ -50,6 +50,17 @@ h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
 .btn.back{align-self:flex-start}
 #lobby .mark{font-family:var(--display);font-size:clamp(40px,calc(10 * var(--vw)),68px);letter-spacing:.12em;color:var(--bronze);line-height:1}
 #lobby .mark small{display:block;font-size:.26em;letter-spacing:.3em;color:var(--paper-dim);margin-top:.8em;font-family:var(--display)}
+/* 로비: 게임 속 노을 풍경을 뒤에 깔고, 가운데를 어둡게 눌러 글자가 읽히게 */
+#lobby{position:relative;z-index:1}
+#lobby > .scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+#lobby > .scene::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 48%,rgba(20,14,11,.72),rgba(20,14,11,.35) 65%,rgba(20,14,11,.15))}
+#lobby .mark{color:#f3dca6;text-shadow:0 2px 14px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.5)}
+#lobby .mark small{color:#efe6d2;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+#lobby .mark small::before,#lobby .mark small::after{content:'';display:inline-block;width:2.2em;height:1px;background:rgba(239,230,210,.5);vertical-align:.35em;margin:0 .9em}
+#goSingle{box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,240,200,.45)}
+#goMulti{background:rgba(27,21,19,.78);color:#f0d79a;border:1px solid var(--bronze);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+#menuMain .row .btn,#lobby .btn.back{background:rgba(27,21,19,.72)}
+#lobby .panel{background:rgba(42,32,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45)}
 .panel{border:1px solid var(--bronze-dim);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--lacquer2)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);color:var(--paper);border-radius:6px;padding:.45em .7em;font:inherit;font-size:15px;min-width:0;flex:1}
@@ -774,6 +785,7 @@ function aiStep(){
    4. 그림: 캐릭터와 건물 (2D)
    ===================================================================== */
 const $ = id => document.getElementById(id);
+{ const sc = $('game') && $('game').querySelector('.scene'); if(sc) $('lobby').prepend(sc.cloneNode(true)); }   // 로비 뒤에도 같은 노을 풍경
 const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const hzify = s => String(s).replace(/([㐀-鿿\u{20000}-\u{2ffff}]+)/gu,'<span class="hz">$1</span>');
 const SEAT_LOOK = ['scholar','noble','merchant','artisan'];
