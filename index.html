@@ -179,6 +179,9 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 /* 플레이어 옆 쟁반: 오수전 더미(100수전에 한 닢, 열 닢씩 한 더미)와 모은 유물 카드 */
 #game{--trayH:44px}
 #game.p4 #sideL{bottom:calc(var(--pw) + 12px + var(--trayH) + 4px)}
+/* 판 소식(기록)은 오른쪽: 오른쪽 위 플레이어 쟁반 아래 ~ 오른쪽 아래 플레이어 위 */
+#sideR{position:absolute;z-index:9;right:6px;top:calc(var(--pw) + 12px + var(--trayH) + 4px);bottom:calc(var(--pw) + 12px);width:var(--pw);display:flex;flex-direction:column;min-height:0}
+#game.p3 #sideR{bottom:calc(var(--pw) + 12px + var(--trayH) + 4px)}
 .tray{position:absolute;z-index:9;width:var(--pw);height:var(--trayH);display:flex;align-items:flex-end;justify-content:space-between;gap:4px;pointer-events:none}
 .tray.tl{left:6px;top:calc(var(--pw) + 10px)}.tray.tr{right:6px;top:calc(var(--pw) + 10px);flex-direction:row-reverse}
 .tray.bl{left:6px;bottom:calc(var(--pw) + 10px)}.tray.br{right:6px;bottom:calc(var(--pw) + 10px);flex-direction:row-reverse}
@@ -424,7 +427,7 @@ td:first-child,th:first-child{text-align:left}
 </section>
 
 <div id="safeProbe" aria-hidden="true" style="position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)"></div>
-<section id="game" hidden><div class="scene" aria-hidden="true"><div class="sky"></div><div class="dusk"></div><div class="cloud c1"></div><div class="cloud c2"></div><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice"><path class="m3" d="M0 330 L120 270 L260 300 L420 230 L560 280 L700 240 L860 290 L1000 220 L1180 280 L1320 245 L1480 285 L1600 260 L1600 500 L0 500Z"/><path class="m2" d="M0 370 Q180 300 360 345 T720 330 Q900 280 1080 340 T1600 320 L1600 500 L0 500Z"/><g class="tower"><rect x="1210" y="250" width="16" height="70"/><path d="M1196 262h44l-6 -8h-32zM1198 282h40l-6 -7h-28zM1200 300h36l-5 -6h-26zM1202 316h32l-5 -6h-22z"/></g><path class="m1" d="M0 410 Q260 360 520 395 T1040 390 Q1300 350 1600 385 L1600 500 L0 500Z"/><rect class="river" x="0" y="440" width="1600" height="60"/><g class="shine"><rect x="200" y="452" width="90" height="2"/><rect x="620" y="466" width="140" height="2"/><rect x="1100" y="458" width="110" height="2"/><rect x="1380" y="474" width="70" height="2"/></g></svg></div><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn ico" id="fsBtn" aria-label="전체화면" title="전체화면"></button><button class="btn ico" id="rulesBtn2" aria-label="규칙" title="규칙">?</button><button class="btn ico" id="fastBtn" aria-label="컴퓨터 차례 빨리감기" title="컴퓨터 차례 빨리감기"></button><button class="btn ico" id="sndBtn" aria-label="소리" title="소리"></button><button class="btn ico" id="exitBtn" aria-label="나가기" title="나가기"></button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div class="tray tl" id="tr0"></div><div class="tray tr" id="tr1"></div><div class="tray br" id="tr2"></div><div class="tray bl" id="tr3"></div><div id="board"></div></section>
+<section id="game" hidden><div class="scene" aria-hidden="true"><div class="sky"></div><div class="dusk"></div><div class="cloud c1"></div><div class="cloud c2"></div><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice"><path class="m3" d="M0 330 L120 270 L260 300 L420 230 L560 280 L700 240 L860 290 L1000 220 L1180 280 L1320 245 L1480 285 L1600 260 L1600 500 L0 500Z"/><path class="m2" d="M0 370 Q180 300 360 345 T720 330 Q900 280 1080 340 T1600 320 L1600 500 L0 500Z"/><g class="tower"><rect x="1210" y="250" width="16" height="70"/><path d="M1196 262h44l-6 -8h-32zM1198 282h40l-6 -7h-28zM1200 300h36l-5 -6h-26zM1202 316h32l-5 -6h-22z"/></g><path class="m1" d="M0 410 Q260 360 520 395 T1040 390 Q1300 350 1600 385 L1600 500 L0 500Z"/><rect class="river" x="0" y="440" width="1600" height="60"/><g class="shine"><rect x="200" y="452" width="90" height="2"/><rect x="620" y="466" width="140" height="2"/><rect x="1100" y="458" width="110" height="2"/><rect x="1380" y="474" width="70" height="2"/></g></svg></div><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn ico" id="fsBtn" aria-label="전체화면" title="전체화면"></button><button class="btn ico" id="rulesBtn2" aria-label="규칙" title="규칙">?</button><button class="btn ico" id="fastBtn" aria-label="컴퓨터 차례 빨리감기" title="컴퓨터 차례 빨리감기"></button><button class="btn ico" id="sndBtn" aria-label="소리" title="소리"></button><button class="btn ico" id="exitBtn" aria-label="나가기" title="나가기"></button></div></div><div id="sideR"><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div class="tray tl" id="tr0"></div><div class="tray tr" id="tr1"></div><div class="tray br" id="tr2"></div><div class="tray bl" id="tr3"></div><div id="board"></div></section>
 <div id="sheet" hidden><div class="in" id="sheetIn"></div></div>
 <div id="evt" hidden><div class="in" id="evtIn"></div></div>
 <div id="over" hidden><div class="in" id="overIn"></div></div>
@@ -698,6 +701,8 @@ function doThrow(p, power, big){
   const hit = power >= 70 && power <= 85;
   let t = throwSticks();
   if(big && hit) t = better(better(t, throwSticks()), throwSticks());
+  // 조심히: 왕채가 나와도 절반은 막대가 한 번 더 굴러 결과가 바뀐다 (왕채 12.5% → 약 7%, 게임용)
+  if(!big && OUT[t.k].king && Math.random() < .5) t = throwSticks();
   let r = OUT[t.k], mv = r.move + (hit ? 1 : 0), spill = false;
   if(big && !hit){ spill = true; mv = 2; r = { ...r, king:false }; }
   G.last = { f:t.f, k:t.k, who:p.id, n:(G.last?.n||0)+1, hit, mv, big:!!big, spill };
@@ -1424,7 +1429,7 @@ function render(){
   if(L && L.n !== lastThrowN){ lastThrowN = L.n; const ms = throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; setTimeout(showResult, ms); }
   else if(Date.now() >= throwingUntil){ if(!L) setSticksStatic(null); showResult(); }
   [0,1,2,3].forEach(k => { const el = $('pc'+k); if(el){ el.hidden = !G.players[k]; } const tr = $('tr'+k); if(tr) tr.hidden = !G.players[k] || G.players[k].out; });
-  $('game').classList.toggle('p4', !!G.players[3]);
+  $('game').classList.toggle('p4', !!G.players[3]); $('game').classList.toggle('p3', !!G.players[2]);
   G.players.forEach((q,i) => drawTray(q, i));
   G.players.forEach((q,i) => {
     const s = score(q,i), rk = RANKS[q.rank];
@@ -1686,7 +1691,7 @@ function showOver(){
 }
 function showRules(){
   openSheet(`<h2>규칙</h2><div class="rules">
-  <p><b>저포 던지기.</b> 버튼을 꾹 누르면 힘 게이지가 오르내리고, 놓으면 막대 다섯 개가 굴러요. 게이지가 70~85(초록)에서 놓으면 <b>명중 +1칸</b>. 던지기 전에 <b>조심히 / 크게</b>를 고를 수 있어요. <b>크게</b> 던져 명중하면 막대를 세 번 던져 가장 좋은 결과(왕채 먼저)를 쓰고, 빗나가면 막대가 흩어져 2칸만 가요(게임용). 막대는 한쪽이 흰 면, 한쪽이 검은 면이고, 두 막대에는 흰 면에 꿩(<span class="hz">雉</span>), 검은 면에 소(<span class="hz">牛</span>)가 그려져 있어요. 모양의 이름과 점수는 당나라 이고의 『오목경』에서 왔고, 칸 수는 게임용이에요.</p>
+  <p><b>저포 던지기.</b> 버튼을 꾹 누르면 힘 게이지가 오르내리고, 놓으면 막대 다섯 개가 굴러요. 게이지가 70~85(초록)에서 놓으면 <b>명중 +1칸</b>. 던지기 전에 <b>조심히 / 크게</b>를 고를 수 있어요. <b>조심히</b> 던지면 왕채가 잘 안 나와요(왕채가 나와도 절반은 막대가 한 번 더 굴러요). <b>크게</b> 던져 명중하면 막대를 세 번 던져 가장 좋은 결과(왕채 먼저)를 쓰고, 빗나가면 막대가 흩어져 2칸만 가요(게임용). 막대는 한쪽이 흰 면, 한쪽이 검은 면이고, 두 막대에는 흰 면에 꿩(<span class="hz">雉</span>), 검은 면에 소(<span class="hz">牛</span>)가 그려져 있어요. 모양의 이름과 점수는 당나라 이고의 『오목경』에서 왔고, 칸 수는 게임용이에요.</p>
   <div style="overflow-x:auto"><table><tr><th>모양</th><th>『오목경』</th><th>칸</th><th></th></tr>
   ${OUT.map(o => `<tr><td>${o.rare ? '희귀자 (𢳚, 대부분의 글꼴에 없는 한자)' : `<span class="hz">${o.zh}</span> ${o.ko}`}<div class="muted" style="font-size:11px">${o.how}</div></td><td>${o.pts ?? '—'}</td><td>${o.move}</td><td>${o.king?'왕채 · 한 번 더':'맹채'}</td></tr>`).join('')}</table></div>
   <p><b>왕채</b>(노·치·독·백)가 나오거나, 다른 사람이 있는 칸에 서면(<span class="hz">擊馬</span>) 한 번 더 던져요. — 『오목경』 「<span class="hz">凡擊馬及王采皆又投</span>」</p>
