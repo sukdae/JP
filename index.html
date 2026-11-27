@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -28,6 +28,10 @@
   color-scheme:dark;
 }
 [hidden]{display:none!important}
+/* 휴대폰: 두 번 눌러 확대 · 꾹 눌러 글자 선택/복사 메뉴가 뜨지 않게 (입력 칸만 예외) */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,textarea,select{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 html,body{height:100%}
 body{background:var(--lacquer);color:var(--paper);font-family:var(--body);margin:0;box-sizing:border-box;
   padding-left:max(10px, env(safe-area-inset-left,0px));padding-right:max(10px, env(safe-area-inset-right,0px));padding-block:8px;overflow-x:hidden}
@@ -1904,6 +1908,11 @@ function alertLobby(t){ $('roomNote').textContent = t; $('roomNote').scrollIntoV
 $('howBtn').onclick = showRules;
 const showMenu = id => { ['menuMain','menuSingle','menuMulti'].forEach(m => $(m).hidden = m !== id); $('lobby').classList.toggle('sub', id !== 'menuMain'); };
 addEventListener('resize', () => setTimeout(fitStage, 60));
+// 꾹 눌렀을 때 뜨는 메뉴(복사·저장)와 두 번 눌러 확대를 막는다. 입력 칸은 그대로
+const typing = e => e.target.closest && e.target.closest('input,textarea,select');
+addEventListener('contextmenu', e => { if(!typing(e)) e.preventDefault(); });
+addEventListener('selectstart', e => { if(!typing(e)) e.preventDefault(); });
+addEventListener('dblclick', e => { if(!typing(e)) e.preventDefault(); }, { passive:false });
 fitStage();
 $('goSingle').onclick = () => showMenu('menuSingle');
 $('goMulti').onclick = () => showMenu('menuMulti');
