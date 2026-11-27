@@ -144,11 +144,45 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 #game > #center #gauge{height:clamp(18px,calc(2.4 * var(--vw)),28px);max-width:none;min-width:140px}
 #game > #center #gauge .lbl{font-size:clamp(9px,calc(1 * var(--vw)),12px)}
 
-#sideL{position:absolute;z-index:9;left:6px;top:calc(var(--pw) + 12px);bottom:calc(var(--pw) + 12px);width:var(--pw);display:flex;flex-direction:column;gap:6px;min-height:0}
+#sideL{position:absolute;z-index:9;left:6px;top:calc(var(--pw) + 12px + var(--trayH) + 4px);bottom:calc(var(--pw) + 12px);width:var(--pw);display:flex;flex-direction:column;gap:6px;min-height:0}
 #sideL .tools{display:flex;flex-wrap:wrap;gap:4px;margin:0}
 #sideL .tools .btn{font-size:calc(var(--pw) * .07);padding:.3em .6em}
 #liveLog{flex:1;min-height:0;overflow:hidden;font-size:calc(var(--pw) * .062);line-height:1.4;color:var(--paper-dim);display:flex;flex-direction:column;gap:3px;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
 #liveLog .new{color:var(--paper)}
+/* 플레이어 옆 쟁반: 오수전 더미(100수전에 한 닢, 열 닢씩 한 더미)와 모은 유물 카드 */
+#game{--trayH:42px}
+#game.p4 #sideL{bottom:calc(var(--pw) + 12px + var(--trayH) + 4px)}
+.tray{position:absolute;z-index:9;width:var(--pw);height:var(--trayH);display:flex;align-items:flex-end;justify-content:space-between;gap:4px;pointer-events:none}
+.tray.tl{left:6px;top:calc(var(--pw) + 10px)}.tray.tr{right:6px;top:calc(var(--pw) + 10px);flex-direction:row-reverse}
+.tray.bl{left:6px;bottom:calc(var(--pw) + 10px)}.tray.br{right:6px;bottom:calc(var(--pw) + 10px);flex-direction:row-reverse}
+.tray .coins{display:flex;gap:3px;align-items:flex-end;height:100%}
+.tray .pile{position:relative;width:21px;height:100%}
+.tray .coin{position:absolute;left:0;width:21px;height:8px;border-radius:50%;background:radial-gradient(ellipse at 45% 35%,#f3d58a,#c39a45 55%,#8a6428);box-shadow:0 1.5px 0 #5a3f1a,0 2px 2px rgba(0,0,0,.35)}
+.tray .coin.top::after{content:'';position:absolute;left:50%;top:50%;width:5px;height:3px;background:#3a2812;transform:translate(-50%,-50%);border-radius:1px;box-shadow:0 0 0 1px rgba(90,63,26,.6)}
+.tray .coin.new{animation:coindrop .35s ease-out backwards}
+@keyframes coindrop{from{transform:translateY(-14px);opacity:0}}
+.tray .more{font-size:9px;color:#f0d79a;align-self:flex-start;text-shadow:0 1px 2px #000}
+.tray .relics{display:flex;align-items:flex-end;height:100%;pointer-events:auto}
+.tray .rc{width:22px;height:31px;border-radius:3px;margin-left:-9px;background:linear-gradient(#f4ecda,#d9ccae);border:1.5px solid #9a7a3e;box-shadow:0 2px 4px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-family:var(--hz);font-size:13px;color:#5a2a1c;cursor:pointer;transform:rotate(var(--r,0deg));transition:transform .15s}
+.tray .rc:first-child{margin-left:0}
+.tray .rc:hover,.tray .rc:focus-visible{transform:translateY(-4px) rotate(var(--r,0deg));z-index:2}
+.tray .rc.live{border-color:#f5d27a;box-shadow:0 0 8px 2px rgba(245,210,122,.8)}
+.tray .rc.new{animation:cardin .45s ease-out backwards}
+@keyframes cardin{from{transform:translateY(-30px) rotate(-20deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.tray .coin.new,.tray .rc.new{animation:none}}
+#sideL .tools .btn.on{background:var(--bronze);color:var(--lacquer)}
+.pc .pl{position:relative}
+.pc .pl .rolechip{position:absolute;top:5px;right:5px;font-size:.8em;font-family:var(--display);color:#f0d79a;border:1px solid rgba(224,194,122,.55);border-radius:999px;padding:0 .6em;line-height:1.5}
+.pc .pl .rolechip.done{background:#e0b85a;color:var(--lacquer);border-color:#e0b85a}
+#actrow .btn.mode{font-size:.85em;border-style:dashed}
+#actrow .btn.mode.on{background:#8e3328;border-color:#e2574c;border-style:solid;color:#fff}
+#gauge.big .sweet{background:rgba(226,87,76,.6)}
+#game > #center.kingglow{animation:kglow 1.3s ease-out}
+@keyframes kglow{25%{box-shadow:0 0 0 3px rgba(245,200,90,.9),0 0 40px 10px rgba(245,200,90,.5)}}
+.kingburst{position:absolute;left:50%;top:44%;z-index:12;pointer-events:none;display:flex;flex-direction:column;align-items:center;line-height:1;font-family:var(--display);color:#f5d27a;font-size:calc(var(--pw) * .5);text-shadow:0 0 18px rgba(245,200,90,.9),0 2px 6px #000;transform:translate(-50%,-50%);animation:kingb 1.45s ease-out forwards}
+.kingburst small{font-size:.3em;letter-spacing:.4em;margin-top:.25em;color:#fff2c8}
+@keyframes kingb{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}35%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04)}}
+@media (prefers-reduced-motion:reduce){ #game > #center.kingglow{animation:none} .kingburst{animation:none;opacity:.95} }
 #game .edge{position:absolute;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(#8a6242,#5a3d27 45%,#2e1e13);box-shadow:inset 0 2px 0 #c9a25a}
 #game .edge.front{left:0;right:0;top:100%;height:calc(var(--bw,600px) * .11);transform-origin:50% 0;transform:rotateX(-90deg)}
 #game .edge.left{top:0;bottom:0;left:0;width:calc(var(--bw,600px) * .11);transform-origin:0 50%;transform:rotateY(90deg);background:linear-gradient(90deg,#6b4a30,#3a2618 60%,#1f150e);box-shadow:inset 2px 0 0 #c9a25a}
@@ -236,6 +270,21 @@ input[type=text]{background:var(--lacquer);border:1px solid var(--bronze-dim);co
 .zh{font-family:var(--hz);font-size:15px;color:#e8dcc2;line-height:1.6}
 #sheet .src{font-size:12px;color:var(--paper-dim)}
 #sheet p{margin:0;line-height:1.6}
+/* 설명 창: 아래를 다 덮던 띠 대신 오른쪽에 뜨는 작은 판. 판 왼쪽은 그대로 보인다 (가로 휴대폰에서 글자가 너무 컸음) */
+#sheet{inset:max(8px, env(safe-area-inset-top,0px)) max(8px, env(safe-area-inset-right,0px)) max(8px, env(safe-area-inset-bottom,0px)) auto;width:min(420px, 50vw);max-height:none;
+  border:1px solid var(--bronze);border-radius:12px;padding:12px 14px 14px;font-size:14px;box-shadow:-10px 0 40px rgba(0,0,0,.55);animation:sheetin .22s ease-out}
+@keyframes sheetin{from{transform:translateX(24px);opacity:0}}
+#sheet .in{max-width:none;gap:6px}
+#sheet h2{font-size:18px;line-height:1.3;padding-right:34px}
+#sheet .zh{font-size:14px}
+#sheet .src{font-size:11px}
+#sheet .muted{font-size:13px}
+#sheet .rules{font-size:13px;line-height:1.6}
+#sheet td,#sheet th{font-size:12px;padding:4px 3px}
+#sheet .panel{padding:10px}
+#sheetX{position:sticky;top:0;align-self:flex-end;margin:-4px -4px -30px 0;width:30px;height:30px;padding:0;border-radius:50%;font-size:15px;line-height:1;background:var(--lacquer);z-index:1}
+@media (max-width:560px){ #sheet{width:auto;left:max(8px, env(safe-area-inset-left,0px))} }
+@media (prefers-reduced-motion:reduce){ #sheet{animation:none} }
 #over{position:fixed;inset:0;z-index:30;background:rgba(15,11,9,.92);display:flex;align-items:center;justify-content:center;padding:16px}
 #over .in{max-width:560px;width:100%;display:flex;flex-direction:column;gap:12px}
 #evt{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;background:rgba(10,8,7,.9);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:16px;cursor:pointer}
@@ -273,6 +322,7 @@ td:first-child,th:first-child{text-align:left}
     <h3>양생과 부처님</h3>
     <p class="muted" style="margin:0;font-size:14px;line-height:1.7">김시습의 『금오신화』 「만복사저포기」에서 가난한 서생 양생은 만복사 부처님께 저포 내기를 청한다. 지면 법회를 열어 갚고, 이기면 짝을 만나게 해 달라고. 이번 판의 상대는 부처님이다.</p>
     <div class="row lvrow" role="radiogroup" aria-label="부처님 세기"><label><input type="radio" name="soloLv" value="0"> 너그러운 부처님 <small class="muted">쉬움</small></label><label><input type="radio" name="soloLv" value="1" checked> 부처님 <small class="muted">보통</small></label><label><input type="radio" name="soloLv" value="2"> 깐깐한 부처님 <small class="muted">어려움</small></label></div>
+    <div class="row lvrow" role="radiogroup" aria-label="판 길이"><span class="muted">판 길이</span><label><input type="radio" name="lenSolo" value="short" checked> 짧은 판 <small class="muted">6턴</small></label><label><input type="radio" name="lenSolo" value="long"> 긴 판 <small class="muted">12턴</small></label></div>
     <div class="row"><input type="text" id="soloNick" maxlength="10" value="양생" aria-label="내 이름"><button class="btn main" id="startSolo">만복사로 가기</button></div>
   </div>
     <button class="btn back" data-back>← 처음으로</button>
@@ -281,6 +331,7 @@ td:first-child,th:first-child{text-align:left}
     <div class="panel" id="localPanel">
     <h3>한 기기에서 함께</h3>
     <div id="seats" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="row lvrow" role="radiogroup" aria-label="판 길이"><span class="muted">판 길이</span><label><input type="radio" name="lenLocal" value="short" checked> 짧은 판 <small class="muted">6턴</small></label><label><input type="radio" name="lenLocal" value="long"> 긴 판 <small class="muted">12턴</small></label></div>
     <div class="row"><button class="btn main" id="startLocal">시작하기</button></div>
   </div>
     <div class="panel" id="roomPanel">
@@ -288,6 +339,8 @@ td:first-child,th:first-child{text-align:left}
     <p class="muted" id="roomNote" style="margin:0;font-size:14px">방 기능을 확인하는 중…</p>
     <div id="roomCtl" hidden style="display:flex;flex-direction:column;gap:10px">
       <div class="row"><input type="text" id="nick" maxlength="10" placeholder="내 이름 (10자까지)"></div>
+      <div class="row lvrow" role="radiogroup" aria-label="판 길이 (방장이 정함)"><span class="muted">판 길이</span><label><input type="radio" name="lenRoom" value="short" checked> 짧은 판 <small class="muted">6턴</small></label><label><input type="radio" name="lenRoom" value="long"> 긴 판 <small class="muted">12턴</small></label></div>
+    
       <div class="row"><button class="btn main" id="mkRoom">방 만들기</button><input type="text" id="code" maxlength="6" placeholder="방 번호" style="max-width:120px"><button class="btn" id="joinRoom">들어가기</button></div>
     </div>
     <div id="waiting" hidden style="display:flex;flex-direction:column;gap:8px"></div>
@@ -297,7 +350,7 @@ td:first-child,th:first-child{text-align:left}
 </section>
 
 <div id="safeProbe" aria-hidden="true" style="position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)"></div>
-<section id="game" hidden><div class="scene" aria-hidden="true"><div class="sky"></div><div class="dusk"></div><div class="cloud c1"></div><div class="cloud c2"></div><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice"><path class="m3" d="M0 330 L120 270 L260 300 L420 230 L560 280 L700 240 L860 290 L1000 220 L1180 280 L1320 245 L1480 285 L1600 260 L1600 500 L0 500Z"/><path class="m2" d="M0 370 Q180 300 360 345 T720 330 Q900 280 1080 340 T1600 320 L1600 500 L0 500Z"/><g class="tower"><rect x="1210" y="250" width="16" height="70"/><path d="M1196 262h44l-6 -8h-32zM1198 282h40l-6 -7h-28zM1200 300h36l-5 -6h-26zM1202 316h32l-5 -6h-22z"/></g><path class="m1" d="M0 410 Q260 360 520 395 T1040 390 Q1300 350 1600 385 L1600 500 L0 500Z"/><rect class="river" x="0" y="440" width="1600" height="60"/><g class="shine"><rect x="200" y="452" width="90" height="2"/><rect x="620" y="466" width="140" height="2"/><rect x="1100" y="458" width="110" height="2"/><rect x="1380" y="474" width="70" height="2"/></g></svg></div><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn" id="fsBtn">전체화면</button><button class="btn" id="rulesBtn2">규칙</button><button class="btn" id="exitBtn">나가기</button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div id="board"></div></section>
+<section id="game" hidden><div class="scene" aria-hidden="true"><div class="sky"></div><div class="dusk"></div><div class="cloud c1"></div><div class="cloud c2"></div><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice"><path class="m3" d="M0 330 L120 270 L260 300 L420 230 L560 280 L700 240 L860 290 L1000 220 L1180 280 L1320 245 L1480 285 L1600 260 L1600 500 L0 500Z"/><path class="m2" d="M0 370 Q180 300 360 345 T720 330 Q900 280 1080 340 T1600 320 L1600 500 L0 500Z"/><g class="tower"><rect x="1210" y="250" width="16" height="70"/><path d="M1196 262h44l-6 -8h-32zM1198 282h40l-6 -7h-28zM1200 300h36l-5 -6h-26zM1202 316h32l-5 -6h-22z"/></g><path class="m1" d="M0 410 Q260 360 520 395 T1040 390 Q1300 350 1600 385 L1600 500 L0 500Z"/><rect class="river" x="0" y="440" width="1600" height="60"/><g class="shine"><rect x="200" y="452" width="90" height="2"/><rect x="620" y="466" width="140" height="2"/><rect x="1100" y="458" width="110" height="2"/><rect x="1380" y="474" width="70" height="2"/></g></svg></div><div id="eraBar"><div id="era"></div><div id="eraCap"></div></div><div id="sideL"><div class="tools"><button class="btn" id="fsBtn">전체화면</button><button class="btn" id="rulesBtn2">규칙</button><button class="btn" id="exitBtn">나가기</button><button class="btn" id="fastBtn" aria-label="컴퓨터 차례 빨리감기">▶▶</button><button class="btn" id="sndBtn">소리</button></div><div id="liveLog" aria-live="polite"></div></div><div class="pc tl" id="pc0"></div><div class="pc tr" id="pc1"></div><div class="pc br" id="pc2"></div><div class="pc bl" id="pc3"></div><div class="tray tl" id="tr0"></div><div class="tray tr" id="tr1"></div><div class="tray br" id="tr2"></div><div class="tray bl" id="tr3"></div><div id="board"></div></section>
 <div id="sheet" hidden><div class="in" id="sheetIn"></div></div>
 <div id="evt" hidden><div class="in" id="evtIn"></div></div>
 <div id="over" hidden><div class="in" id="overIn"></div></div>
@@ -486,11 +539,45 @@ function modKey(E){
 const curMod = () => (G && G.mod && MOD[G.mod]) || {};
 const fxText = E => { const m = MOD[modKey(E)]; return m ? (m.inst ? m.inst + ' ' : '') + m.d : (E.fxt || ''); };
 const modToll = k => { const t = curMod().toll; if(!t) return 1; const g = CELLS[k].g; return t[g] ?? t['*'] ?? 1; };
-const modCost = k => (curMod().cost || 1) * ((curMod().costG || {})[CELLS[k].g] || 1);
+const modCost = k => (curMod().cost || 1) * ((curMod().costG || {})[CELLS[k].g] || 1) * roleDisc(k);
 const buyCost = k => Math.round(CELLS[k].p * modCost(k) / 10) * 10;
 const upCostNow = k => Math.round(upCost(k) * modCost(k) / 10) * 10;
 const curEvent = () => G.era >= TURNS.length ? FINAL : TURNS[G.era].ev[G.ev[G.era]];
+const turnNo = t => G && G.short ? Math.floor(t / 2) + 1 : t + 1;
 const kingOf = (e, t) => e.king || (t < TURNS.length ? TURNS[t].king : '의자왕');
+
+/* 백제 인물 카드: 판을 시작할 때 한 사람에 한 장씩. 능력 하나 + 목표 하나 (능력·목표는 게임용 창작, 인물 설명은 사료) */
+const ROLES = [
+  { id:'seongchung', n:'성충', who:'의자왕 때 좌평. 656년 왕에게 간언하다 옥에 갇혔고, 옥에서 나라를 지킬 방도를 글로 올렸다.',
+    ab:'정사암 회의에 관등과 상관없이 이름이 오르고, 막대를 두 번 던져 하나라도 왕채면 좌평. 높은 사람을 깎아 내리는 사건에도 관등이 내려가지 않는다.', goal:() => '좌평이 되거나, 판이 끝날 때 관등이 가장 높으면', bonus:110,
+    tag:'rec', ...sg('sg_028r_0020_0260','권28 의자왕 (656년 3월)') },
+  { id:'gyebaek', n:'계백', who:'백제의 달솔. 660년 결사대 5천을 이끌고 황산벌에서 신라군과 싸우다 전사했다.',
+    ab:'내 성(城)에서 받는 통행세가 1.5배.', goal:() => `성 ${need(3,2)}곳을 가지면`, bonus:100,
+    tag:'chk', src:'『삼국사기』 권47 열전 계백 (원문 대조 필요)' },
+  { id:'sataek', n:'사택지적', who:'654년 「사택지적비」를 남긴 귀족. 비문에 나이 듦을 슬퍼하며 금당과 탑을 세웠다고 적었다.',
+    ab:'절(가람)을 세우고 올리는 값이 30% 싸다.', goal:() => `절 ${need(3,2)}곳을 가지면`, bonus:100,
+    tag:'rec', src:'부여 사택지적비 · 국사편찬위원회 한국사데이터베이스 금석문', url: DB + 'gskh_002_0010_0010_0030' },
+  { id:'mu', n:'무왕', who:'백제 30대 왕(재위 600~641). 634년 왕흥사를 완성하고 대궐 남쪽에 못(궁남지)을 팠다.',
+    ab:'왕궁 건물을 세우고 올리는 값이 30% 싸다.', goal:() => `왕궁 ${need(3,2)}곳을 가지면`, bonus:100,
+    tag:'rec', ...sg('sg_027r_0050_0440','권27 무왕 (634년 2월·3월)') },
+  { id:'danyang', n:'단양이', who:'513년 왜에 건너간 백제의 오경박사. 3년 뒤 고안무와 교대했다.',
+    ab:'왜국 파견 칸에서 쉬지 않고 바로 100수전을 받는다.', goal:() => `${need(5,3)}바퀴를 돌면`, bonus:100,
+    tag:'rec', ...ek('E0036601','역박사',' · 근거 사료는 『일본서기』') },
+];
+const roleOf = p => p && ROLES.find(r => r.id === p.role);
+const need = (long, short) => G && G.short ? short : long;   // 짧은 판은 목표를 낮춘다
+const hasRole = (p, id) => !!p && p.role === id;
+function roleDone(p, i){
+  const r = roleOf(p); if(!r || !G) return false;
+  const mine = g => CELLS.filter((c,k) => c.g === g && G.own[k] === i).length;
+  if(r.id === 'seongchung') return p.rank === 10 || (!!G.over && G.players.every((q,j) => j === i || q.out || q.rank < p.rank));
+  if(r.id === 'gyebaek') return mine('C') >= need(3,2);
+  if(r.id === 'sataek') return mine('T') >= need(3,2);
+  if(r.id === 'mu') return mine('P') >= need(3,2);
+  if(r.id === 'danyang') return p.laps >= need(5,3);
+  return false;
+}
+const roleDisc = k => { const p = G && cur(); const g = CELLS[k].g; return (hasRole(p,'sataek') && g === 'T') || (hasRole(p,'mu') && g === 'P') ? .7 : 1; };
 
 const OUT = [
   { zh:'盧', ko:'노', pts:16, move:8, king:true,  how:'다섯 모두 검은 면' },
@@ -527,11 +614,12 @@ const RELICS = [
    ===================================================================== */
 const COLORS = ['#e2574c','#3fa7b0','#d9b23a','#9d7ad8'];
 let G = null, ME = null, NET = null;
-function newGame(seats){
+function newGame(seats, opt = {}){
+  const roles = shuffle(ROLES.map(r => r.id));
   return {
-    v:2, seq:0, turn:0, phase:'throw', extra:0, era:0, round:0, over:false, winner:null,
+    v:2, short:!!opt.short, seq:0, turn:0, phase:'throw', extra:0, era:0, round:0, over:false, winner:null,
     players: seats.map((s,i) => ({ id:s.id, nm:s.nm, c:s.c || COLORS[i], ai:!!s.ai, lv:s.lv ?? 1, pos:0, cash:START_CASH + i * SEAT_COMP + (s.bonus || 0), rank:0, laps:0,
-      away:0, gate:0, shield:false, out:false, seen:[], zp:-1, prog:0 })),
+      away:0, gate:0, shield:false, out:false, seen:[], zp:-1, prog:0, relics:[], role: opt.noRoles ? null : roles[i % roles.length] })),
     own: Array(N).fill(-1), lv: Array(N).fill(0), tmp: Array(N).fill(0), bl: Array(N).fill(0),
     last:null, card:null, deck: shuffle(RELICS.map((_,i)=>i)), log:['사비에 판이 열렸다.'], evtN:0, note:null, pick:null, pendingGoto:null,
     ev: Array(TURNS.length).fill(0), fx:{},
@@ -552,7 +640,7 @@ function act(pid, a){
   if(a.s != null && a.s !== G.seq) return;
   G.eraThisAct = false;
   if(G.phase === 'throw' && a.k === 'pay' && p.gate){ if(p.cash < GATE_FEE) return; p.cash -= GATE_FEE; p.gate = 0; log(`${p.nm}: 30수전 내고 관문 통과`); return done(); }
-  if(G.phase === 'throw' && a.k === 'throw') return doThrow(p, +a.x || 0);
+  if(G.phase === 'throw' && a.k === 'throw') return doThrow(p, +a.x || 0, !!a.big);
   if(G.phase === 'buy' && a.k === 'buy') return buy(p);
   if(['buy','up','take'].includes(G.phase) && a.k === 'skip'){ G.phase = 'throw'; return afterProp(p); }
   if(G.phase === 'up' && a.k === 'up') return upgrade(p);
@@ -562,16 +650,22 @@ function act(pid, a){
   if(G.phase === 'card' && a.k === 'ok'){ G.card = null; G.phase = G.pick ? 'pick' : 'throw'; if(G.pick) return done(); return endMove(p); }
 }
 function done(){ G.seq++; publish(); }
-function doThrow(p, power){
-  const t = throwSticks(), r = OUT[t.k];
+/* 크게 던지기: 명중하면 세 번 던져 가장 좋은 쪽(왕채 먼저, 그다음 칸 수), 빗나가면 막대가 흩어져 2칸만 (게임용).
+   컴퓨터끼리 시험에서 명중률 47% 안팎이 본전: 잘 맞히는 사람에게 이득 */
+const better = (a, b) => { const ra = OUT[a.k], rb = OUT[b.k]; if(ra.king !== rb.king) return ra.king ? a : b; return rb.move > ra.move ? b : a; };
+function doThrow(p, power, big){
   const hit = power >= 70 && power <= 85;
-  G.last = { f:t.f, k:t.k, who:p.id, n:(G.last?.n||0)+1, hit, mv: r.move + (hit?1:0) };
+  let t = throwSticks();
+  if(big && hit) t = better(better(t, throwSticks()), throwSticks());
+  let r = OUT[t.k], mv = r.move + (hit ? 1 : 0), spill = false;
+  if(big && !hit){ spill = true; mv = 2; r = { ...r, king:false }; }
+  G.last = { f:t.f, k:t.k, who:p.id, n:(G.last?.n||0)+1, hit, mv, big:!!big, spill };
   if(p.gate){
     if(!r.king){ p.gate++; log(`${p.nm}: ${r.ko} — 관문에 막힘`); if(p.gate>2){ p.gate=0; log(`${p.nm}: 다음엔 그냥 통과`); } return nextTurn(); }
     p.gate = 0; log(`${p.nm}: 왕채! 관문 통과`);
   }
   G.extra = r.king ? G.extra + 1 : 0;
-  log(`${p.nm}: ${r.ko} ${G.last.mv}칸${hit?' (명중)':''}${r.king?' · 왕채':''}`);
+  log(spill ? `${p.nm}: 크게 던졌다 빗나감 — 막대가 흩어져 2칸` : `${p.nm}: ${big?'크게 · ':''}${r.ko} ${G.last.mv}칸${hit?' (명중)':''}${r.king?' · 왕채':''}`);
   step(p, G.last.mv);
 }
 // 턴은 선두 기준: 출발(사비 천도)과 맞은편 구태묘 제사를 지날 때, 지금까지의 선두 기록을 처음 넘어서면 다음 턴
@@ -610,6 +704,7 @@ function land(p){
   }
   if(c.t === 'card') return draw(p);
   if(c.t === 'gibok') return gibok(p);
+  if(c.t === 'away' && hasRole(p,'danyang')){ p.cash += 100; log(`${p.nm}(단양이): 왜국에서 바로 +100`); note(`${p.nm} · 오경박사 +100`); return endMove(p); }
   if(c.t === 'away'){ p.away = 1; G.extra = 0; log(`${p.nm}: 왜국 파견 · 한 번 쉼`); note(`${p.nm} 왜국 파견`); return endMove(p); }
   if(c.t === 'rite'){ G.players.forEach(q => { if(!q.out) q.cash += RITE; }); log(`구태묘 제사 · 모두 +${RITE}`); note(`구태묘 제사 · 모두 +${RITE}`); return endMove(p); }
   if(c.t === 'song'){ G.phase = 'tp'; log(`${p.nm}: 과하마 · 칸 고르기`); return done(); }
@@ -617,10 +712,11 @@ function land(p){
 }
 function afterProp(p){ if(p.pos === IDX('국립부여박물관') && !G.over && !p.out) return draw(p); return endMove(p); }
 function jeongsa(p){
-  const t = throwSticks(), r = OUT[t.k];
+  let t = throwSticks(); if(hasRole(p,'seongchung')) t = better(t, throwSticks());
+  const r = OUT[t.k];
   if(p.rank === 10) return;
   if(curMod().nojwa){ log(`${p.nm}: 정사암 · 이번 턴엔 회의가 없다`); note('정사암 회의 없음'); return; }
-  if(p.rank < JWA_MIN){ log(`${p.nm}: 정사암 · 관등이 낮다`); note(`정사암 · ${RANKS[JWA_MIN].n} 이상만`); return; }
+  if(p.rank < JWA_MIN && !hasRole(p,'seongchung')){ log(`${p.nm}: 정사암 · 관등이 낮다`); note(`정사암 · ${RANKS[JWA_MIN].n} 이상만`); return; }
   if(r.king){ p.rank = 10; p.zp = 0; p.cash += 200; log(`${p.nm}: 정사암 왕채 — 좌평! (+200)`); note(`${p.nm} 좌평!`); }
   else { log(`${p.nm}: 정사암 · 도장 없음`); note('정사암 · 도장 없음'); }
 }
@@ -657,7 +753,7 @@ function takeover(p){
 function payToll(p, o, k){
   const owner = G.players[o]; if(owner.out) return;
   const roll = G.last ? (OUT[G.last.k].pts || 6) : 6;
-  const fee = Math.round(portToll(k, toll(k, roll)) * modToll(k) / 5) * 5;
+  const fee = Math.round(portToll(k, toll(k, roll)) * modToll(k) * (hasRole(owner,'gyebaek') && CELLS[k].g === 'C' ? 1.5 : 1) / 5) * 5;
   if(p.shield){ p.shield = false; log(`${p.nm}: 광배로 통행세 면제`); return; }
   const paid = Math.min(fee, p.cash); p.cash -= paid; owner.cash += paid;
   log(`${p.nm} → ${owner.nm}: 통행세 ${paid}`);
@@ -673,6 +769,7 @@ function bankrupt(p){
 function draw(p){
   if(!G.deck.length) G.deck = shuffle(RELICS.map((_,i)=>i));
   const k = G.deck.pop(), cd = RELICS[k]; G.card = k;
+  (p.relics = p.relics || []).push(k);   // 뽑은 유물은 플레이어 옆에 카드로 남는다
   log(`${p.nm}: 유물 카드 한 장`);
   if(cd.fx === 'shield') p.shield = true;
   else if(cd.fx === 'double'){ const b = p.cash; p.cash *= 2; log(`${p.nm}: 오수전 두 배 (${p.cash})`); }
@@ -709,8 +806,9 @@ function nextTurn(){
 }
 function advanceEra(){
   if(G.over) return;
-  if(G.era >= TURNS.length - 1){ G.era = TURNS.length; G.evtN++; log('— 660 사비 함락'); return finish('era'); }
-  G.era++;
+  const stepN = G.short ? 2 : 1;   // 짧은 판: 두 턴씩 건너뛰어 여섯 턴
+  if(G.era + stepN > TURNS.length - 1){ G.era = TURNS.length; G.evtN++; log('— 660 사비 함락'); return finish('era'); }
+  G.era += G.era < 0 ? 1 : stepN;
   const pool = TURNS[G.era].ev; G.ev[G.era] = Math.floor(Math.random() * pool.length);
   applyEvent(pool[G.ev[G.era]]);
 }
@@ -718,7 +816,7 @@ function applyEvent(E){
   const alive = G.players.filter(q => !q.out);
   G.evtN++; G.mod = modKey(E);
   log(`— ${E.y} ${E.t}: ${MOD[G.mod] ? MOD[G.mod].s + ' (이번 턴)' : E.fxt}`);
-  if(G.mod === 'purge'){ const top = alive.slice().sort((a,b) => b.rank - a.rank)[0]; if(top.rank === 10){ top.rank = LAP_TOP; top.zp = -1; } else if(top.rank > 0) top.rank--; }
+  if(G.mod === 'purge'){ const top = alive.slice().sort((a,b) => b.rank - a.rank)[0]; if(hasRole(top,'seongchung')) log(`${top.nm}(성충): 관등을 지켰다`); else if(top.rank === 10){ top.rank = LAP_TOP; top.zp = -1; } else if(top.rank > 0) top.rank--; }
   if(G.mod === 'envoy'){ const low = alive.slice().sort((a,b) => a.rank - b.rank)[0]; if(low.rank < LAP_TOP) low.rank++; }
   if(G.mod === 'amnesty') alive.forEach(q => { q.gate = 0; q.away = 0; });
   if(G.mod === 'gungnam') G.fx.gungnam = true;
@@ -729,7 +827,8 @@ function score(p, i){
   G.own.forEach((o,k) => { if(o === i) props += Math.round(spent(k) / 10) + G.lv[k]*8 + G.tmp[k]*10; });
   const groups = ['P','C','T'].filter(g => fullGroup(i, g)).length * 80;
   const cash = Math.floor(p.cash / 10), stamps = p.seen.length * 5, rank = p.rank * 10 + (p.rank === 10 ? 50 : 0);
-  return { props, groups, cash, stamps, rank, total: props + groups + cash + stamps + rank };
+  const role = roleDone(p, i) ? roleOf(p).bonus : 0;
+  return { props, groups, cash, stamps, rank, role, total: props + groups + cash + stamps + rank + role };
 }
 function finish(why){
   if(G.over) return;
@@ -745,13 +844,19 @@ let aiTimer = null;
 /* 컴퓨터 세기: 0 너그러운 · 1 보통 · 2 깐깐한
    남겨 둘 돈(buy/up/take), 인수할 확률, 힘 게이지 명중률, 관문에서 돈 내고 나갈 기준 */
 const AI_LV = [
-  { buy:450, up:450, take:9999, takeP:0,  hit:.05, gate:800, tpBest:false },
-  { buy:150, up:150, take:250,  takeP:.5, hit:.25, gate:400, tpBest:false },
-  { buy:40,  up:60,  take:80,   takeP:1,  hit:.85, gate:100, tpBest:true  },
+  { buy:450, up:450, take:9999, takeP:0,  hit:.05, gate:800, tpBest:false, big:0 },
+  { buy:150, up:150, take:250,  takeP:.5, hit:.25, gate:400, tpBest:false, big:0, bigBehind:true },
+  { buy:40,  up:60,  take:80,   takeP:1,  hit:.85, gate:100, tpBest:true,  big:.3 },
 ];
 function aiDecide(p){
   const L = AI_LV[p.lv ?? 1];
-  if(G.phase === 'throw') return p.gate && p.cash > L.gate ? { k:'pay' } : { k:'throw', x: Math.random() < L.hit ? 70 + Math.floor(Math.random()*16) : Math.floor(Math.random()*101) };
+  if(G.phase === 'throw'){
+    if(p.gate && p.cash > L.gate) return { k:'pay' };
+    // 크게: 깐깐한 부처님은 자주, 보통은 뒤처졌거나 관문에 갇혔을 때만
+    const i = idx(p), behind = G.players.some((q,j) => j !== i && !q.out && score(q,j).total > score(p,i).total + 60);
+    const big = Math.random() < (L.big || 0) || (L.bigBehind && (behind || p.gate) && Math.random() < .5);
+    return { k:'throw', big, x: Math.random() < L.hit ? 70 + Math.floor(Math.random()*16) : Math.floor(Math.random()*101) };
+  }
   if(G.phase === 'buy') return { k: p.cash - buyCost(p.pos) >= L.buy ? 'buy' : 'skip' };
   if(G.phase === 'up') return { k: p.cash - upCostNow(p.pos) >= L.up ? 'up' : 'skip' };
   if(G.phase === 'take') return { k: p.cash - takeCost(p.pos) >= L.take && Math.random() < L.takeP ? 'take' : 'skip' };
@@ -778,7 +883,7 @@ function aiStep(){
   aiTimer = setTimeout(() => {
     if(animating()) return aiStep();
     const a = aiDecide(p); if(a) act(p.id, a);
-  }, G.phase === 'card' ? 1500 : 800);
+  }, fastNow() ? (G.phase === 'card' ? 500 : 200) : G.phase === 'card' ? 1500 : 800);
 }
 
 /* =====================================================================
@@ -919,7 +1024,7 @@ function buildBoard(){
 const S3 = (() => {
   const LEN = 1.0, WID = 0.17, THK = 0.06, DUR = 1150;
   const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let resizing = false, cssW = 0, cssH = 0, salt = 0, cv = null, ctx = null, raf = 0, plan = null, t0 = 0, faces = null, ro = null;
+  let dur = DUR, resizing = false, cssW = 0, cssH = 0, salt = 0, cv = null, ctx = null, raf = 0, plan = null, t0 = 0, faces = null, ro = null;
   const tex = [];   // tex[k] = { w: canvas, b: canvas }
   const rad = d => d * Math.PI / 180;
   const easeOut = s => 1 - Math.pow(1 - s, 3);
@@ -1050,7 +1155,7 @@ const S3 = (() => {
     const box = cv.getBoundingClientRect();
     cv.style.visibility = box.height < 34 ? 'hidden' : '';
     if(!resizing && box.height && (Math.abs(box.width - cssW) > 1 || Math.abs(box.height - cssH) > 1)){ resizing = true; try{ resize(); } finally { resizing = false; } return; }
-    const t = plan && plan.anim ? Math.min((performance.now() - t0) / DUR, 1) : 1;
+    const t = plan && plan.anim ? Math.min((performance.now() - t0) / dur, 1) : 1;
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
     const sticks = (plan || { s: makePlan(faces, false, salt) }).s;
     // 돗자리
@@ -1114,8 +1219,8 @@ const S3 = (() => {
       if(window.ResizeObserver){ ro = new ResizeObserver(resize); ro.observe(el); } else addEventListener('resize', resize);
       resize();
     },
-    show(f, n){ faces = f || null; salt = n || 0; if(plan && plan.anim && performance.now() - t0 < DUR) return; cancelAnimationFrame(raf); plan = { s: makePlan(faces, false, salt), anim: false }; draw(); },
-    toss(f, n){ faces = f; salt = n || 0; cancelAnimationFrame(raf); if(RM){ return this.show(f, n); } plan = { s: makePlan(f, true, salt), anim: true }; t0 = performance.now(); draw(); },
+    show(f, n){ faces = f || null; salt = n || 0; if(plan && plan.anim && performance.now() - t0 < dur) return; cancelAnimationFrame(raf); plan = { s: makePlan(faces, false, salt), anim: false }; draw(); },
+    toss(f, n, ms){ dur = ms || DUR; faces = f; salt = n || 0; cancelAnimationFrame(raf); if(RM){ return this.show(f, n); } plan = { s: makePlan(f, true, salt), anim: true }; t0 = performance.now(); draw(); },
     DUR,
   };
 })();
@@ -1202,6 +1307,31 @@ function drawTokens(hopIds){
   });
 }
 let lastWalk = 0, lastAct = 0;
+/* 빨리감기: 켜 두면 컴퓨터 차례의 막대·말 움직임과 생각하는 시간이 짧아진다 (이 기기에서만) */
+let FAST = false; try{ FAST = localStorage.getItem('jeopo-fast') === '1'; }catch(e){}
+const aiById = id => !!G && !!G.players.find(q => q.id === id && q.ai);
+const fastNow = () => FAST && !!G && (cur().ai || (!!G.last && aiById(G.last.who)));
+/* 소리: 외부 파일 없이 Web Audio로 만든다. 막대 부딪는 소리 · 왕채 종소리 · 명중 · 흩어짐 */
+const SND = (() => {
+  let ac = null, on = true; try{ on = localStorage.getItem('jeopo-snd') !== '0'; }catch(e){}
+  const ctx = () => { if(!on) return null; try{ if(!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); if(ac.state === 'suspended') ac.resume(); }catch(e){ return null; } return ac; };
+  function clack(t0, vol){ const a = ctx(); if(!a) return; const t = a.currentTime + t0, n = Math.floor(a.sampleRate * .06);
+    const b = a.createBuffer(1, n, a.sampleRate), d = b.getChannelData(0); for(let i=0;i<n;i++) d[i] = (Math.random()*2-1) * Math.pow(1 - i/n, 6);
+    const s = a.createBufferSource(); s.buffer = b; const f = a.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1700 + Math.random()*1500; f.Q.value = 4;
+    const g = a.createGain(); g.gain.value = vol; s.connect(f); f.connect(g); g.connect(a.destination); s.start(t); }
+  function tone(freq, t0, dur, vol, type){ const a = ctx(); if(!a) return; const t = a.currentTime + t0, o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + .05); }
+  return {
+    get on(){ return on; }, set on(v){ on = !!v; try{ localStorage.setItem('jeopo-snd', on ? '1' : '0'); }catch(e){} },
+    unlock(){ ctx(); },
+    toss(ms){ const n = 4 + Math.floor(Math.random()*3); for(let i=0;i<n;i++) clack(ms / 1000 * (.5 + .5 * i / n) + Math.random()*.03, .3 + Math.random()*.3); },
+    king(){ [523.25, 659.25, 783.99, 1046.5].forEach((f,i) => tone(f, i*.09, 1.1, .14, 'triangle')); tone(130.8, 0, 1.6, .2); },
+    hit(){ tone(1318.5, 0, .25, .1, 'triangle'); },
+    spill(){ clack(0, .6); clack(.07, .4); tone(110, 0, .3, .14); },
+  };
+})();
+addEventListener('pointerdown', () => SND.unlock(), { passive:true });
 function walk(){
   clearTimeout(stepTimer); lastWalk = Date.now();
   if(!G) return;
@@ -1215,12 +1345,15 @@ function walk(){
   });
   drawTokens(hop);
   const was = walking; walking = moving;
-  if(moving) stepTimer = setTimeout(walk, STEP_MS);
+  if(moving) stepTimer = setTimeout(walk, fastNow() ? 110 : STEP_MS);
   else if(was){ renderActions(); paintPicks(); aiStep(); }
 }
 function throwAnim(L){
-  throwingUntil = Date.now() + 1150;
-  try{ S3.toss(L.f, L.n); }catch(e){ console.warn('막대 그리기 오류', e); }
+  const ms = fastNow() ? 450 : S3.DUR;
+  throwingUntil = Date.now() + ms;
+  try{ S3.toss(L.f, L.n, ms); }catch(e){ console.warn('막대 그리기 오류', e); }
+  SND.toss(ms);
+  return ms;
 }
 function setSticksStatic(L){ try{ S3.show(L ? L.f : null, L ? L.n : 0); }catch(e){ console.warn('막대 그리기 오류', e); } }
 
@@ -1243,16 +1376,18 @@ function render(){
     if(bd.dataset.k !== key){ bd.dataset.k = key; bd.innerHTML = o >= 0 ? building(i, G.players[o].c) : ''; bd.classList.toggle('gold', o >= 0 && (G.bl[i] || 1) >= MAX_BL); }
   });
   paintPicks();
-  $('era').innerHTML = TURNS.map((t,k) => `<span class="${k<G.era?'past':k===G.era?'now':''}" title="${k+1}턴 · ${t.king}">${k<=G.era ? TURNS[k].ev[G.ev[k]].y : k+1+'턴'}</span>`).join('') + `<span class="${G.era>=TURNS.length?'now':''}">660</span>`;
-  { const E = curEvent(); $('eraCap').innerHTML = `${Math.min(G.era+1, 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${esc(E.t)}${MOD[G.mod] ? ` <b class="modpill">${MOD[G.mod].s}</b>` : ''}`; }
+  $('era').innerHTML = TURNS.map((t,k) => G.short && k % 2 ? '' : `<span class="${k<G.era?'past':k===G.era?'now':''}" title="${turnNo(k)}턴 · ${t.king}">${k<=G.era ? TURNS[k].ev[G.ev[k]].y : turnNo(k)+'턴'}</span>`).join('') + `<span class="${G.era>=TURNS.length?'now':''}">660</span>`;
+  { const E = curEvent(); $('eraCap').innerHTML = `${Math.min(turnNo(G.era), G.short ? 6 : 12)}턴 · ${kingOf(E, G.era)} · ${E.y} ${esc(E.t)}${MOD[G.mod] ? ` <b class="modpill">${MOD[G.mod].s}</b>` : ''}`; }
   const L = G.last;
-  if(L && L.n !== lastThrowN){ lastThrowN = L.n; throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; setTimeout(showResult, 1150); }
+  if(L && L.n !== lastThrowN){ lastThrowN = L.n; const ms = throwAnim(L); $('result').innerHTML = '<span class="muted" style="font-size:.6em">막대가 구른다…</span>'; $('faces').textContent = ''; setTimeout(showResult, ms); }
   else if(Date.now() >= throwingUntil){ if(!L) setSticksStatic(null); showResult(); }
-  [0,1,2,3].forEach(k => { const el = $('pc'+k); if(el){ el.hidden = !G.players[k]; } });
+  [0,1,2,3].forEach(k => { const el = $('pc'+k); if(el){ el.hidden = !G.players[k]; } const tr = $('tr'+k); if(tr) tr.hidden = !G.players[k] || G.players[k].out; });
+  $('game').classList.toggle('p4', !!G.players[3]);
+  G.players.forEach((q,i) => drawTray(q, i));
   G.players.forEach((q,i) => {
     const s = score(q,i), rk = RANKS[q.rank];
     $('pc'+i).innerHTML = `<div class="pl${i===G.turn&&!G.over?' cur':''}${q.out?' out':''}"><span class="face">${chibi(q, i)}</span>
-      <b>${esc(q.nm)}</b><span class="cash">${q.out ? '탈락' : q.cash}</span>
+      <b>${esc(q.nm)}</b>${roleOf(q) ? `<span class="rolechip${s.role?' done':''}">${roleOf(q).n}${s.role?' ✓':''}</span>` : ''}<span class="cash">${q.out ? '탈락' : q.cash}</span>
       <span class="rank">${rk.n} ${rk.g}품 · ${q.laps}바퀴 · ${s.total}점${q.shield?' · 광배':''}${q.gate?' · 관문':''}${q.away?' · 왜국':''}${q.rank===10?` · 출발 ${Math.max(0,q.zp)}/2`:''}</span></div>`; });
   walk();
   if(G.evtN !== lastEvtN){ lastEvtN = G.evtN; const E = curEvent(), t = G.era; setTimeout(() => showEvent(E, t), animating() ? 1500 : 100); }
@@ -1264,12 +1399,46 @@ function render(){
   aiStep();
   if(G.over) setTimeout(showOver, 1800);
 }
+let lastFxN = 0;
+function throwFx(L, r){
+  if(!L || L.n === lastFxN) return; lastFxN = L.n;
+  if(L.spill){ SND.spill(); return; }
+  if(r.king){
+    SND.king();
+    const c = $('center'); if(!c) return;
+    c.classList.remove('kingglow'); void c.offsetWidth; c.classList.add('kingglow');
+    c.insertAdjacentHTML('beforeend', `<div class="kingburst" aria-hidden="true">${r.rare ? r.ko : `<span class="hz">${r.zh}</span>`}<small>왕채</small></div>`);
+    const b = c.lastElementChild; setTimeout(() => b.remove(), 1500);
+  } else if(L.hit) SND.hit();
+}
+const RELIC_HZ = { hyangno:'香', lotus:'蓮', halo:'光', gugu:'九', sataek:'砂', gyuam:'觀', wanghung:'舍', sarigam:'龕' };
+const trayPrev = {};
+function drawTray(q, i){
+  const el = $('tr'+i); if(!el) return;
+  const n = q.out ? 0 : Math.min(30, Math.ceil(Math.max(0, q.cash) / 100)), rel = q.relics || [];
+  const prev = trayPrev[q.id] || { n, r: rel.length };
+  const key = [n, rel.join(','), q.shield].join('|'); if(el.dataset.k === key) return; el.dataset.k = key;
+  let coins = '';
+  for(let j = 0; j < Math.ceil(n / 10); j++){
+    const m = Math.min(10, n - j * 10); let pile = '';
+    for(let c = 0; c < m; c++){ const idx = j * 10 + c; pile += `<i class="coin${c === m - 1 ? ' top' : ''}${idx >= prev.n ? ' new' : ''}" style="bottom:${c * 3.2}px;animation-delay:${Math.max(0, idx - prev.n) * 40}ms"></i>`; }
+    coins += `<div class="pile">${pile}</div>`;
+  }
+  if(q.cash > 3000) coins += '<span class="more">+</span>';
+  const halo = RELICS.findIndex(r => r.id === 'halo');
+  const cards = rel.map((k, j) => `<button class="rc${k === halo && q.shield && rel.lastIndexOf(halo) === j ? ' live' : ''}${j >= prev.r ? ' new' : ''}" style="--r:${((j * 37) % 11) - 5}deg" data-k="${k}" aria-label="유물 카드 ${esc(RELICS[k].t)}">${RELIC_HZ[RELICS[k].id] || '寶'}</button>`).join('');
+  el.innerHTML = `<div class="coins" title="오수전 ${q.cash}" aria-label="오수전 ${q.cash}">${coins}</div><div class="relics">${cards}</div>`;
+  el.querySelectorAll('.rc').forEach(b => b.onclick = e => { e.stopPropagation(); const cd = RELICS[+b.dataset.k]; openSheet(`<h2>${esc(q.nm)}의 유물 · ${hzify(cd.t)}<span class="tag ${cd.tag}">${TAGN[cd.tag]}</span></h2>${cd.zh?`<div class="zh">${cd.zh}</div>`:''}<p>${cd.d}</p>${srcLine(cd)}`, 'relic'); });
+  trayPrev[q.id] = { n, r: rel.length };
+}
 function showResult(){
   if(!G || !$('result')) return;
   const L = G.last;
   if(!L){ $('result').innerHTML = '<span class="muted" style="font-size:.55em">꾹 눌렀다 놓아 던지기</span>'; $('faces').textContent = '꿩 막대 · 뒤집으면 소'; $('faces').title = '두 막대는 흰 면에 꿩, 검은 면에 소가 그려져 있다'; return; }
   const r = OUT[L.k];
-  $('result').innerHTML = `${r.rare ? '' : `<span class="hz">${r.zh}</span> `}${r.ko} · ${L.mv}칸 <span class="badge ${r.king?'king':'peon'}">${r.king?'왕채 · 한 번 더':'맹채'}</span>${L.hit?'<span class="badge hit">명중 +1</span>':''}`;
+  if(L.spill) $('result').innerHTML = `흩어짐 · ${L.mv}칸 <span class="badge peon">크게 · 빗나감</span>`;
+  else $('result').innerHTML = `${r.rare ? '' : `<span class="hz">${r.zh}</span> `}${r.ko} · ${L.mv}칸 <span class="badge ${r.king?'king':'peon'}">${r.king?'왕채 · 한 번 더':'맹채'}</span>${L.hit?`<span class="badge hit">${L.big ? '크게 명중' : '명중 +1'}</span>`:''}`;
+  throwFx(L, r);
   $('faces').textContent = r.how.replace(/\s*\(.*\)/, '');
   $('faces').title = `${L.f.map((b,k) => k<2 ? (b?'소':'꿩') : (b?'검':'흰')).join(' · ')} → ${r.how}${r.pts ? ` · 『오목경』 ${r.pts}점` : ''}`;
  
@@ -1286,9 +1455,10 @@ function phaseText(p){
   return '막대를 던질 차례';
 }
 let gauge = { on:false, v:0, dir:1, t:null };
+let BIG = false;   // 이번 던지기를 크게 (던지면 다시 조심히로)
 function gaugeStart(e){ e.preventDefault(); if(gauge.on || !myTurn() || animating() || G.phase !== 'throw') return; gauge.on = true; gauge.v = 0; gauge.dir = 1;
   gauge.t = setInterval(() => { gauge.v += gauge.dir * 4; if(gauge.v >= 100){ gauge.v = 100; gauge.dir = -1; } if(gauge.v <= 0){ gauge.v = 0; gauge.dir = 1; } const f = $('gfill'); if(f) f.style.width = gauge.v + '%'; }, 22); }
-function gaugeEnd(e){ if(!gauge.on) return; if(e) e.preventDefault(); clearInterval(gauge.t); gauge.on = false; send({ k:'throw', x: Math.round(gauge.v) }); }
+function gaugeEnd(e){ if(!gauge.on) return; if(e) e.preventDefault(); clearInterval(gauge.t); gauge.on = false; const big = BIG; BIG = false; send({ k:'throw', x: Math.round(gauge.v), big }); }
 function renderActions(){
   if(!G || !$('actrow')) return;
   if(gauge.on) return;
@@ -1297,7 +1467,8 @@ function renderActions(){
   const A = $('actrow'); A.innerHTML = '';
   if(!G.over && mine){
     if(G.phase === 'throw'){
-      A.insertAdjacentHTML('beforeend', `<button class="btn main" id="throwBtn" aria-label="꾹 눌렀다 놓아 던지기">터치</button><div id="gauge" aria-label="힘 게이지"><div class="sweet"></div><div class="fill" id="gfill"></div><div class="lbl">명중 70~85</div></div>`);
+      A.insertAdjacentHTML('beforeend', `<button class="btn mode${BIG?' on':''}" id="modeBtn" aria-pressed="${BIG}" title="크게: 명중하면 세 번 던져 가장 좋은 것, 빗나가면 2칸">${BIG ? '크게' : '조심히'}</button><button class="btn main" id="throwBtn" aria-label="꾹 눌렀다 놓아 던지기">터치</button><div id="gauge" class="${BIG?'big':''}" aria-label="힘 게이지"><div class="sweet"></div><div class="fill" id="gfill"></div><div class="lbl">${BIG ? '명중=세 번 중 최선 · 빗나가면 2칸' : '명중 70~85'}</div></div>`);
+      $('modeBtn').onclick = () => { BIG = !BIG; renderActions(); };
       const tb = $('throwBtn');
       tb.addEventListener('contextmenu', e => e.preventDefault());   // 휴대폰에서 꾹 누를 때 메뉴가 뜨지 않게
       tb.addEventListener('pointerdown', gaugeStart); tb.addEventListener('pointerup', gaugeEnd); tb.addEventListener('pointerleave', gaugeEnd); tb.addEventListener('pointercancel', gaugeEnd);
@@ -1313,8 +1484,21 @@ function renderActions(){
   $('fsBtn').textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '창 모드' : '전체화면';
 }
 let exitArm = 0;
+function showRoles(){
+  if(!G) return;
+  openSheet(`<h2>백제 인물 카드</h2><p class="muted" style="margin:0">판을 시작할 때 한 사람에 한 장씩. 인물 이야기는 사료에서, 능력과 목표는 게임용으로 지었어요.</p>` +
+    G.players.map((p,i) => { const r = roleOf(p); if(!r) return ''; const ok = roleDone(p, i);
+      return `<div class="panel" style="gap:4px"><b style="color:${p.c}">${esc(p.nm)} · ${r.n}<span class="tag ${r.tag}">${TAGN[r.tag]}</span></b>
+        <p style="margin:0">${r.who}</p><p style="margin:0"><b>능력</b> ${r.ab} <span class="tag fic">창작</span></p>
+        <p style="margin:0"><b>목표</b> ${r.goal()} +${r.bonus}점 ${ok ? '<b style="color:#9fd8a0">· 이룸</b>' : ''}</p>${srcLine(r)}</div>`; }).join(''), 'roles');
+}
 function wireSide(){
   $('fsBtn').onclick = toggleFS; $('rulesBtn2').onclick = showRules;
+  [0,1,2,3].forEach(k => { const el = $('pc'+k); if(el){ el.onclick = showRoles; el.style.cursor = 'pointer'; } });
+  const paintTools = () => { $('fastBtn').classList.toggle('on', FAST); $('fastBtn').setAttribute('aria-pressed', FAST); $('sndBtn').textContent = SND.on ? '소리' : '소리 끔'; };
+  $('fastBtn').onclick = () => { FAST = !FAST; try{ localStorage.setItem('jeopo-fast', FAST ? '1' : '0'); }catch(e){} paintTools(); };
+  $('sndBtn').onclick = () => { SND.on = !SND.on; paintTools(); if(SND.on) SND.hit(); };
+  paintTools();
   $('exitBtn').onclick = () => {
     if(Date.now() < exitArm){ location.reload(); return; }
     exitArm = Date.now() + 3000; $('exitBtn').textContent = '한 번 더 누르면 나가요';
@@ -1327,7 +1511,7 @@ function addBtn(t, fn, main, dis){ const b = document.createElement('button'); b
 const srcLine = o => o.src ? `<div class="src" style="font-size:12px;color:var(--paper-dim)">출처: ${o.src}</div>` : '';  // 원문 링크(o.url)는 기획 기록용으로만 두고 게임 화면에는 글로만
 const TAGN = { rec:'기록', leg:'설화', fic:'창작', chk:'확인 중', lit:'소설', re:'재현 이름' };
 let sheetMode = null;
-function openSheet(html, mode){ $('sheetIn').innerHTML = html + `<div class="row"><button class="btn" id="sheetClose">닫기</button></div>`; $('sheet').hidden = false; sheetMode = mode; $('sheetClose').onclick = closeSheet; }
+function openSheet(html, mode){ $('sheetIn').innerHTML = `<button class="btn" id="sheetX" aria-label="닫기">✕</button>` + html + `<div class="row"><button class="btn" id="sheetClose">닫기</button></div>`; $('sheet').hidden = false; $('sheet').scrollTop = 0; sheetMode = mode; $('sheetClose').onclick = closeSheet; $('sheetX').onclick = closeSheet; }
 function closeSheet(){ $('sheet').hidden = true; sheetMode = null; }
 function tollText(i){
   const c = CELLS[i];
@@ -1351,8 +1535,8 @@ function showCard(cd){
   openSheet(`<h2>유물 카드 · ${hzify(cd.t)}<span class="tag ${cd.tag}">${TAGN[cd.tag]}</span></h2>${cd.zh?`<div class="zh">${cd.zh}</div>`:''}<p>${cd.d}</p>${srcLine(cd)}`, 'card');
 }
 function showEvent(E, t){
-  $('evtIn').innerHTML = `<div class="muted" style="letter-spacing:.2em">${t >= TURNS.length ? '마지막' : (t+1)+'턴'} · ${kingOf(E, t)}</div><div class="yr">${E.y}</div><h2>${E.t}<span class="tag ${E.tag}">${TAGN[E.tag]}</span></h2>${E.zh?`<div class="zh">${E.zh}</div>`:''}<p>${E.d}</p><p class="fx">${fxText(E)}</p>${srcLine(E)}<div class="muted" style="font-size:12px">빈 곳을 눌러 닫기</div>`;
-  $('evt').hidden = false; clearTimeout(showEvent.t); showEvent.t = setTimeout(() => { $('evt').hidden = true; }, 5200);
+  $('evtIn').innerHTML = `<div class="muted" style="letter-spacing:.2em">${t >= TURNS.length ? '마지막' : turnNo(t)+'턴'} · ${kingOf(E, t)}</div><div class="yr">${E.y}</div><h2>${E.t}<span class="tag ${E.tag}">${TAGN[E.tag]}</span></h2>${E.zh?`<div class="zh">${E.zh}</div>`:''}<p>${E.d}</p><p class="fx">${fxText(E)}</p>${srcLine(E)}<div class="muted" style="font-size:12px">빈 곳을 눌러 닫기</div>`;
+  $('evt').hidden = false; clearTimeout(showEvent.t); showEvent.t = setTimeout(() => { $('evt').hidden = true; }, fastNow() ? 2600 : 5200);
   buddhaSay('era');
 }
 $('evt').onclick = () => { $('evt').hidden = true; };
@@ -1363,15 +1547,15 @@ function showOver(){
   const win = G.winner != null ? G.players[G.winner] : rows.find(r => !r.p.out)?.p || rows[0].p;
   const why = { era:'660년, 사비가 무너졌다. 나라는 사라져도 세운 것은 남는다.', groups:'왕궁·성·절 가운데 두 무리를 모두 차지했다.', jwapyeong:'좌평이 되어 출발점을 두 번 더 밟았다.', last:'마지막까지 남았다.' }[G.over];
   $('overIn').innerHTML = `<h2 style="color:var(--bronze);font-size:28px">${esc(win.nm)}의 승리</h2><p class="muted" style="margin:0">${why}</p>
-    <div style="overflow-x:auto"><table><tr><th>이름</th><th>건물</th><th>무리</th><th>도장</th><th>관등</th><th>오수전</th><th>합</th></tr>
-    ${rows.map(({p,s}) => `<tr><td>${esc(p.nm)}${p.out?' (탈락)':''}</td><td>${s.props}</td><td>${s.groups}</td><td>${s.stamps}</td><td>${s.rank}</td><td>${s.cash}</td><td><b>${s.total}</b></td></tr>`).join('')}</table></div>
+    <div style="overflow-x:auto"><table><tr><th>이름</th><th>건물</th><th>무리</th><th>도장</th><th>관등</th><th>인물</th><th>오수전</th><th>합</th></tr>
+    ${rows.map(({p,s}) => `<tr><td>${esc(p.nm)}${roleOf(p) ? ` · ${roleOf(p).n}` : ''}${p.out?' (탈락)':''}</td><td>${s.props}</td><td>${s.groups}</td><td>${s.stamps}</td><td>${s.rank}</td><td>${s.role || 0}</td><td>${s.cash}</td><td><b>${s.total}</b></td></tr>`).join('')}</table></div>
     <div class="row"><button class="btn main" id="again">처음 화면으로</button></div>`;
   $('over').hidden = false; $('again').onclick = () => location.reload();
   if(SOLO.on){ const won = win.id === 'Y'; $('over').hidden = true; story(won ? SOLO_WIN : SOLO_LOSE, SOLO_SRC).then(() => { $('over').hidden = false; }); }
 }
 function showRules(){
   openSheet(`<h2>규칙</h2><div class="rules">
-  <p><b>저포 던지기.</b> 버튼을 꾹 누르면 힘 게이지가 오르내리고, 놓으면 막대 다섯 개가 굴러요. 게이지가 70~85(초록)에서 놓으면 <b>명중 +1칸</b>. 막대는 한쪽이 흰 면, 한쪽이 검은 면이고, 두 막대에는 흰 면에 꿩(<span class="hz">雉</span>), 검은 면에 소(<span class="hz">牛</span>)가 그려져 있어요. 모양의 이름과 점수는 당나라 이고의 『오목경』에서 왔고, 칸 수는 게임용이에요.</p>
+  <p><b>저포 던지기.</b> 버튼을 꾹 누르면 힘 게이지가 오르내리고, 놓으면 막대 다섯 개가 굴러요. 게이지가 70~85(초록)에서 놓으면 <b>명중 +1칸</b>. 던지기 전에 <b>조심히 / 크게</b>를 고를 수 있어요. <b>크게</b> 던져 명중하면 막대를 세 번 던져 가장 좋은 결과(왕채 먼저)를 쓰고, 빗나가면 막대가 흩어져 2칸만 가요(게임용). 막대는 한쪽이 흰 면, 한쪽이 검은 면이고, 두 막대에는 흰 면에 꿩(<span class="hz">雉</span>), 검은 면에 소(<span class="hz">牛</span>)가 그려져 있어요. 모양의 이름과 점수는 당나라 이고의 『오목경』에서 왔고, 칸 수는 게임용이에요.</p>
   <div style="overflow-x:auto"><table><tr><th>모양</th><th>『오목경』</th><th>칸</th><th></th></tr>
   ${OUT.map(o => `<tr><td>${o.rare ? '희귀자 (𢳚, 대부분의 글꼴에 없는 한자)' : `<span class="hz">${o.zh}</span> ${o.ko}`}<div class="muted" style="font-size:11px">${o.how}</div></td><td>${o.pts ?? '—'}</td><td>${o.move}</td><td>${o.king?'왕채 · 한 번 더':'맹채'}</td></tr>`).join('')}</table></div>
   <p><b>왕채</b>(노·치·독·백)가 나오거나, 다른 사람이 있는 칸에 서면(<span class="hz">擊馬</span>) 한 번 더 던져요. — 『오목경』 「<span class="hz">凡擊馬及王采皆又投</span>」</p>
@@ -1383,6 +1567,8 @@ function showRules(){
   <p><b>관등과 봉급.</b> 출발을 지날 때마다 두 품씩 오르고 봉급을 받아요. 극우(흰 띠) → 계덕(푸른 띠) → 시덕(검은 띠) → 내솔(은꽃 관 장식) … 좌평은 <b>내솔(6품) 이상</b>이 <b>정사암 회의</b>에서 왕채를 내야 돼요. 『주서』에서 6품 이상만 관에 은꽃을 달았다는 구절에서 따왔어요. 16품 가운데 12~15품(문독·무독·좌군·진무)은 게임에서 줄였어요.</p>
   <div class="src">${RANK_SRC} · 봉급은 게임용</div>
   <p><b>관문</b>(나성·부소산성)에 멈추면 다음 차례에 왕채가 나와야 나가요. 30수전을 내면 바로 나가요.</p>
+  <p><b>백제 인물 카드.</b> 판을 시작하면 성충·계백·사택지적·무왕·단양이 가운데 한 장씩 받아요. 인물마다 능력 하나와 목표 하나가 있고, 목표를 이루면 판이 끝날 때 점수를 더 받아요. 플레이어 카드를 누르면 다시 볼 수 있어요. 인물 이야기는 사료에서, 능력·목표는 게임용으로 지었어요.</p>
+  <p><b>판 길이.</b> 짧은 판은 여섯 턴(두 턴씩 건너뛰며 성왕부터 의자왕까지), 긴 판은 열두 턴. 짧은 판에서는 인물 목표가 조금 낮아져요. 왼쪽 ▶▶를 켜 두면 컴퓨터 차례가 빨리 지나가요.</p>
   <p><b>열두 턴.</b> 선두가 출발(사비 천도)이나 맞은편 구태묘 제사를 지날 때마다 다음 턴으로 넘어가요. 턴마다 그 시대(성왕 → 위덕왕 → 법왕·무왕 → 의자왕)의 사건 서너 개 가운데 하나가 무작위로 일어나요. 사건의 효과는 <b>다음 사건이 올 때까지 그 턴 내내</b> 이어져요(예: 일식 → 그 턴 동안 통행세 1.5배, 성 방어 → 성 통행세 두 배). 지금 걸린 효과는 위쪽 시대 띠에 노란 표시로 보여요. 12턴 다음 바퀴에 660 사비 함락이 오면 점수를 세요.</p>
   <p><b>뒤처진 사람 돕기.</b> 출발을 지날 때 점수가 꼴찌면 격려금 80수전을 받아요. 뒤에 던지는 사람은 시작 오수전이 60씩 더 많아요(먼저 던지는 쪽이 유리해서). 혼자 하기에서는 부처님 세기를 너그러운·보통·깐깐한 가운데 고를 수 있어요.</p>
   <p><b>이기는 법.</b> ① 사비 함락 때 점수가 가장 높은 사람 ② 왕궁·성·절 가운데 두 무리를 다 가진 사람 ③ 좌평이 된 뒤 출발을 두 번 더 지난 사람 ④ 혼자 남은 사람(파산하면 탈락).</p>
@@ -1433,7 +1619,7 @@ $('startSolo').onclick = async () => {
   SOLO.on = true;
   await story(SOLO_INTRO, SOLO_SRC);
   const lv = +(document.querySelector('input[name=soloLv]:checked')?.value ?? 1);
-  startGame(newGame([{ id:'Y', nm, c:'#e2574c', bonus:[200,0,0][lv] }, { id:'B', nm:['너그러운 부처님','부처님','깐깐한 부처님'][lv], ai:true, lv, c:'#e0c27a', bonus:[0,0,340][lv] }]));
+  startGame(newGame([{ id:'Y', nm, c:'#e2574c', bonus:[200,0,0][lv] }, { id:'B', nm:['너그러운 부처님','부처님','깐깐한 부처님'][lv], ai:true, lv, c:'#e0c27a', bonus:[0,0,200][lv] }], { short: lenOf('lenSolo') }));
   ME = ['Y']; enterGame();
 };
 
@@ -1441,6 +1627,7 @@ $('startSolo').onclick = async () => {
    7. 한 기기 / 방
    ===================================================================== */
 const isHostSide = () => !NET || NET.host;
+const lenOf = name => document.querySelector(`input[name=${name}]:checked`)?.value !== 'long';   // 기본은 짧은 판
 /* 차례 제한 10초: 온라인 방에서 사람 차례에만. 막대·말 움직임과 사건 창이 끝난 뒤부터 센다.
    방장이 시간을 재고, 끝나면 대신 움직인다 (던지기 · 지나가기 · 카드 닫기). */
 const TURN_MS = 10000;
@@ -1479,9 +1666,10 @@ function publish(){
 }
 function enterGame(){
   for(const k in DISP) delete DISP[k];
-  lastEvtN = 0; lastNoteN = G.note?.n || 0; lastThrowN = G.last?.n || 0;
+  lastEvtN = 0; lastNoteN = G.note?.n || 0; lastThrowN = G.last?.n || 0; lastFxN = G.last?.n || 0;
   $('lobby').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
   buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { render(); fitBoard(); }); setTimeout(fitBoard, 300);
+  if(!G.over && G.players.some(q => q.role) && !(G.last)) setTimeout(showRoles, 700);   // 새 판이면 인물 카드부터 보여 준다
 }
 
 const seatState = [{ nm:'나', who:'me' }, { nm:'컴퓨터 1', who:'ai' }, { nm:'컴퓨터 2', who:'off' }, { nm:'컴퓨터 3', who:'off' }];
@@ -1494,7 +1682,7 @@ function drawSeats(){
 $('startLocal').onclick = () => {
   const seats = seatState.map((s,i) => ({ ...s, id:'L'+i })).filter(s => s.who !== 'off');
   if(seats.length < 2) return alertLobby('두 자리 이상 채워야 해요. 빈 자리를 사람이나 컴퓨터로 바꿔 주세요.');
-  startGame(newGame(seats.map(s => ({ id:s.id, nm:(s.nm||'이름 없음').slice(0,10), ai:s.who==='ai' }))));
+  startGame(newGame(seats.map(s => ({ id:s.id, nm:(s.nm||'이름 없음').slice(0,10), ai:s.who==='ai' })), { short: lenOf('lenLocal') }));
   ME = seats.filter(s => s.who === 'me').map(s => s.id);
   enterGame();
 };
@@ -1593,7 +1781,7 @@ function onRoom(peers){
     $('waiting').innerHTML = `<b>방 번호 ${NET.code}</b><div class="muted" style="font-size:14px">${people.map(p => esc(p.presence.nick) + (p.presence.host?' (방장)':'') + (p.isMe&&p.sameTab?' · 나':'')).join(', ') || '연결하는 중…'}</div>` +
       (NET.host ? `<div class="row"><button class="btn main" id="goRoom" ${people.length<2?'disabled':''}>판 열기 (${Math.min(people.length,4)}명)</button></div>` : `<div class="muted" style="font-size:13px">${hostPeer ? '방장이 판을 열기를 기다리는 중…' : '방장을 찾는 중… 방 번호가 맞는지 확인해 주세요.'}</div>`);
     if(NET.host && $('goRoom')) $('goRoom').onclick = () => {
-      startGame(newGame(people.slice(0,4).map(p => ({ id:p.peer, nm:p.presence.nick })))); ME = [people.find(p => p.isMe && p.sameTab).peer];
+      startGame(newGame(people.slice(0,4).map(p => ({ id:p.peer, nm:p.presence.nick })), { short: lenOf('lenRoom') })); ME = [people.find(p => p.isMe && p.sameTab).peer];
       enterGame(); publish();
     };
     if(!NET.host && hostPeer && hostPeer.presence.st){ G = JSON.parse(JSON.stringify(hostPeer.presence.st)); ME = [people.find(p => p.isMe && p.sameTab)?.peer]; enterGame(); }
