@@ -51,9 +51,38 @@ h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
 #lobby .mark{font-family:var(--display);font-size:clamp(40px,calc(10 * var(--vw)),68px);letter-spacing:.12em;color:var(--bronze);line-height:1}
 #lobby .mark small{display:block;font-size:.26em;letter-spacing:.3em;color:var(--paper-dim);margin-top:.8em;font-family:var(--display)}
 /* 로비: 게임 속 노을 풍경을 뒤에 깔고, 가운데를 어둡게 눌러 글자가 읽히게 */
-#lobby{position:relative;z-index:1}
-#lobby > .scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-#lobby > .scene::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 48%,rgba(20,14,11,.72),rgba(20,14,11,.35) 65%,rgba(20,14,11,.15))}
+/* 로비도 게임처럼 800×450 고정 무대를 화면에 맞게 키우고 줄인다 (fitStage) */
+#lobbyBg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#lobbyBg > .scene{position:absolute;inset:0;overflow:hidden}
+#lobby{--W:800px;--H:450px;--vw:10px;--vh:4.5px;position:fixed;left:50%;top:50%;width:var(--W);height:var(--H);max-width:none;margin:0;min-height:0;padding:12px 40px;gap:10px;
+  transform:translate(-50%,-50%) scale(var(--sc,1));transform-origin:50% 50%;z-index:1;justify-content:center}
+#lobby .mark{font-size:64px}
+#lobby.sub .mark{font-size:30px}#lobby.sub .mark small{margin-top:.45em;font-size:.36em}
+#lobby .menu{width:100%;max-width:460px;margin:0 auto}
+#lobby.sub .menu{max-width:720px}
+#lobby .btn.back{position:absolute;left:14px;top:12px}
+#lobby input[type=text]{font-size:16px}
+#menuMulti:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+#lobby .panel{padding:12px 14px;gap:8px}
+#lobby h3{font-size:18px}
+#lobby .lvrow{font-size:13px;gap:4px 12px}
+.seat input[type=text]{max-width:104px!important;font-size:15px!important;padding:.35em .5em}
+.seat select{font-size:13px;max-width:96px}
+.picks{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pickc{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 5px;border:1px solid var(--bronze-dim);border-radius:10px;background:rgba(27,21,19,.6);color:var(--paper);transition:transform .12s,border-color .12s}
+.pickc .portrait{width:58px;height:58px}
+.pickc b{font-family:var(--display);font-size:15px;line-height:1.2}
+.pickc small{font-size:10.5px;color:var(--paper-dim);white-space:nowrap}
+.pickc:hover{transform:translateY(-2px)}
+.pickc.on{border-color:#f0d79a;background:rgba(201,162,90,.22);box-shadow:0 0 0 2px #e0b85a inset,0 4px 14px rgba(0,0,0,.4)}
+.pickc.on small{color:#f0d79a}
+.roletxt{margin:0;font-size:12px;line-height:1.5;color:var(--paper);min-height:3em}
+.roletxt .muted{color:#d9ccb2}
+.portrait{display:block}
+.pc .pl .face .portrait{width:100%;height:auto}
+#sheet .rolehead{display:flex;gap:10px;align-items:center}
+#sheet .rolehead .portrait{width:56px;height:56px;flex:none}
+#lobbyBg > .scene::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 48%,rgba(20,14,11,.72),rgba(20,14,11,.35) 65%,rgba(20,14,11,.15))}
 #lobby .mark{color:#f3dca6;text-shadow:0 2px 14px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.5)}
 #lobby .mark small{color:#efe6d2;text-shadow:0 1px 6px rgba(0,0,0,.7)}
 #lobby .mark small::before,#lobby .mark small::after{content:'';display:inline-block;width:2.2em;height:1px;background:rgba(239,230,210,.5);vertical-align:.35em;margin:0 .9em}
@@ -319,8 +348,9 @@ td:first-child,th:first-child{text-align:left}
   </div>
   <div id="menuSingle" class="menu" hidden>
     <div class="panel" id="soloPanel">
-    <h3>양생과 부처님</h3>
-    <p class="muted" style="margin:0;font-size:14px;line-height:1.7">김시습의 『금오신화』 「만복사저포기」에서 가난한 서생 양생은 만복사 부처님께 저포 내기를 청한다. 지면 법회를 열어 갚고, 이기면 짝을 만나게 해 달라고. 이번 판의 상대는 부처님이다.</p>
+    <h3>양생과 부처님 <small class="muted" style="font-family:var(--body);font-weight:400;font-size:12px">『금오신화』 「만복사저포기」처럼, 부처님께 저포 내기를 청한다</small></h3>
+    <div class="picks" id="soloPicks" role="radiogroup" aria-label="내 인물 고르기"></div>
+    <p id="soloRoleTxt" class="roletxt"></p>
     <div class="row lvrow" role="radiogroup" aria-label="부처님 세기"><label><input type="radio" name="soloLv" value="0"> 너그러운 부처님 <small class="muted">쉬움</small></label><label><input type="radio" name="soloLv" value="1" checked> 부처님 <small class="muted">보통</small></label><label><input type="radio" name="soloLv" value="2"> 깐깐한 부처님 <small class="muted">어려움</small></label></div>
     <div class="row lvrow" role="radiogroup" aria-label="판 길이"><span class="muted">판 길이</span><label><input type="radio" name="lenSolo" value="short" checked> 짧은 판 <small class="muted">6턴</small></label><label><input type="radio" name="lenSolo" value="long"> 긴 판 <small class="muted">12턴</small></label></div>
     <div class="row"><input type="text" id="soloNick" maxlength="10" value="양생" aria-label="내 이름"><button class="btn main" id="startSolo">만복사로 가기</button></div>
@@ -548,24 +578,25 @@ const kingOf = (e, t) => e.king || (t < TURNS.length ? TURNS[t].king : '의자�
 
 /* 백제 인물 카드: 판을 시작할 때 한 사람에 한 장씩. 능력 하나 + 목표 하나 (능력·목표는 게임용 창작, 인물 설명은 사료) */
 const ROLES = [
-  { id:'seongchung', n:'성충', who:'의자왕 때 좌평. 656년 왕에게 간언하다 옥에 갇혔고, 옥에서 나라를 지킬 방도를 글로 올렸다.',
+  { id:'seongchung', hint:'정사암 · 관등', n:'성충', who:'의자왕 때 좌평. 656년 왕에게 간언하다 옥에 갇혔고, 옥에서 나라를 지킬 방도를 글로 올렸다.',
     ab:'정사암 회의에 관등과 상관없이 이름이 오르고, 막대를 두 번 던져 하나라도 왕채면 좌평. 높은 사람을 깎아 내리는 사건에도 관등이 내려가지 않는다.', goal:() => '좌평이 되거나, 판이 끝날 때 관등이 가장 높으면', bonus:110,
     tag:'rec', ...sg('sg_028r_0020_0260','권28 의자왕 (656년 3월)') },
-  { id:'gyebaek', n:'계백', who:'백제의 달솔. 660년 결사대 5천을 이끌고 황산벌에서 신라군과 싸우다 전사했다.',
+  { id:'gyebaek', hint:'성 통행세 1.5배', n:'계백', who:'백제의 달솔. 660년 결사대 5천을 이끌고 황산벌에서 신라군과 싸우다 전사했다.',
     ab:'내 성(城)에서 받는 통행세가 1.5배.', goal:() => `성 ${need(3,2)}곳을 가지면`, bonus:100,
     tag:'chk', src:'『삼국사기』 권47 열전 계백 (원문 대조 필요)' },
-  { id:'sataek', n:'사택지적', who:'654년 「사택지적비」를 남긴 귀족. 비문에 나이 듦을 슬퍼하며 금당과 탑을 세웠다고 적었다.',
+  { id:'sataek', hint:'절 값 30% 할인', n:'사택지적', who:'654년 「사택지적비」를 남긴 귀족. 비문에 나이 듦을 슬퍼하며 금당과 탑을 세웠다고 적었다.',
     ab:'절(가람)을 세우고 올리는 값이 30% 싸다.', goal:() => `절 ${need(3,2)}곳을 가지면`, bonus:100,
     tag:'rec', src:'부여 사택지적비 · 국사편찬위원회 한국사데이터베이스 금석문', url: DB + 'gskh_002_0010_0010_0030' },
-  { id:'mu', n:'무왕', who:'백제 30대 왕(재위 600~641). 634년 왕흥사를 완성하고 대궐 남쪽에 못(궁남지)을 팠다.',
+  { id:'mu', hint:'왕궁 값 30% 할인', n:'무왕', who:'백제 30대 왕(재위 600~641). 634년 왕흥사를 완성하고 대궐 남쪽에 못(궁남지)을 팠다.',
     ab:'왕궁 건물을 세우고 올리는 값이 30% 싸다.', goal:() => `왕궁 ${need(3,2)}곳을 가지면`, bonus:100,
     tag:'rec', ...sg('sg_027r_0050_0440','권27 무왕 (634년 2월·3월)') },
-  { id:'danyang', n:'단양이', who:'513년 왜에 건너간 백제의 오경박사. 3년 뒤 고안무와 교대했다.',
+  { id:'danyang', hint:'왜국에서 바로 +100', n:'단양이', who:'513년 왜에 건너간 백제의 오경박사. 3년 뒤 고안무와 교대했다.',
     ab:'왜국 파견 칸에서 쉬지 않고 바로 100수전을 받는다.', goal:() => `${need(5,3)}바퀴를 돌면`, bonus:100,
     tag:'rec', ...ek('E0036601','역박사',' · 근거 사료는 『일본서기』') },
 ];
 const roleOf = p => p && ROLES.find(r => r.id === p.role);
-const need = (long, short) => G && G.short ? short : long;   // 짧은 판은 목표를 낮춘다
+let LOBBY_SHORT = true;   // 로비에서 고른 판 길이 (게임 전 목표 글에 씀)
+const need = (long, short) => (G ? G.short : LOBBY_SHORT) ? short : long;   // 짧은 판은 목표를 낮춘다
 const hasRole = (p, id) => !!p && p.role === id;
 function roleDone(p, i){
   const r = roleOf(p); if(!r || !G) return false;
@@ -615,11 +646,14 @@ const RELICS = [
 const COLORS = ['#e2574c','#3fa7b0','#d9b23a','#9d7ad8'];
 let G = null, ME = null, NET = null;
 function newGame(seats, opt = {}){
-  const roles = shuffle(ROLES.map(r => r.id));
+  // 고른 인물은 그대로, 나머지는 남은 인물 가운데 무작위
+  const known = id => ROLES.some(r => r.id === id);
+  const rest = shuffle(ROLES.map(r => r.id).filter(id => !seats.some(s => s.role === id)));
+  const roleFor = s => known(s.role) ? s.role : (rest.shift() || ROLES[Math.floor(Math.random() * ROLES.length)].id);
   return {
     v:2, short:!!opt.short, seq:0, turn:0, phase:'throw', extra:0, era:0, round:0, over:false, winner:null,
     players: seats.map((s,i) => ({ id:s.id, nm:s.nm, c:s.c || COLORS[i], ai:!!s.ai, lv:s.lv ?? 1, pos:0, cash:START_CASH + i * SEAT_COMP + (s.bonus || 0), rank:0, laps:0,
-      away:0, gate:0, shield:false, out:false, seen:[], zp:-1, prog:0, relics:[], role: opt.noRoles ? null : roles[i % roles.length] })),
+      away:0, gate:0, shield:false, out:false, seen:[], zp:-1, prog:0, relics:[], role: opt.noRoles ? null : roleFor(s) })),
     own: Array(N).fill(-1), lv: Array(N).fill(0), tmp: Array(N).fill(0), bl: Array(N).fill(0),
     last:null, card:null, deck: shuffle(RELICS.map((_,i)=>i)), log:['사비에 판이 열렸다.'], evtN:0, note:null, pick:null, pendingGoto:null,
     ev: Array(TURNS.length).fill(0), fx:{},
@@ -890,7 +924,8 @@ function aiStep(){
    4. 그림: 캐릭터와 건물 (2D)
    ===================================================================== */
 const $ = id => document.getElementById(id);
-{ const sc = $('game') && $('game').querySelector('.scene'); if(sc) $('lobby').prepend(sc.cloneNode(true)); }   // 로비 뒤에도 같은 노을 풍경
+{ const sc = $('game') && $('game').querySelector('.scene');   // 로비 뒤에도 같은 노을 풍경 (화면 전체)
+  if(sc){ const bg = document.createElement('div'); bg.id = 'lobbyBg'; bg.setAttribute('aria-hidden', 'true'); bg.appendChild(sc.cloneNode(true)); $('lobby').before(bg); } }
 const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const hzify = s => String(s).replace(/([㐀-鿿\u{20000}-\u{2ffff}]+)/gu,'<span class="hz">$1</span>');
 const SEAT_LOOK = ['scholar','noble','merchant','artisan'];
@@ -917,6 +952,78 @@ function chibi(p, i){
       : `<rect x="-1.2" y="-12" width=".6" height=".8" fill="#2a2018"/><rect x=".6" y="-12" width=".6" height=".8" fill="#2a2018"/>`}
     ${kind === 'buddha' ? '' : hair}${hats[kind]}${flower}</svg>`;
 }
+/* 백제 인물 얼굴 (상상 그림 · 창작). 옷과 관은 사료의 백제 복식을 따름:
+   왕 — 자주색 큰 소매 옷, 검은 비단 관(烏羅冠)에 금꽃 장식 (『구당서』 백제전)
+   관리 — 붉은 옷, 관에 은꽃 장식 (『구당서』 백제전, 『주서』 6품 이상 은꽃)
+   장수 — 세로판 투구와 비늘 갑옷(찰갑) · 학자 — 검은 건과 두루마리 */
+const PORTRAIT = (() => {
+  const SKIN = '#f0cfa6', SKIN2 = '#d9b08a', INK = '#2a2018';
+  const face = (o = {}) => {
+    const brow = o.brow || 'M37 42 q5 -3 10 -1 M53 41 q5 -2 10 1';
+    const eyes = o.eyes || `<ellipse cx="43" cy="48" rx="2.1" ry="2.5" fill="${INK}"/><ellipse cx="57" cy="48" rx="2.1" ry="2.5" fill="${INK}"/><circle cx="43.7" cy="47.2" r=".7" fill="#fff"/><circle cx="57.7" cy="47.2" r=".7" fill="#fff"/>`;
+    return `<path d="M33 56 q0 10 4 14 l13 8 l13 -8 q4 -4 4 -14z" fill="${SKIN2}"/>
+      <ellipse cx="32.5" cy="50" rx="3.2" ry="5" fill="${SKIN}" stroke="rgba(0,0,0,.18)" stroke-width=".6"/><ellipse cx="67.5" cy="50" rx="3.2" ry="5" fill="${SKIN}" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
+      <path d="M33 44 q0 -16 17 -16 q17 0 17 16 v6 q0 15 -17 20 q-17 -5 -17 -20z" fill="${SKIN}" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+      ${o.age ? `<path d="M38 53 q3 2 6 1 M56 54 q3 1 6 -1" stroke="rgba(120,80,50,.45)" stroke-width=".8" fill="none"/><path d="M41 36 h6 M53 35.5 h6" stroke="rgba(120,80,50,.35)" stroke-width=".7"/>` : ''}
+      <path d="${brow}" stroke="${o.browC || INK}" stroke-width="${o.browW || 1.8}" fill="none" stroke-linecap="round"/>
+      ${eyes}
+      <path d="M50 49 q-2 6 -1 8 q1 1 2.5 .3" stroke="rgba(120,80,50,.6)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="56" r="3" fill="#e8a38f" opacity=".35"/><circle cx="60" cy="56" r="3" fill="#e8a38f" opacity=".35"/>
+      ${o.mouth || `<path d="M45 62 q5 2.5 10 0" stroke="#8a4a3a" stroke-width="1.3" fill="none" stroke-linecap="round"/>`}`;
+  };
+  const robe = (c, c2, collar = '#efe6d2') => `<path d="M8 100 q2 -22 24 -28 l18 6 l18 -6 q22 6 24 28z" fill="${c}"/>
+    <path d="M32 72 l18 22 l18 -22 l-4 -1.5 l-14 16 l-14 -16z" fill="${collar}"/><path d="M50 94 v6" stroke="${c2}" stroke-width="1.2"/>
+    <path d="M20 86 q6 -6 12 -14 M80 86 q-6 -6 -12 -14" stroke="${c2}" stroke-width="1.4" fill="none" opacity=".6"/>`;
+  const silver = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})" fill="#e8edf3" stroke="#8a96a3" stroke-width=".6">
+    <path d="M0 0 c-2 -6 -6 -8 -4 -13 c2 3 4 4 4 9 c0 -6 2 -9 4 -12 c1 5 -1 9 -2 12 c2 -3 5 -4 7 -4 c-1 4 -5 6 -9 8z"/></g>`;
+  const P = {
+    // 무왕: 자주색 옷, 검은 비단 관(오라관)에 금꽃 장식, 콧수염과 짧은 턱수염
+    mu: { bg:'#4a2a4a', body: robe('#6b3a7a', '#3e1f48', '#e0c27a') + face({
+          brow:'M37 41.5 q5 -2.5 10 -.5 M53 41 q5 -2 10 .5',
+          mouth:`<path d="M42 60 q4 -2.5 8 -.8 q4 -1.7 8 .8" stroke="${INK}" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M47 66 q3 5 6 0 q-3 1.5 -6 0z" fill="${INK}"/>` }) +
+        `<path d="M31 41 q0 -19 19 -20 q19 1 19 20 q-4 -6 -19 -6 q-15 0 -19 6z" fill="#17120f"/><rect x="30" y="38" width="40" height="5" rx="2" fill="#241b16"/>
+         <g transform="translate(41 33) rotate(-12)"><path d="M0 0 V-24" stroke="#e0b85a" stroke-width="2.2" stroke-linecap="round"/>
+           <g fill="none" stroke="#e0b85a" stroke-width="1.6" stroke-linecap="round"><path d="M0 -5 q-7 -1 -8 -8 q2 3 5 2"/><path d="M0 -5 q7 -1 8 -8 q-2 3 -5 2"/><path d="M0 -13 q-6 -1 -6 -7 q2 2 4 1"/><path d="M0 -13 q6 -1 6 -7 q-2 2 -4 1"/></g>
+           <path d="M0 -30 q-3 4 0 7 q3 -3 0 -7z" fill="#e0b85a" stroke="#8a6428" stroke-width=".5"/></g><g transform="translate(59 33) rotate(12)"><path d="M0 0 V-24" stroke="#e0b85a" stroke-width="2.2" stroke-linecap="round"/>
+           <g fill="none" stroke="#e0b85a" stroke-width="1.6" stroke-linecap="round"><path d="M0 -5 q-7 -1 -8 -8 q2 3 5 2"/><path d="M0 -5 q7 -1 8 -8 q-2 3 -5 2"/><path d="M0 -13 q-6 -1 -6 -7 q2 2 4 1"/><path d="M0 -13 q6 -1 6 -7 q-2 2 -4 1"/></g>
+           <path d="M0 -30 q-3 4 0 7 q3 -3 0 -7z" fill="#e0b85a" stroke="#8a6428" stroke-width=".5"/></g>
+         <circle cx="50" cy="40.5" r="2" fill="#e0b85a"/>` },
+    // 성충: 좌평의 붉은 옷과 은꽃 관, 긴 검은 수염, 굳은 눈썹
+    seongchung: { bg:'#4a2220', body: robe('#9a2f26', '#5e1a14') + face({ age:1,
+          brow:'M37 40 q5 1 10 3 M53 43 q5 -2 10 -3', browW:2.2,
+          mouth:`<path d="M42 59 q8 -2 16 0" stroke="${INK}" stroke-width="2" fill="none"/><path d="M42 61 q0 14 8 22 q8 -8 8 -22 q-8 3 -16 0z" fill="#2b231d"/><path d="M46 64 q2 6 4 12 M54 64 q-2 6 -4 12" stroke="#4a3e34" stroke-width=".6" fill="none"/>` }) +
+        `<path d="M33 40 q0 -14 17 -15 q17 1 17 15 q-6 -4 -17 -4 q-11 0 -17 4z" fill="#17120f"/><rect x="40" y="18" width="20" height="12" rx="4" fill="#17120f"/>` +
+        silver(41, 19, .9) + silver(59, 19, -.9) },
+    // 계백: 세로판 투구, 비늘 갑옷, 굵은 눈썹과 콧수염
+    gyebaek: { bg:'#2a3038', body: `<path d="M8 100 q2 -22 24 -28 l18 4 l18 -4 q22 6 24 28z" fill="#4a4a4e"/>` +
+        Array.from({length:5}, (_, r) => Array.from({length:12}, (_, c) => `<rect x="${12 + c * 6.5 + (r % 2) * 3}" y="${76 + r * 5}" width="5.6" height="4.4" rx="1" fill="${r % 2 ? '#6e6a62' : '#7c776c'}" stroke="#2e2c28" stroke-width=".5"/>`).join('')).join('') +
+        `<path d="M30 74 q20 8 40 0 v5 q-20 7 -40 0z" fill="#8e3328"/>` + face({
+          brow:'M36 41 l11 2.5 M53 43.5 l11 -2.5', browW:2.8,
+          mouth:`<path d="M41 60 q4 -3 9 -1 q5 -2 9 1" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M45 64.5 h10" stroke="#8a4a3a" stroke-width="1.3" stroke-linecap="round"/>` }) +
+        `<path d="M29 46 q-1 -26 21 -27 q22 1 21 27 l-5 -8 h-32z" fill="#55534f" stroke="#2e2c28" stroke-width=".8"/>
+         ${[36,41,46,50,54,59,64].map(x => `<path d="M${x} ${x < 50 ? 22 + (50 - x) * .5 : 22 + (x - 50) * .5} L${x + (x - 50) * .1} 38" stroke="#2e2c28" stroke-width=".7"/>`).join('')}
+         <rect x="29" y="37" width="42" height="4" rx="1.5" fill="#3e3c39"/><path d="M28 41 q-3 12 4 20 l3 -2 q-4 -8 -2 -18z M72 41 q3 12 -4 20 l-3 -2 q4 -8 2 -18z" fill="#3e3c39"/>
+         <path d="M50 19 q-3 -9 2 -14 q1 6 4 8 q-4 1 -6 6z" fill="#b8473a"/><circle cx="50" cy="19" r="2.2" fill="#3e3c39"/>` },
+    // 사택지적: 나이 든 귀족, 흰머리와 흰 수염, 은꽃 관, 처진 눈썹 (비문에 늙음을 슬퍼한 글)
+    sataek: { bg:'#3a2a2a', body: robe('#8a3a30', '#4e1e18') + face({ age:1,
+          brow:'M37 41 q5 -2 10 1 M53 42 q5 -3 10 -1', browC:'#d8d2c6', browW:2,
+          eyes:`<path d="M40.5 48.5 q2.5 -2 5 0" stroke="${INK}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M54.5 48.5 q2.5 -2 5 0" stroke="${INK}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+          mouth:`<path d="M42 59 q8 -2.5 16 0" stroke="#e6e0d4" stroke-width="2.2" fill="none"/><path d="M43 61 q-1 16 7 24 q8 -8 7 -24 q-7 2.5 -14 0z" fill="#e6e0d4"/><path d="M47 64 q2 8 3 15 M53 64 q-2 8 -3 15" stroke="#b8b2a6" stroke-width=".6" fill="none"/>` }) +
+        `<path d="M33 43 q-1 -13 17 -14 q18 1 17 14 q-4 -6 -17 -6 q-13 0 -17 6z" fill="#d8d2c6"/><path d="M36 33 q0 -10 14 -10 q14 0 14 10 q-6 -3 -14 -3 q-8 0 -14 3z" fill="#17120f"/>` +
+        silver(43, 23, .8) + silver(57, 23, -.8) },
+    // 단양이: 오경박사, 검은 건, 푸른 옷, 두루마리
+    danyang: { bg:'#1f3238', body: robe('#2f5a6a', '#173038') + face({
+          brow:'M38 42 q4.5 -2.5 9 -.5 M53 41.5 q4.5 -2 9 .5', browW:1.5,
+          mouth:`<path d="M44 60.5 q3 -1.4 6 -.4 q3 -1 6 .4" stroke="${INK}" stroke-width="1.2" fill="none"/><path d="M45 64 q5 2.5 10 0" stroke="#8a4a3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>` }) +
+        `<path d="M32 41 q0 -17 18 -18 q18 1 18 18 q-5 -5 -18 -5 q-13 0 -18 5z" fill="#17120f"/><path d="M38 24 q12 -8 24 0 v8 h-24z" fill="#17120f"/><path d="M44 24 v-3 q6 -3 12 0 v3z" fill="#17120f"/>
+         <g transform="rotate(-18 72 88)"><rect x="58" y="84" width="30" height="9" rx="4.5" fill="#e8dcc2" stroke="#9a8a66" stroke-width=".8"/><rect x="56" y="83" width="4" height="11" rx="1.5" fill="#8e3328"/><rect x="86" y="83" width="4" height="11" rx="1.5" fill="#8e3328"/></g>` },
+  };
+  return (id, cls = '') => { const p = P[id]; if(!p) return '';
+    return `<svg class="portrait ${cls}" viewBox="0 0 100 100" role="img" aria-label="상상 그림"><defs><clipPath id="pc-${id}"><circle cx="50" cy="50" r="49"/></clipPath></defs>
+      <g clip-path="url(#pc-${id})"><circle cx="50" cy="50" r="50" fill="${p.bg}"/><circle cx="50" cy="40" r="34" fill="rgba(255,236,200,.08)"/>${p.body}</g>
+      <circle cx="50" cy="50" r="48.5" fill="none" stroke="#c9a25a" stroke-width="2"/></svg>`; };
+})();
+
 function building(k, col){
   const kind = GROUPS[CELLS[k].g].kind, flag = `<path d="M17 4 v12" stroke="#2b2118" stroke-width="1"/><path d="M17 4 h7 l-2 2.5 l2 2.5 h-7z" fill="${col}"/>`;
   const art = {
@@ -1242,6 +1349,7 @@ function fitStage(){
   const k = Math.max(.2, Math.min((vw - sl - sr) / STW, (vh - st - sb) / STH));
   g.style.setProperty('--sc', k);
   g.style.left = `calc(50% + ${(sl - sr) / 2}px)`; g.style.top = `calc(50% + ${(st - sb) / 2}px)`;
+  const lb = $('lobby'); if(lb){ lb.style.setProperty('--sc', k); lb.style.left = g.style.left; lb.style.top = g.style.top; }
   // 풍경(하늘·산·강)은 무대 밖 빈 띠까지 늘려 화면 전체를 채운다
   const sc = g.querySelector('.scene');
   if(sc){ const ex = Math.max(0, (vw / k - STW) / 2 + Math.abs(sl - sr) / k), ey = Math.max(0, (vh / k - STH) / 2 + Math.abs(st - sb) / k);
@@ -1386,7 +1494,7 @@ function render(){
   G.players.forEach((q,i) => drawTray(q, i));
   G.players.forEach((q,i) => {
     const s = score(q,i), rk = RANKS[q.rank];
-    $('pc'+i).innerHTML = `<div class="pl${i===G.turn&&!G.over?' cur':''}${q.out?' out':''}"><span class="face">${chibi(q, i)}</span>
+    $('pc'+i).innerHTML = `<div class="pl${i===G.turn&&!G.over?' cur':''}${q.out?' out':''}"><span class="face">${q.role && q.id !== 'B' ? PORTRAIT(q.role) : chibi(q, i)}</span>
       <b>${esc(q.nm)}</b>${roleOf(q) ? `<span class="rolechip${s.role?' done':''}">${roleOf(q).n}${s.role?' ✓':''}</span>` : ''}<span class="cash">${q.out ? '탈락' : q.cash}</span>
       <span class="rank">${rk.n} ${rk.g}품 · ${q.laps}바퀴 · ${s.total}점${q.shield?' · 광배':''}${q.gate?' · 관문':''}${q.away?' · 왜국':''}${q.rank===10?` · 출발 ${Math.max(0,q.zp)}/2`:''}</span></div>`; });
   walk();
@@ -1486,9 +1594,9 @@ function renderActions(){
 let exitArm = 0;
 function showRoles(){
   if(!G) return;
-  openSheet(`<h2>백제 인물 카드</h2><p class="muted" style="margin:0">판을 시작할 때 한 사람에 한 장씩. 인물 이야기는 사료에서, 능력과 목표는 게임용으로 지었어요.</p>` +
+  openSheet(`<h2>백제 인물 카드</h2><p class="muted" style="margin:0">판을 시작할 때 한 사람에 한 장씩. 인물 이야기는 사료에서, 능력과 목표는 게임용으로 지었어요. 얼굴은 남은 초상이 없어 상상해 그린 것이고, 옷과 관만 『구당서』·『주서』 백제전의 복식(왕은 자주색 옷에 검은 비단 관과 금꽃, 관리는 붉은 옷과 은꽃)을 따랐어요.</p>` +
     G.players.map((p,i) => { const r = roleOf(p); if(!r) return ''; const ok = roleDone(p, i);
-      return `<div class="panel" style="gap:4px"><b style="color:${p.c}">${esc(p.nm)} · ${r.n}<span class="tag ${r.tag}">${TAGN[r.tag]}</span></b>
+      return `<div class="panel" style="gap:4px"><div class="rolehead">${PORTRAIT(r.id)}<b style="color:${p.c}">${esc(p.nm)} · ${r.n}<span class="tag ${r.tag}">${TAGN[r.tag]}</span></b></div>
         <p style="margin:0">${r.who}</p><p style="margin:0"><b>능력</b> ${r.ab} <span class="tag fic">창작</span></p>
         <p style="margin:0"><b>목표</b> ${r.goal()} +${r.bonus}점 ${ok ? '<b style="color:#9fd8a0">· 이룸</b>' : ''}</p>${srcLine(r)}</div>`; }).join(''), 'roles');
 }
@@ -1567,7 +1675,7 @@ function showRules(){
   <p><b>관등과 봉급.</b> 출발을 지날 때마다 두 품씩 오르고 봉급을 받아요. 극우(흰 띠) → 계덕(푸른 띠) → 시덕(검은 띠) → 내솔(은꽃 관 장식) … 좌평은 <b>내솔(6품) 이상</b>이 <b>정사암 회의</b>에서 왕채를 내야 돼요. 『주서』에서 6품 이상만 관에 은꽃을 달았다는 구절에서 따왔어요. 16품 가운데 12~15품(문독·무독·좌군·진무)은 게임에서 줄였어요.</p>
   <div class="src">${RANK_SRC} · 봉급은 게임용</div>
   <p><b>관문</b>(나성·부소산성)에 멈추면 다음 차례에 왕채가 나와야 나가요. 30수전을 내면 바로 나가요.</p>
-  <p><b>백제 인물 카드.</b> 판을 시작하면 성충·계백·사택지적·무왕·단양이 가운데 한 장씩 받아요. 인물마다 능력 하나와 목표 하나가 있고, 목표를 이루면 판이 끝날 때 점수를 더 받아요. 플레이어 카드를 누르면 다시 볼 수 있어요. 인물 이야기는 사료에서, 능력·목표는 게임용으로 지었어요.</p>
+  <p><b>백제 인물 카드.</b> 판을 시작할 때 성충·계백·사택지적·무왕·단양이 가운데 하나를 골라요(혼자 하기·한 기기에서 함께. 고르지 않은 자리와 방에서는 무작위). 인물마다 능력 하나와 목표 하나가 있고, 목표를 이루면 판이 끝날 때 점수를 더 받아요. 플레이어 카드를 누르면 다시 볼 수 있어요. 인물 이야기는 사료에서, 능력·목표는 게임용으로 지었어요.</p>
   <p><b>판 길이.</b> 짧은 판은 여섯 턴(두 턴씩 건너뛰며 성왕부터 의자왕까지), 긴 판은 열두 턴. 짧은 판에서는 인물 목표가 조금 낮아져요. 왼쪽 ▶▶를 켜 두면 컴퓨터 차례가 빨리 지나가요.</p>
   <p><b>열두 턴.</b> 선두가 출발(사비 천도)이나 맞은편 구태묘 제사를 지날 때마다 다음 턴으로 넘어가요. 턴마다 그 시대(성왕 → 위덕왕 → 법왕·무왕 → 의자왕)의 사건 서너 개 가운데 하나가 무작위로 일어나요. 사건의 효과는 <b>다음 사건이 올 때까지 그 턴 내내</b> 이어져요(예: 일식 → 그 턴 동안 통행세 1.5배, 성 방어 → 성 통행세 두 배). 지금 걸린 효과는 위쪽 시대 띠에 노란 표시로 보여요. 12턴 다음 바퀴에 660 사비 함락이 오면 점수를 세요.</p>
   <p><b>뒤처진 사람 돕기.</b> 출발을 지날 때 점수가 꼴찌면 격려금 80수전을 받아요. 뒤에 던지는 사람은 시작 오수전이 60씩 더 많아요(먼저 던지는 쪽이 유리해서). 혼자 하기에서는 부처님 세기를 너그러운·보통·깐깐한 가운데 고를 수 있어요.</p>
@@ -1619,7 +1727,7 @@ $('startSolo').onclick = async () => {
   SOLO.on = true;
   await story(SOLO_INTRO, SOLO_SRC);
   const lv = +(document.querySelector('input[name=soloLv]:checked')?.value ?? 1);
-  startGame(newGame([{ id:'Y', nm, c:'#e2574c', bonus:[200,0,0][lv] }, { id:'B', nm:['너그러운 부처님','부처님','깐깐한 부처님'][lv], ai:true, lv, c:'#e0c27a', bonus:[0,0,200][lv] }], { short: lenOf('lenSolo') }));
+  startGame(newGame([{ id:'Y', nm, c:'#e2574c', bonus:[200,0,0][lv], role:SOLO_ROLE }, { id:'B', nm:['너그러운 부처님','부처님','깐깐한 부처님'][lv], ai:true, lv, c:'#e0c27a', bonus:[0,0,200][lv] }], { short: lenOf('lenSolo') }));
   ME = ['Y']; enterGame();
 };
 
@@ -1667,7 +1775,7 @@ function publish(){
 function enterGame(){
   for(const k in DISP) delete DISP[k];
   lastEvtN = 0; lastNoteN = G.note?.n || 0; lastThrowN = G.last?.n || 0; lastFxN = G.last?.n || 0;
-  $('lobby').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
+  $('lobby').hidden = true; if($('lobbyBg')) $('lobbyBg').hidden = true; $('game').hidden = false; document.body.classList.add('ingame');
   buildBoard(); wireSide(); sizeBoard(); requestAnimationFrame(() => { render(); fitBoard(); }); setTimeout(fitBoard, 300);
   if(!G.over && G.players.some(q => q.role) && !(G.last)) setTimeout(showRoles, 700);   // 새 판이면 인물 카드부터 보여 준다
 }
@@ -1676,19 +1784,32 @@ const seatState = [{ nm:'나', who:'me' }, { nm:'컴퓨터 1', who:'ai' }, { nm:
 function drawSeats(){
   $('seats').innerHTML = seatState.map((s,i) => `<div class="seat"><span class="dot">${chibi({ id:'L'+i, c:COLORS[i], rank:0, nm:s.nm }, i)}</span>
     <input type="text" id="sn${i}" value="${esc(s.nm)}" maxlength="10" style="max-width:150px" aria-label="${i+1}번 자리 이름">
-    <select id="sw${i}" aria-label="${i+1}번 자리"><option value="me"${s.who==='me'?' selected':''}>사람</option><option value="ai"${s.who==='ai'?' selected':''}>컴퓨터</option><option value="off"${s.who==='off'?' selected':''}>비움</option></select></div>`).join('');
-  seatState.forEach((s,i) => { $('sn'+i).oninput = e => s.nm = e.target.value; $('sw'+i).onchange = e => s.who = e.target.value; });
+    <select id="sw${i}" aria-label="${i+1}번 자리"><option value="me"${s.who==='me'?' selected':''}>사람</option><option value="ai"${s.who==='ai'?' selected':''}>컴퓨터</option><option value="off"${s.who==='off'?' selected':''}>비움</option></select>
+    <select id="sr${i}" aria-label="${i+1}번 자리 인물"><option value="">인물 무작위</option>${ROLES.map(r => `<option value="${r.id}"${s.role===r.id?' selected':''}>${r.n}</option>`).join('')}</select></div>`).join('');
+  seatState.forEach((s,i) => { $('sn'+i).oninput = e => s.nm = e.target.value; $('sw'+i).onchange = e => s.who = e.target.value; $('sr'+i).onchange = e => s.role = e.target.value; });
 }
 $('startLocal').onclick = () => {
   const seats = seatState.map((s,i) => ({ ...s, id:'L'+i })).filter(s => s.who !== 'off');
   if(seats.length < 2) return alertLobby('두 자리 이상 채워야 해요. 빈 자리를 사람이나 컴퓨터로 바꿔 주세요.');
-  startGame(newGame(seats.map(s => ({ id:s.id, nm:(s.nm||'이름 없음').slice(0,10), ai:s.who==='ai' })), { short: lenOf('lenLocal') }));
+  startGame(newGame(seats.map(s => ({ id:s.id, nm:(s.nm||'이름 없음').slice(0,10), ai:s.who==='ai', role:s.role || null })), { short: lenOf('lenLocal') }));
   ME = seats.filter(s => s.who === 'me').map(s => s.id);
   enterGame();
 };
 function alertLobby(t){ $('roomNote').textContent = t; $('roomNote').scrollIntoView({block:'center'}); }
 $('howBtn').onclick = showRules;
-const showMenu = id => ['menuMain','menuSingle','menuMulti'].forEach(m => $(m).hidden = m !== id);
+const showMenu = id => { ['menuMain','menuSingle','menuMulti'].forEach(m => $(m).hidden = m !== id); $('lobby').classList.toggle('sub', id !== 'menuMain'); };
+/* 혼자 하기: 다섯 인물 가운데 고르기 */
+let SOLO_ROLE = ROLES[Math.floor(Math.random() * ROLES.length)].id;
+function drawSoloPicks(){
+  $('soloPicks').innerHTML = ROLES.map(r => `<button type="button" class="pickc${r.id === SOLO_ROLE ? ' on' : ''}" role="radio" aria-checked="${r.id === SOLO_ROLE}" data-r="${r.id}">${PORTRAIT(r.id)}<b>${r.n}</b><small>${r.hint}</small></button>`).join('');
+  $('soloPicks').querySelectorAll('.pickc').forEach(b => b.onclick = () => { SOLO_ROLE = b.dataset.r; drawSoloPicks(); });
+  const r = ROLES.find(x => x.id === SOLO_ROLE);
+  $('soloRoleTxt').innerHTML = `<b style="color:#f0d79a">${r.n}</b> · ${r.ab} <span class="muted">· 목표: ${r.goal()} +${r.bonus}점</span>`;
+}
+document.querySelectorAll('input[name=lenSolo]').forEach(x => x.onchange = () => { LOBBY_SHORT = lenOf('lenSolo'); drawSoloPicks(); });
+drawSoloPicks();
+addEventListener('resize', () => setTimeout(fitStage, 60));
+fitStage();
 $('goSingle').onclick = () => showMenu('menuSingle');
 $('goMulti').onclick = () => showMenu('menuMulti');
 document.querySelectorAll('[data-back]').forEach(b => b.onclick = () => showMenu('menuMain'));
